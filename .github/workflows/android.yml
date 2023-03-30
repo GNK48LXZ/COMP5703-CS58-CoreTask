@@ -14,14 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+      name: Checkout the code
 
-    - name: Run Lint
-      uses: ./gradlew lintDebug
 
-    - name: upload html test report
-      uses: actions/upload-artifact@v3
+    - uses: ./gradlew lintDebug
+      name: Run Lint
+
+
+    - uses: actions/upload-artifact@v3
+      name: upload html test report
+
 
       with:
          name: index.html
