@@ -10,18 +10,16 @@ on:
 
 jobs:
   lint:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout the code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Run Lint
       uses: ./gradlew lintDebug
 
     - name: upload html test report
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
 
       with:
          name: index.html
