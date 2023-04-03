@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v3
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -31,12 +32,24 @@ jobs:
     steps:
     - name: Checkout the code
       uses: actions/checkout@v3
+=======
+    - uses: actions/checkout@v3
+      name: Checkout the code
+>>>>>>> 59d86bef8d94a486485778139f9fdb219d0d5891
 
-    - name: Run Lint
-      uses: ./gradlew lintDebug
 
+<<<<<<< HEAD
     - name: upload html test report
       uses: actions/upload-artifact@v3
+=======
+    - uses: ./gradlew lintDebug
+      name: Run Lint
+
+
+    - uses: actions/upload-artifact@v3
+      name: upload html test report
+
+>>>>>>> 59d86bef8d94a486485778139f9fdb219d0d5891
 
       with:
          name: index.html
