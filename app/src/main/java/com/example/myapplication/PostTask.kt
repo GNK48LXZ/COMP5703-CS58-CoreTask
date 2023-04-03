@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.app.ActivityManager.TaskDescription
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,12 +28,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -43,7 +48,10 @@ import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
+import androidx.compose.material3.Icon
+import androidx.compose.ui.text.font.FontWeight
 import java.time.LocalDate
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -56,32 +64,49 @@ fun PostTaskPage() {
     * 4: WhereDone
     * 5: DescribeTask
     * 6: Select Address
-    * 7：Suggest Budget
-    *
+    * 8: Suggest Budget
+    * 8: TaskDetail
     * */
     val pageState = remember {
         mutableStateOf(1)
     }
+    val taskTopic = remember {
+        mutableStateOf("")
+    }
+    val taskDescription = remember {
+        mutableStateOf("")
+    }
+    val date = remember {
+        mutableStateOf("")
+    }
+    val address = remember {
+        mutableStateOf("")
+    }
+    val money = remember {
+        mutableStateOf("")
+    }
     if (pageState.value == 1) {
-        SimplyDescribeTask(pageState)
+        SimplyDescribeTask(pageState,taskTopic)
     } else if (pageState.value == 2) {
         WhenDone(pageState)
     } else if(pageState.value == 3){
-        SelectDate(pageState)
+        SelectDate(pageState,date)
     } else if (pageState.value == 4) {
         WhereDone(pageState)
     } else if (pageState.value == 5) {
-        DescribeTask(pageState)
+        DescribeTask(pageState,taskDescription)
     } else if (pageState.value == 6) {
-        SelectAddress(pageState)
+        SelectAddress(pageState,address)
     } else if (pageState.value == 7) {
-        SuggestBudget(pageState)
+        SuggestBudget(pageState,money)
+    } else if (pageState.value == 8) {
+        TaskDetail(pageState,taskTopic,date,taskDescription,address,money)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SimplyDescribeTask(pageState: MutableState<Int>) {
+fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<String>) {
     MaterialTheme(colorScheme = LightColorScheme) {
         Column(
             modifier = Modifier
@@ -116,9 +141,9 @@ fun SimplyDescribeTask(pageState: MutableState<Int>) {
                 value = text,
                 onValueChange = { text = it },
                 modifier = Modifier
-                    .height(200.dp)
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(70.dp))
@@ -132,7 +157,10 @@ fun SimplyDescribeTask(pageState: MutableState<Int>) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    onClick = { pageState.value = 2 }
+                    onClick = {
+                        pageState.value = 2
+                        taskTopic.value = text.text
+                    }
                 ) {
                     Text("Continue", fontSize = 20.sp)
                 }
@@ -229,12 +257,16 @@ fun WhenDone(pageState: MutableState<Int>) {
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectDate(pageState: MutableState<Int>) {
+fun SelectDate(pageState: MutableState<Int>, selectedDate:MutableState<String>) {
     val calendarState = rememberSheetState()
+    val d = remember {
+        mutableStateOf("")}
 
     CalendarDialog(
         state = calendarState,
-        selection = CalendarSelection.Date {},
+        selection = CalendarSelection.Date {
+            d.value = it.toString()
+        },
         config = CalendarConfig(
             monthSelection = true,
             yearSelection = true,
@@ -269,19 +301,22 @@ fun SelectDate(pageState: MutableState<Int>) {
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-        var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue("", TextRange(0,0)))
+        if(d.value!=""){
+            DateTextFiled(d)
         }
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            enabled = false,
+        else{
+            DateTextFiled(d)
+        }
+
+        FilledTonalButton(
             modifier = Modifier
-                .height(80.dp)
-                .fillMaxWidth()
+                .width(250.dp)
                 .padding(16.dp)
-                .clickable { calendarState.show() },
-        )
+                .align(alignment = Alignment.CenterHorizontally),
+            onClick = { calendarState.show() }
+        ) {
+            Text("Pick Date", fontSize = 20.sp)
+        }
 
         Column(
             modifier = Modifier
@@ -294,15 +329,29 @@ fun SelectDate(pageState: MutableState<Int>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = { pageState.value = 4 }
+                onClick = { pageState.value = 4
+                    selectedDate.value = d.value}
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
         }
     }
-    //Spacer(modifier = Modifier.height(70.dp))
+}
 
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateTextFiled(d:MutableState<String>){
+    var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(d.value, TextRange(0,0)))
+    }
+    TextField(
+        value = text,
+        onValueChange = { text = it},
+        enabled = false,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    )
 }
 
 @Composable
@@ -402,7 +451,7 @@ fun WhereDone(pageState: MutableState<Int>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DescribeTask(pageState: MutableState<Int>) {
+fun DescribeTask(pageState: MutableState<Int>, taskDescription:MutableState<String>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -472,8 +521,6 @@ fun DescribeTask(pageState: MutableState<Int>) {
             //Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 
         }
-
-
         //continue button
         Column(
             modifier = Modifier
@@ -485,7 +532,10 @@ fun DescribeTask(pageState: MutableState<Int>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = { pageState.value = 6 }
+                onClick = {
+                    pageState.value = 6
+                    taskDescription.value = text.text
+                }
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
@@ -497,7 +547,7 @@ fun DescribeTask(pageState: MutableState<Int>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectAddress(pageState: MutableState<Int>) {
+fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -550,22 +600,25 @@ fun SelectAddress(pageState: MutableState<Int>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = { pageState.value = 7 }
+                onClick = {
+                    pageState.value = 7
+                    address.value = text.text
+                }
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
         }
     }
-    //Spacer(modifier = Modifier.height(70.dp))
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuggestBudget(pageState: MutableState<Int>) {
+fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .fillMaxHeight()
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -648,13 +701,193 @@ fun SuggestBudget(pageState: MutableState<Int>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = { }
+                onClick = {
+                    pageState.value = 8
+                    money.value = text.text
+                }
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
         }
     }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
+               date:MutableState<String>,taskDescription:MutableState<String>,
+               address:MutableState<String>,money:MutableState<String>){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        androidx.compose.material.Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            "Icon",
+            modifier = Modifier
+                .clickable { pageState.value = 7 }
+                .padding(horizontal = 16.dp),
+            tint = Color(0xff333333)
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        //Title1
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            text = taskTopic.value,
+            style = MaterialTheme.typography.bodyLarge,
+            lineHeight = 40.sp,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        //Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .height(70.dp)
+                .fillMaxWidth()
+        ){
+            Icon(
+                Icons.Outlined.Person,
+                modifier = Modifier.size(70.dp),
+                contentDescription = "User",
+            )
+            Column() {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = "POSTED BY",fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(3.dp))
+                Text(text = "Jessica L",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 25.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(modifier = Modifier
+            .padding(horizontal = 30.dp)
+            .height(100.dp)
+            .fillMaxWidth()
+        ){
+            Column() {
+                Spacer(modifier = Modifier.height(15.dp))
+                Icon(
+                    Icons.Outlined.LocationOn,
+                    modifier = Modifier.size(35.dp),
+                    contentDescription = "Address",
+                )
+            }
+            Spacer(modifier = Modifier.width(28.dp))
+            Column() {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = "LOCATION",fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(3.dp))
+                Text(//text = "Darlington NSW 2008 Australia",
+                    text = address.value,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+        }
+
+        Row(modifier = Modifier
+            .padding(horizontal = 30.dp)
+            .height(90.dp)
+            .fillMaxWidth()
+        ){
+            Column() {
+                Spacer(modifier = Modifier.height(15.dp))
+                Icon(
+                    Icons.Outlined.DateRange,
+                    modifier = Modifier.size(35.dp),
+                    contentDescription = "Date",
+                )
+            }
+            Spacer(modifier = Modifier.width(28.dp))
+            Column() {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = "TO BE DONE ON",fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(3.dp))
+                Text(//text = "Monday April 10",
+                    text = date.value,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text("TASK PRICE",
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    fontWeight = FontWeight.Bold
+                )
+                Text(//"AU$200",
+                    text = money.value + "$",
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                FilledTonalButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(21.dp),
+                    onClick = { },
+                    colors = ButtonDefaults.buttonColors(background)
+                ) {
+                    Text("Change",
+                        fontSize = 20.sp,
+                        color = Color.Black)
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            text = "DETAILS",
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 20.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            //text = "Looking for a professional to clean my living room thoroughly",
+            text = taskDescription.value,
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        FilledTonalButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            onClick = {/*To do something!*/}
+        ) {
+            Text("Publish this Task!", fontSize = 20.sp)
+        }
+
+    }
 }
 
 
