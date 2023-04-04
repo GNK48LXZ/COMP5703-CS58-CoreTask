@@ -31,10 +31,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
@@ -59,13 +58,12 @@ fun PostTaskPage() {
     /*
     * pageState:int represents which page should be shown
     * 1: SimplyDescribeTask
-    * 2: WhenDone
-    * 3: SelectDate
-    * 4: WhereDone
-    * 5: DescribeTask
-    * 6: Select Address
-    * 8: Suggest Budget
-    * 8: TaskDetail
+    * 2: SelectDate
+    * 3: WhenDone
+    * 4: DescribeTask
+    * 5: Select Address
+    * 6: Suggest Budget
+    * 7: TaskDetail
     * */
     val pageState = remember {
         mutableStateOf(1)
@@ -88,18 +86,16 @@ fun PostTaskPage() {
     if (pageState.value == 1) {
         SimplyDescribeTask(pageState,taskTopic)
     } else if (pageState.value == 2) {
-        WhenDone(pageState)
-    } else if(pageState.value == 3){
         SelectDate(pageState,date)
+    } else if(pageState.value == 3){
+        WhenDone(pageState)
     } else if (pageState.value == 4) {
-        WhereDone(pageState)
-    } else if (pageState.value == 5) {
         DescribeTask(pageState,taskDescription)
-    } else if (pageState.value == 6) {
+    } else if (pageState.value == 5) {
         SelectAddress(pageState,address)
-    } else if (pageState.value == 7) {
+    } else if (pageState.value == 6) {
         SuggestBudget(pageState,money)
-    } else if (pageState.value == 8) {
+    } else if (pageState.value == 7) {
         TaskDetail(pageState,taskTopic,date,taskDescription,address,money)
     }
 }
@@ -114,15 +110,23 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                 .background(background)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            androidx.compose.material.Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                "Icon",
-                modifier = Modifier
-                    .clickable {/* */ }
-                    .padding(horizontal = 16.dp),
-                tint = Color(0xff333333)
-            )
-
+            Row(){
+                androidx.compose.material.Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    "Icon",
+                    modifier = Modifier
+                        .clickable {/* */ }
+                        .padding(horizontal = 16.dp)
+                        .size(30.dp),
+                    tint = Color(0xff333333)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = "Start with a title",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.W600
+                )
+            }
             Spacer(modifier = Modifier.height(60.dp))
             Text(
                 modifier = Modifier
@@ -135,7 +139,7 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
 
             Spacer(modifier = Modifier.height(20.dp))
             var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-                mutableStateOf(TextFieldValue("eg. Move my stuff", TextRange(0, 18)))
+                mutableStateOf(TextFieldValue("", TextRange(0,0)))
             }
             TextField(
                 value = text,
@@ -143,7 +147,8 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                singleLine = true
+                singleLine = true,
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
 
             Spacer(modifier = Modifier.height(70.dp))
@@ -157,6 +162,7 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(buttonColor),
                     onClick = {
                         pageState.value = 2
                         taskTopic.value = text.text
@@ -170,6 +176,100 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectDate(pageState: MutableState<Int>, selectedDate:MutableState<String>) {
+    val calendarState = rememberSheetState()
+    val d = remember {
+        mutableStateOf("")}
+
+    CalendarDialog(
+        state = calendarState,
+        selection = CalendarSelection.Date {
+            d.value = it.toString()
+        },
+        config = CalendarConfig(
+            monthSelection = true,
+            yearSelection = true,
+        )
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(){
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable {pageState.value = 1 }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Choose a time",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
+
+        Spacer(modifier = Modifier.height(60.dp))
+
+        //Title
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            text = "Tell the tasker your preferred time",
+            style = MaterialTheme.typography.bodyLarge,
+            lineHeight = 40.sp,
+            fontSize = 40.sp
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+        if(d.value!=""){
+            DateTextFiled(d)
+        }
+        else{
+            DateTextFiled(d)
+        }
+
+        FilledTonalButton(
+            modifier = Modifier
+                .width(200.dp)
+                .padding(16.dp)
+                .align(alignment = Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(buttonColor),
+            onClick = { calendarState.show() }
+        ) {
+            Text("Pick Date", fontSize = 20.sp)
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(background),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(buttonColor),
+                onClick = { pageState.value = 3
+                    selectedDate.value = d.value}
+            ) {
+                Text("Continue", fontSize = 20.sp)
+            }
+        }
+    }
+}
 @Composable
 fun WhenDone(pageState: MutableState<Int>) {
     Column(
@@ -178,14 +278,23 @@ fun WhenDone(pageState: MutableState<Int>) {
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material.Icon(
-            imageVector = Icons.Filled.ArrowBack,
-            "Icon",
-            modifier = Modifier
-                .clickable { pageState.value = 1 }
-                .padding(horizontal = 16.dp),
-            tint = Color(0xff333333)
-        )
+        Row(){
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable {pageState.value = 2 }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Decide on When",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
 
         Spacer(modifier = Modifier.height(60.dp))
 
@@ -222,7 +331,8 @@ fun WhenDone(pageState: MutableState<Int>) {
                 ) {
                     RadioButton(
                         selected = (text == selectedOption),
-                        onClick = null
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(buttonColor)
                     )
                     Text(
                         text = text,
@@ -245,96 +355,13 @@ fun WhenDone(pageState: MutableState<Int>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = { pageState.value = 3 }
+                onClick = { pageState.value = 4 },
+                colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
         }
 
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SelectDate(pageState: MutableState<Int>, selectedDate:MutableState<String>) {
-    val calendarState = rememberSheetState()
-    val d = remember {
-        mutableStateOf("")}
-
-    CalendarDialog(
-        state = calendarState,
-        selection = CalendarSelection.Date {
-            d.value = it.toString()
-        },
-        config = CalendarConfig(
-            monthSelection = true,
-            yearSelection = true,
-        )
-    )
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material.Icon(
-            imageVector = Icons.Filled.ArrowBack,
-            "Icon",
-            modifier = Modifier
-                .clickable { pageState.value = 2 }
-                .padding(horizontal = 16.dp),
-            tint = Color(0xff333333)
-        )
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        //Title
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = "Select Date",
-            style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 40.sp
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-        if(d.value!=""){
-            DateTextFiled(d)
-        }
-        else{
-            DateTextFiled(d)
-        }
-
-        FilledTonalButton(
-            modifier = Modifier
-                .width(250.dp)
-                .padding(16.dp)
-                .align(alignment = Alignment.CenterHorizontally),
-            onClick = { calendarState.show() }
-        ) {
-            Text("Pick Date", fontSize = 20.sp)
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(background),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            FilledTonalButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                onClick = { pageState.value = 4
-                    selectedDate.value = d.value}
-            ) {
-                Text("Continue", fontSize = 20.sp)
-            }
-        }
     }
 }
 
@@ -350,7 +377,8 @@ fun DateTextFiled(d:MutableState<String>){
         enabled = false,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
     )
 }
 
@@ -452,95 +480,130 @@ fun WhereDone(pageState: MutableState<Int>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DescribeTask(pageState: MutableState<Int>, taskDescription:MutableState<String>) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .fillMaxHeight()
             .background(background)
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material.Icon(
-            imageVector = Icons.Filled.ArrowBack,
-            "Icon",
-            modifier = Modifier
-                .clickable { pageState.value = 4 }
-                .padding(horizontal = 16.dp),
-            tint = Color(0xff333333)
-        )
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        //Title1
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = "Summarize the key detail",
-            style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 30.sp
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-        var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(""))
-        }
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-        //Title2
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = "Help Taskers understand what needs doing",
-            style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 30.sp
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-        ElevatedButton(
-            onClick = { /* Do something! */ },
-            modifier = Modifier
-                .padding(16.dp)
-                .height(110.dp)
-                .width(160.dp)
-        ) {
-            androidx.compose.material.Icon(
-                Icons.Filled.Add,
-                contentDescription = "Add",
-                modifier = Modifier.size(50.dp)
-            )
-            //Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-
-        }
-        //continue button
+        //TopBar
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Bottom
+                .background(background)
+        ){
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(){
+                androidx.compose.material.Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    "Icon",
+                    modifier = Modifier
+                        .clickable {pageState.value = 3 }
+                        .padding(horizontal = 16.dp)
+                        .size(30.dp),
+                    tint = Color(0xff333333)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = "Task Description",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.W600
+                )
+            }
+        }
+        var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+            mutableStateOf(TextFieldValue(""))
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        //Content
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(background)
+                .verticalScroll(rememberScrollState())
         ) {
-            FilledTonalButton(
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                text = "Summarize the detail of the task",
+                style = MaterialTheme.typography.bodyLarge,
+                lineHeight = 40.sp,
+                fontSize = 40.sp
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            //Title2
+            Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = {
-                    pageState.value = 6
-                    taskDescription.value = text.text
-                }
+                text = "Help the tasker understand what you need to do",
+                style = MaterialTheme.typography.bodyLarge,
+                lineHeight = 40.sp,
+                fontSize = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+            //var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+            //    mutableStateOf(TextFieldValue(""))
+            //}
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier
+                    .height(200.dp)
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                text = "You can upload photos(Optional)",
+                style = MaterialTheme.typography.bodyLarge,
+                lineHeight = 40.sp,
+                fontSize = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+            ElevatedButton(
+                onClick = { /* Do something! */ },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .height(110.dp)
+                    .width(160.dp),
+                colors = ButtonDefaults.buttonColors(textFieldColor)
             ) {
-                Text("Continue", fontSize = 20.sp)
+                androidx.compose.material.Icon(
+                    Icons.Outlined.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+            //continue button
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                FilledTonalButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    onClick = {
+                        pageState.value = 5
+                        taskDescription.value = text.text
+                    },
+                    colors = ButtonDefaults.buttonColors(buttonColor)
+                ) {
+                    Text("Continue", fontSize = 20.sp)
+                }
             }
         }
-
     }
 }
 
@@ -554,14 +617,23 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material.Icon(
-            imageVector = Icons.Filled.ArrowBack,
-            "Icon",
-            modifier = Modifier
-                .clickable { pageState.value = 5 }
-                .padding(horizontal = 16.dp),
-            tint = Color(0xff333333)
-        )
+        Row(){
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable {pageState.value = 4 }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Work address",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
 
         Spacer(modifier = Modifier.height(60.dp))
 
@@ -570,7 +642,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Select Address",
+            text = "Where does the Tasker work",
             style = MaterialTheme.typography.bodyLarge,
             lineHeight = 40.sp,
             fontSize = 40.sp
@@ -578,7 +650,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
 
         Spacer(modifier = Modifier.height(20.dp))
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue("Ultimo NSW 2023 Australia", TextRange(0, 50)))
+            mutableStateOf(TextFieldValue("", TextRange(0,0)))
         }
         TextField(
             value = text,
@@ -586,7 +658,8 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
             modifier = Modifier
                 .height(80.dp)
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
         )
 
         Column(
@@ -601,9 +674,10 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    pageState.value = 7
+                    pageState.value = 6
                     address.value = text.text
-                }
+                },
+                colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
@@ -622,14 +696,23 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material.Icon(
-            imageVector = Icons.Filled.ArrowBack,
-            "Icon",
-            modifier = Modifier
-                .clickable { pageState.value = 6 }
-                .padding(horizontal = 16.dp),
-            tint = Color(0xff333333)
-        )
+        Row(){
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable {pageState.value = 5 }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Suggest Budget",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
 
         Spacer(modifier = Modifier.height(60.dp))
 
@@ -648,48 +731,17 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
             mutableStateOf(TextFieldValue("", TextRange(0, 18)))
         }
         TextField(
-
             value = text,
             onValueChange = { text = it },
             label = { Text(text = "Enter the Price in AU$") },
             modifier = Modifier
                 .height(90.dp)
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        val radioOptions = listOf("One-time payment", "Pay by the day","Pay by the hour")
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-        // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
-        Column(Modifier.selectableGroup()) {
-            radioOptions.forEach { text ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .selectable(
-                            selected = (text == selectedOption),
-                            onClick = { onOptionSelected(text) },
-                            role = Role.RadioButton
-                        )
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = (text == selectedOption),
-                        onClick = null
-                    )
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(start = 16.dp),
-                        fontSize = 20.sp
-                    )
-                }
-            }
-        }
 
         Column(
             modifier = Modifier
@@ -702,9 +754,10 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    pageState.value = 8
+                    pageState.value = 7
                     money.value = text.text
-                }
+                },
+                colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
@@ -722,169 +775,193 @@ fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
         modifier = Modifier
             .fillMaxWidth()
             .background(background)
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material.Icon(
-            imageVector = Icons.Filled.ArrowBack,
-            "Icon",
-            modifier = Modifier
-                .clickable { pageState.value = 7 }
-                .padding(horizontal = 16.dp),
-            tint = Color(0xff333333)
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        //Title1
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = taskTopic.value,
-            style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        //Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .height(70.dp)
-                .fillMaxWidth()
-        ){
-            Icon(
-                Icons.Outlined.Person,
-                modifier = Modifier.size(70.dp),
-                contentDescription = "User",
-            )
-            Column() {
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "POSTED BY",fontSize = 13.sp)
-                Spacer(modifier = Modifier.height(3.dp))
-                Text(text = "Jessica L",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(modifier = Modifier
-            .padding(horizontal = 30.dp)
-            .height(100.dp)
-            .fillMaxWidth()
-        ){
-            Column() {
-                Spacer(modifier = Modifier.height(15.dp))
-                Icon(
-                    Icons.Outlined.LocationOn,
-                    modifier = Modifier.size(35.dp),
-                    contentDescription = "Address",
-                )
-            }
-            Spacer(modifier = Modifier.width(28.dp))
-            Column() {
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "LOCATION",fontSize = 13.sp)
-                Spacer(modifier = Modifier.height(3.dp))
-                Text(//text = "Darlington NSW 2008 Australia",
-                    text = address.value,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
-            }
-        }
-
-        Row(modifier = Modifier
-            .padding(horizontal = 30.dp)
-            .height(90.dp)
-            .fillMaxWidth()
-        ){
-            Column() {
-                Spacer(modifier = Modifier.height(15.dp))
-                Icon(
-                    Icons.Outlined.DateRange,
-                    modifier = Modifier.size(35.dp),
-                    contentDescription = "Date",
-                )
-            }
-            Spacer(modifier = Modifier.width(28.dp))
-            Column() {
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "TO BE DONE ON",fontSize = 13.sp)
-                Spacer(modifier = Modifier.height(3.dp))
-                Text(//text = "Monday April 10",
-                    text = date.value,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Text("TASK PRICE",
-                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                    fontWeight = FontWeight.Bold
-                )
-                Text(//"AU$200",
-                    text = money.value + "$",
-                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                FilledTonalButton(
+        Column() {
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(){
+                androidx.compose.material.Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    "Icon",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(21.dp),
-                    onClick = { },
-                    colors = ButtonDefaults.buttonColors(background)
-                ) {
-                    Text("Change",
-                        fontSize = 20.sp,
-                        color = Color.Black)
+                        .clickable {pageState.value = 6 }
+                        .padding(horizontal = 16.dp)
+                        .size(30.dp),
+                    tint = Color(0xff333333)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = "Task Confirmation",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.W600
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(background)
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                text = taskTopic.value,
+                style = MaterialTheme.typography.bodyLarge,
+                lineHeight = 40.sp,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            //Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .height(70.dp)
+                    .fillMaxWidth()
+            ){
+                Icon(
+                    Icons.Outlined.Person,
+                    modifier = Modifier.size(70.dp),
+                    contentDescription = "User",
+                )
+                Column() {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(text = "POSTED BY",fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(text = "Jessica L",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 25.sp
+                    )
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            text = "DETAILS",
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = 20.sp
-        )
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            //text = "Looking for a professional to clean my living room thoroughly",
-            text = taskDescription.value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
+            Divider(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                thickness = 1.5.dp,
+                color = textFieldColor,
+            )
 
-        FilledTonalButton(
-            modifier = Modifier
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(modifier = Modifier
+                .padding(horizontal = 30.dp)
+                .height(100.dp)
                 .fillMaxWidth()
-                .padding(16.dp),
-            onClick = {/*To do something!*/}
-        ) {
-            Text("Publish this Task!", fontSize = 20.sp)
+            ){
+                Column() {
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Icon(
+                        Icons.Outlined.LocationOn,
+                        modifier = Modifier.size(35.dp),
+                        contentDescription = "Address",
+                    )
+                }
+                Spacer(modifier = Modifier.width(28.dp))
+                Column() {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(text = "LOCATION",fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(//text = "Darlington NSW 2008 Australia",
+                        text = address.value,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                }
+            }
+            Divider(
+                modifier = Modifier.padding(horizontal = 25.dp),
+                thickness = 1.5.dp,
+                color = textFieldColor,
+            )
+
+            Row(modifier = Modifier
+                .padding(horizontal = 30.dp)
+                .height(90.dp)
+                .fillMaxWidth()
+            ){
+                Column() {
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Icon(
+                        Icons.Outlined.DateRange,
+                        modifier = Modifier.size(35.dp),
+                        contentDescription = "Date",
+                    )
+                }
+                Spacer(modifier = Modifier.width(28.dp))
+                Column() {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(text = "TO BE DONE ON",fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(//text = "Monday April 10",
+                        text = date.value,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text("TASK PRICE",
+                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(//"AU$200",
+                        text = money.value + "$",
+                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    FilledTonalButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(21.dp),
+                        onClick = { },
+                        colors = ButtonDefaults.buttonColors(buttonColor)
+                    ) {
+                        Text("Change", fontSize = 20.sp)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                text = "DETAILS",
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 20.sp
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                //text = "Looking for a professional to clean my living room thoroughly",
+                text = taskDescription.value,
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                onClick = {/*To do something!*/},
+                colors = ButtonDefaults.buttonColors(buttonColor)
+            ) {
+                Text("Publish this Task!", fontSize = 20.sp)
+            }
         }
 
     }

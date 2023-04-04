@@ -29,7 +29,9 @@ class MainActivity : ComponentActivity() {
 }
 
 
-val background = Color (0xFFfcf4ff)
+val background = Color (0xFFFFFFFF)
+val buttonColor = Color(0xFF0A65FC)
+val textFieldColor = Color(0xFFF5F5F5)
 
 val LightColorScheme = lightColorScheme (
 )
