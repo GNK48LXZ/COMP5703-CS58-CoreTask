@@ -21,8 +21,10 @@ class MainActivity : ComponentActivity() {
             MaterialTheme(
                 colorScheme = LightColorScheme
             ){
-
-                PostTaskPage()
+                //SelectReoeatedDate()
+                //PostTaskPage()
+                //AccountManagement()
+                MainPage()
             }
         }
     }

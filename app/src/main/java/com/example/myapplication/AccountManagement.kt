@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.Purple200
+import kotlinx.coroutines.selects.select
 
 @Composable
 fun AccountManagement() {
@@ -37,7 +38,6 @@ fun AccountManagement() {
     }
     if (pageState.value == 1) {
         AccountMain(pageState)
-        BottomToolbar()
     } else if (pageState.value == 2) {
         Settings(pageState)
     } else if (pageState.value == 3) {
@@ -176,7 +176,7 @@ fun AccountMain(pageState: MutableState<Int>){
     }
 }
 @Composable
-fun BottomToolbar() {
+fun BottomToolbar(pageState: MutableState<Int>) {
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()
@@ -186,7 +186,7 @@ fun BottomToolbar() {
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { pageState.value = 1 },
                 //selected = true,
                 modifier = Modifier
                     .padding(8.dp)
@@ -202,7 +202,7 @@ fun BottomToolbar() {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { pageState.value = 2 },
                 //selected = false,
                 modifier = Modifier
                     .padding(8.dp)
@@ -216,7 +216,7 @@ fun BottomToolbar() {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { pageState.value = 3 },
                 //selected = false,
                 modifier = Modifier
                     .padding(8.dp)
@@ -230,7 +230,7 @@ fun BottomToolbar() {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { pageState.value = 4 },
                 //selected = true,
                 modifier = Modifier
                     .padding(8.dp)
@@ -245,8 +245,7 @@ fun BottomToolbar() {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { /*TODO*/ },
-                //selected = true,
+                onClick = { pageState.value = 5 },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
