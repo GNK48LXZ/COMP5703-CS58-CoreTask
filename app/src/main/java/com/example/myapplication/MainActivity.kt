@@ -24,8 +24,8 @@ class MainActivity : ComponentActivity() {
                 //SelectReoeatedDate()
                 //PostTaskPage()
                 //AccountManagement()
-                //MainPage()
-                GetItDone()
+                MainPage()
+                //GetItDone()
             }
         }
     }
@@ -37,5 +37,6 @@ val buttonColor = Color(0xFF0A65FC)
 val textFieldColor = Color(0xFFF5F5F5)
 val textColor = Color(0xFFFFFFFF)
 val cardColor = Color(0xFF0A65FC)
+val whiteColor = Color(0xFFFFFFFF)
 val LightColorScheme = lightColorScheme (
 )

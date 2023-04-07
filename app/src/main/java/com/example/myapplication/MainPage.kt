@@ -14,6 +14,9 @@ import androidx.navigation.NavController
 @Composable
 fun MainPage(){
     val pageState = remember { mutableStateOf(1)}
+    if(pageState.value==1){
+        GetItDone()
+    }
     if(pageState.value==4){
         //to do//
     }

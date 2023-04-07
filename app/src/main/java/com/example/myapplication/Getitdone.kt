@@ -99,6 +99,7 @@ fun GetItDoneMain(pageState: MutableState<Int>) {
                     verticalArrangement = Arrangement.Center) {
                     Icon(
                         painter = painterResource(R.drawable.cleaning),
+                        tint = whiteColor,
                         contentDescription = "the cleaning"
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -122,6 +123,7 @@ fun GetItDoneMain(pageState: MutableState<Int>) {
                     verticalArrangement = Arrangement.Center) {
                     Icon(
                         painter = painterResource(R.drawable.removals),
+                        tint = whiteColor,
                         contentDescription = "the removal"
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -148,7 +150,8 @@ fun GetItDoneMain(pageState: MutableState<Int>) {
                     verticalArrangement = Arrangement.Center) {
                     Icon(
                         painter = painterResource(R.drawable.build),
-                        contentDescription = "the repairs"
+                        contentDescription = "the repairs",
+                        tint = whiteColor
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
@@ -171,6 +174,7 @@ fun GetItDoneMain(pageState: MutableState<Int>) {
                     verticalArrangement = Arrangement.Center) {
                     Icon(
                         painter = painterResource(R.drawable.painting),
+                        tint = whiteColor,
                         contentDescription = "the painting"
                     )
                     Spacer(modifier = Modifier.weight(1f))
