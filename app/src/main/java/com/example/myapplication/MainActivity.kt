@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -39,5 +41,7 @@ val textFieldColor = Color(0xFFF5F5F5)
 val textColor = Color(0xFFFFFFFF)
 val cardColor = Color(0xFF0A65FC)
 val whiteColor = Color(0xFFFFFFFF)
-val LightColorScheme = lightColorScheme (
+val LightColorScheme = lightColorScheme ()
+val Poppins = FontFamily(
+    Font(R.font.poppins)
 )
