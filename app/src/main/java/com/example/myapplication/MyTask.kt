@@ -33,98 +33,74 @@ fun MyTask() {
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         Row {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                "Icon",
-                modifier = Modifier
-                    .clickable {/* */ }
-                    .padding(horizontal = 16.dp)
-                    .size(30.dp),
-                tint = Color(0xff333333)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(20.dp))
             Text(
-                text = "Browse tasks",
+                text = "My tasks",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.W600
+                fontWeight = FontWeight.W600,
+                fontFamily = Poppins
             )
         }
         Spacer(modifier = Modifier.height(40.dp))
 
-        ListMyScreen(myList)
+        ListScreen(myList)
     }
 }
-
-data class ListMyItem(val taskname: String, val location: String,val date: String,val time: String,val bill:String, val imageUrl: Int)
 
 val myList = listOf(
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground)
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "40",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "200",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "70",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "40",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "80",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "300",
+        R.drawable.ic_launcher_foreground
+    )
 )
-
-@Composable
-fun ListMyItem(item: ListItem) {
-    Surface(
-        //elevation = 8.dp,
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(158.dp)
-            .padding(16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    item.taskname,
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.primary
-                )
-                Text(
-                    item.location,
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface
-                )
-                Text(
-                    item.date,
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface
-                )
-                Text(
-                    item.time,
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface
-                )
-            }
-            Column{
-                Text(
-                    item.bill+"$",
-                    style = MaterialTheme.typography.body1.copy(textAlign = TextAlign.Center),
-                    color = MaterialTheme.colors.onSurface
-                )
-                Image(
-                    painter = painterResource(item.imageUrl),
-                    contentDescription = "Image",
-                    modifier = Modifier.size(80.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ListMyScreen(list: List<ListItem>) {
-    LazyColumn {
-        items(list.size) { index ->
-            ListMyItem(item = list[index])
-        }
-    }
-}
 

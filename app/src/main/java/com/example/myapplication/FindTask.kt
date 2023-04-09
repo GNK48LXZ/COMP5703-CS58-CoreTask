@@ -2,14 +2,10 @@ package com.example.myapplication
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,37 +29,85 @@ fun FindTask() {
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         Row {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                "Icon",
-                modifier = Modifier
-                    .clickable {/* */ }
-                    .padding(horizontal = 16.dp)
-                    .size(30.dp),
-                tint = Color(0xff333333)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(20.dp))
             Text(
                 text = "Browse tasks",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.W600
+                fontWeight = FontWeight.W600,
+                fontFamily = Poppins
             )
         }
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        ListScreen(list1)
+        ListScreen(list)
     }
 }
 
-data class ListItem(val taskname: String, val location: String,val date: String,val time: String,val bill:String, val imageUrl: Int)
+data class ListItem(
+    val taskname: String,
+    val location: String,
+    val date: String,
+    val time: String,
+    val status: String,
+    val bill: String,
+    val imageUrl: Int
+)
 
-val list1 = listOf(
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground),
-    ListItem("Task name", "Location","Date(4th April, Tuesday)","Time","80", R.drawable.ic_launcher_foreground)
+val list = listOf(
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "80",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "80",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "80",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "80",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "80",
+        R.drawable.ic_launcher_foreground
+    ),
+    ListItem(
+        "Task name",
+        "Location",
+        "Date(4th April, Tuesday)",
+        "Time",
+        "Open",
+        "80",
+        R.drawable.ic_launcher_foreground
+    )
 )
 
 @Composable
@@ -73,40 +117,60 @@ fun ListItem(item: ListItem) {
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(158.dp)
+            .height(200.dp)
             .padding(16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
             ) {
                 Text(
                     item.taskname,
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.primary
+                    style = MaterialTheme.typography.h2.copy(
+                        fontSize = 20.sp,
+                        fontFamily = Poppins
+                    ),
+                    color = MaterialTheme.colors.onSurface
                 )
                 Text(
                     item.location,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.body1.copy(fontFamily = Poppins),
                     color = MaterialTheme.colors.onSurface
                 )
                 Text(
                     item.date,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.body1.copy(fontFamily = Poppins),
                     color = MaterialTheme.colors.onSurface
                 )
                 Text(
                     item.time,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.body1.copy(fontFamily = Poppins),
                     color = MaterialTheme.colors.onSurface
                 )
-            }
-            Column{
                 Text(
-                    item.bill+"$",
-                    style = MaterialTheme.typography.body1.copy(textAlign = TextAlign.Center),
+                    item.status,
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 18.sp,
+                        fontFamily = Poppins
+                    ),
+                    color = Color.Blue,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                )
+            }
+            Column(
+                modifier = Modifier.padding(horizontal = 20.dp)
+            ) {
+                Text(
+                    "AU " + item.bill + " $",
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center
+                    ),
                     color = MaterialTheme.colors.onSurface
                 )
                 Image(
@@ -121,7 +185,7 @@ fun ListItem(item: ListItem) {
 
 @Composable
 fun ListScreen(list: List<ListItem>) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.background(color = Color(0XFFF5F5F5))) {
         items(list.size) { index ->
             ListItem(item = list[index])
         }
