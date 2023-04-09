@@ -9,7 +9,9 @@ import android.inputmethodservice.Keyboard.Row
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
@@ -23,25 +25,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 
 @Composable
-fun GetItDone() {
-    val pageState = remember {
-        mutableStateOf(1)
-    }
-    if (pageState.value == 1) {
-        GetItDoneMain(pageState)
-    }
-}
-
-@Composable
-fun GetItDoneMain(pageState: MutableState<Int>) {
+fun GetItDone(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
+            .height(720.dp)
             .background(background)
+            .verticalScroll(rememberScrollState())
     ) {
         Spacer(
             modifier = Modifier.height(30.dp)
@@ -63,7 +57,7 @@ fun GetItDoneMain(pageState: MutableState<Int>) {
         )
         Spacer(modifier = Modifier.height(30.dp))
         Button(
-            onClick = { /* 点击事件 */ },
+            onClick = { navController.navigate(route = Screen.PostTask.route) },
             colors = ButtonDefaults.buttonColors(buttonColor),
             modifier = Modifier.padding(start = 16.dp).size(width = 250.dp, height = 64.dp)
         ) {
@@ -188,6 +182,9 @@ fun GetItDoneMain(pageState: MutableState<Int>) {
                 }
             }
         }
+        Text("35435345")
+        Text("5345345")
+        Text("5345345")
     }
 }
 

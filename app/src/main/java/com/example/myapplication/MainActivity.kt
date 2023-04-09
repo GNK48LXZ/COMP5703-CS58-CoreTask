@@ -12,8 +12,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
+
+    lateinit var navController: NavHostController
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,11 +25,9 @@ class MainActivity : ComponentActivity() {
             MaterialTheme(
                 colorScheme = LightColorScheme
             ){
-                //SelectReoeatedDate()
-                //PostTaskPage()
-                //AccountManagement()
-                MainPage()
-                //GetItDone()
+                navController = rememberNavController()
+                SetupNavGraph(navController = navController)
+
             }
         }
     }

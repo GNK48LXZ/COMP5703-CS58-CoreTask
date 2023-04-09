@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.Purple200
-
+/*
 @Composable
 fun LoginScreen(){
     val isLoginByPassword = remember{
@@ -32,7 +32,7 @@ fun LoginScreen(){
         mutableStateOf(false)
     }
     if(isLogin.value){
-        MainPage()
+        //MainPage()
     }
     else{
         Column(modifier = Modifier.fillMaxSize()) {
@@ -260,3 +260,4 @@ fun NavigationBarSection(loginByPassword: MutableState<Boolean>) {
         }
     }
 }
+*/

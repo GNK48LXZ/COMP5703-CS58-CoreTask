@@ -1,5 +1,8 @@
 package com.example.myapplication
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -10,20 +13,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainPage(){
+fun MainPage(
+    navController: NavController
+){
     val pageState = remember { mutableStateOf(1)}
-    if(pageState.value==1){
-        GetItDone()
+    Scaffold(
+        bottomBar ={
+            BottomToolbar(pageState = pageState)
+        }
+    ){
+        Column(
+        ) {
+            if(pageState.value==1){
+                GetItDone(navController)
+            }
+            if(pageState.value==4){
+                //to do//
+            }
+            if(pageState.value==5){
+                AccountManagement()
+            }
+        }
+        Column(
+            modifier = Modifier.padding(it),
+        ) {
+        }
     }
-    if(pageState.value==4){
-        //to do//
-    }
-    if(pageState.value==5){
-        AccountManagement()
-    }
-    BottomToolbar(pageState)
 
 }
 
