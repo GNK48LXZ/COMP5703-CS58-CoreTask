@@ -32,6 +32,12 @@ fun MainPage(
             if(pageState.value==1){
                 GetItDone(navController)
             }
+            if(pageState.value==2){
+                FindTask()
+            }
+            if(pageState.value==3){
+                MyTask()
+            }
             if(pageState.value==4){
                 //to do//
             }
