@@ -49,9 +49,10 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import androidx.compose.material3.Icon
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import java.time.LocalDate
 
-
+@Preview
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostTaskPage() {
