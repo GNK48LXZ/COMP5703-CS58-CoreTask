@@ -118,6 +118,7 @@ fun WeChatChatScreen(chatName: String) {
     PreviewConversation()
 }
 
+/*
 @ExperimentalAnimationApi
 @Composable
 fun WeChatApp() {
@@ -143,4 +144,4 @@ fun WeChatApp() {
 @Composable
 fun PreviewWeChatApp() {
     WeChatApp()
-}
+}*/

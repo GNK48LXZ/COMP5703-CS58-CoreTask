@@ -1,6 +1,9 @@
 package com.example.myapplication
+//import WeChatApp
+import WeChatMainScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,6 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
+@OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainPage(
@@ -39,7 +43,8 @@ fun MainPage(
                 MyTask()
             }
             if(pageState.value==4){
-                //to do//
+                //WeChatApp()
+                WeChatMainScreen(navController)
             }
             if(pageState.value==5){
                 AccountManagement()

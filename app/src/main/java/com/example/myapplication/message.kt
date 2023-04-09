@@ -48,7 +48,7 @@ fun MessageListAndInput() {
         )
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxHeight()
     ) {
         LazyColumn(
             modifier = Modifier.weight(1f)
@@ -147,6 +147,7 @@ fun MessageItem(message: Message) {
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviewConversation() {
