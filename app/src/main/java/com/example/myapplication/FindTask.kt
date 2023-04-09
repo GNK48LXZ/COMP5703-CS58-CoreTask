@@ -144,17 +144,17 @@ fun ListItem(item: ListItem) {
                 )
                 Text(
                     item.location,
-                    style = MaterialTheme.typography.body1.copy(fontFamily = Poppins),
+                    style = MaterialTheme.typography.body1.copy(fontSize = 15.sp,fontFamily = Poppins),
                     color = MaterialTheme.colors.onSurface
                 )
                 Text(
                     item.date,
-                    style = MaterialTheme.typography.body1.copy(fontFamily = Poppins),
+                    style = MaterialTheme.typography.body1.copy(fontSize = 15.sp, fontFamily = Poppins),
                     color = MaterialTheme.colors.onSurface
                 )
                 Text(
                     item.time,
-                    style = MaterialTheme.typography.body1.copy(fontFamily = Poppins),
+                    style = MaterialTheme.typography.body1.copy(fontSize = 15.sp,fontFamily = Poppins),
                     color = MaterialTheme.colors.onSurface
                 )
                 Text(
