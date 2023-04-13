@@ -1,15 +1,10 @@
 package com.example.myapplication
 
-import android.app.ActivityManager.TaskDescription
 import android.os.Build
-import android.util.Log
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,12 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.*
 
 import androidx.compose.ui.text.input.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
@@ -40,9 +31,6 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -52,14 +40,17 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
-import java.time.LocalDate
+import java.text.SimpleDateFormat
+import java.util.*
 
-@Preview
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PostTaskPage() {
+fun PostTaskPage(navController: NavController) {
     /*
     * pageState:int represents which page should be shown
     * 1: SimplyDescribeTask
@@ -94,7 +85,7 @@ fun PostTaskPage() {
     } else if (pageState.value == 6) {
         SuggestBudget(pageState,money)
     } else if (pageState.value == 7) {
-        TaskDetail(pageState,taskTopic,date,taskDescription,address,require,money,startTime,endTime)
+        TaskDetail(pageState,taskTopic,date,taskDescription,address,require,money,startTime,endTime,navController)
     }
 }
 
@@ -908,6 +899,16 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
 
 }
 
+data class Task(
+    val taskTopic: String? = null,
+    val date: String? = null,
+    val taskDescription: String? = null,
+    val address: String? = null,
+    val require: String? = null,
+    val money: String? = null,
+    val startTime: String? = null,
+    val endTime: String? = null
+)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetail(
@@ -919,8 +920,19 @@ fun TaskDetail(
     require:MutableState<String>,
     money:MutableState<String>,
     startTime:MutableState<String>,
-    endTime:MutableState<String>
+    endTime:MutableState<String>,
+    navController: NavController
 ){
+    val task = Task(
+        taskTopic.value,
+        date.value,
+        taskDescription.value,
+        address.value,
+        require.value,
+        money.value,
+        startTime.value,
+        endTime.value
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1123,7 +1135,13 @@ fun TaskDetail(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = {/*To do something!*/},
+                onClick = {
+                    val sdf = SimpleDateFormat("dd-MM-yyyy-hh:mm:ss")
+                    val currentDate = sdf.format(Date())
+                    var db = Firebase.firestore
+                    db.collection("Task").document(currentDate).set(task)
+                    navController.popBackStack()
+                },
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
                 Text("Post this Task!", fontSize = 20.sp)
@@ -1131,5 +1149,6 @@ fun TaskDetail(
         }
     }
 }
+
 
 

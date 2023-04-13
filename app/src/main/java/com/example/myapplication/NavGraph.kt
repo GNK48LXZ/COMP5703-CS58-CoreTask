@@ -25,7 +25,7 @@ fun SetupNavGraph(navController:NavHostController){
         composable(
             route = Screen.PostTask.route
         ){
-            PostTaskPage()
+            PostTaskPage(navController)
         }
         composable(
             "chat/{chatName}",
