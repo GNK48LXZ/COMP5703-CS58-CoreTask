@@ -48,8 +48,12 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import androidx.compose.material3.Icon
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.maxkeppeler.sheets.clock.ClockDialog
+import com.maxkeppeler.sheets.clock.models.ClockSelection
 import java.time.LocalDate
 
 @Preview
@@ -74,29 +78,23 @@ fun PostTaskPage() {
     val address = remember { mutableStateOf("") }
     val money = remember { mutableStateOf("") }
     val require = remember { mutableStateOf("") }
-    val startDate = remember { mutableStateOf("") }
-    val endDate = remember { mutableStateOf("") }
-    val frequence = remember { mutableStateOf("") }
-    val option = remember { mutableStateOf("") }
+    val startTime = remember { mutableStateOf("") }
+    val endTime = remember { mutableStateOf("") }
 
     if (pageState.value == 1) {
         SimplyDescribeTask(pageState,taskTopic)
-    } else if (pageState.value == 2) {
-        WhenDone(pageState,option)
-    } else if(pageState.value == 3){
-        SelectDate(pageState,date)
+    } else if(pageState.value == 2){
+        SelectRepeatDate(pageState,date,startTime,endTime)
+    } else if (pageState.value == 3) {
+        DescribeTask(pageState,taskDescription)
     } else if (pageState.value == 4) {
-        DescribeTask(pageState,taskDescription,option)
-    } else if (pageState.value == 5) {
         SelectAddress(pageState,address)
+    } else if (pageState.value == 5) {
+        JobRequires(pageState,require)
     } else if (pageState.value == 6) {
-        JobRequires(pageState,money)
+        SuggestBudget(pageState,money)
     } else if (pageState.value == 7) {
-        SuggestBudget(pageState,require)
-    } else if (pageState.value == 8) {
-        TaskDetail(pageState,taskTopic,date,taskDescription,address,money)
-    } else if(pageState.value == 9){
-        SelectRepeatDate(pageState,startDate,endDate,frequence)
+        TaskDetail(pageState,taskTopic,date,taskDescription,address,require,money,startTime,endTime)
     }
 }
 
@@ -179,9 +177,15 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String>, endDate:MutableState<String>, frequence:MutableState<String>) {
+fun SelectRepeatDate(
+    pageState: MutableState<Int>,
+    startDate:MutableState<String>,
+    startTime:MutableState<String>,
+    endTime:MutableState<String>
+) {
     val startCalendarState = rememberSheetState()
-    val endCalendarState = rememberSheetState()
+    val startClockState = rememberSheetState()
+    val endClockState = rememberSheetState()
 
     CalendarDialog(
         state = startCalendarState,
@@ -193,15 +197,17 @@ fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String
             yearSelection = true,
         )
     )
-    CalendarDialog(
-        state = endCalendarState,
-        selection = CalendarSelection.Date {
-            endDate.value = it.toString()
-        },
-        config = CalendarConfig(
-            monthSelection = true,
-            yearSelection = true,
-        )
+    ClockDialog(
+        state = startClockState,
+        selection = ClockSelection.HoursMinutes{
+            hours, minutes ->  startTime.value = "$hours:$minutes"
+        }
+    )
+    ClockDialog(
+        state = endClockState,
+        selection = ClockSelection.HoursMinutes{
+                hours, minutes ->  endTime.value = "$hours:$minutes"
+        }
     )
     Column(
         modifier = Modifier
@@ -214,7 +220,7 @@ fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable {pageState.value = 2 }
+                    .clickable { pageState.value = 1 }
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
@@ -234,14 +240,13 @@ fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Tell the tasker your preferred time",
+            text = "Tell the job seeker your preferred time",
             style = MaterialTheme.typography.bodyLarge,
             lineHeight = 40.sp,
             fontSize = 40.sp
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-
         Card(modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
@@ -256,7 +261,7 @@ fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Start date:  ",
+                    text = "Date:  ",
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -274,7 +279,7 @@ fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String
             .fillMaxWidth()
             .height(50.dp)
             .padding(horizontal = 16.dp)
-            .clickable { endCalendarState.show() },
+            .clickable { startClockState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
         ){
             Row(
@@ -284,12 +289,12 @@ fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "End date:  ",
+                    text = "Start Time:  ",
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = endDate.value,
+                    text = startTime.value,
                     fontSize = 20.sp,
                     color = buttonColor,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -297,107 +302,12 @@ fun SelectRepeatDate(pageState: MutableState<Int>, startDate:MutableState<String
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "Please provide a detailed description of the working frequency. e.g. Tuesday every week.",
-            fontSize = 20.sp,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            fontWeight = FontWeight.W600
-        )
-        var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(frequence.value, TextRange(0,0)))
-        }
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(background),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            FilledTonalButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(buttonColor),
-                onClick = { pageState.value = 4
-                frequence.value = text.text}
-            ) {
-                Text("Continue", fontSize = 20.sp)
-            }
-        }
-    }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SelectDate(pageState: MutableState<Int>, selectedDate:MutableState<String>) {
-    val calendarState = rememberSheetState()
-
-    CalendarDialog(
-        state = calendarState,
-        selection = CalendarSelection.Date {
-            selectedDate.value = it.toString()
-        },
-        config = CalendarConfig(
-            monthSelection = true,
-            yearSelection = true,
-        )
-    )
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(){
-            androidx.compose.material.Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                "Icon",
-                modifier = Modifier
-                    .clickable { pageState.value = 2 }
-                    .padding(horizontal = 16.dp)
-                    .size(30.dp),
-                tint = Color(0xff333333)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(
-                text = "Choose a time",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600
-            )
-        }
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        //Title
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = "Tell the tasker your preferred time",
-            style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 40.sp
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Card(modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
             .padding(horizontal = 16.dp)
-            .clickable { calendarState.show() },
+            .clickable { endClockState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
         ){
             Row(
@@ -407,12 +317,12 @@ fun SelectDate(pageState: MutableState<Int>, selectedDate:MutableState<String>) 
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Date:  ",
+                    text = "End Time:  ",
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = selectedDate.value,
+                    text = endTime.value,
                     fontSize = 20.sp,
                     color = buttonColor,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -432,13 +342,14 @@ fun SelectDate(pageState: MutableState<Int>, selectedDate:MutableState<String>) 
                     .fillMaxWidth()
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(buttonColor),
-                onClick = { pageState.value = 4 }
+                onClick = { pageState.value = 3 }
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
         }
     }
 }
+/*
 @Composable
 fun WhenDone(pageState: MutableState<Int>,option:MutableState<String>) {
     Column(
@@ -542,12 +453,14 @@ fun WhenDone(pageState: MutableState<Int>,option:MutableState<String>) {
 
     }
 }
-
+*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DescribeTask(pageState: MutableState<Int>,taskDescription:MutableState<String>,option:MutableState<String>) {
-
+fun DescribeTask(
+    pageState: MutableState<Int>,
+    taskDescription:MutableState<String>
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -567,8 +480,7 @@ fun DescribeTask(pageState: MutableState<Int>,taskDescription:MutableState<Strin
                     "Icon",
                     modifier = Modifier
                         .clickable {
-                            if(option.value=="one day") pageState.value = 3
-                            else pageState.value = 9
+                            pageState.value = 2
                         }
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
@@ -581,9 +493,6 @@ fun DescribeTask(pageState: MutableState<Int>,taskDescription:MutableState<Strin
                     fontWeight = FontWeight.W600
                 )
             }
-        }
-        var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(""))
         }
         Spacer(modifier = Modifier.height(20.dp))
         //Content
@@ -615,9 +524,9 @@ fun DescribeTask(pageState: MutableState<Int>,taskDescription:MutableState<Strin
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            //var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            //    mutableStateOf(TextFieldValue(""))
-            //}
+            var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+                mutableStateOf(TextFieldValue(taskDescription.value))
+            }
             TextField(
                 value = text,
                 onValueChange = { text = it },
@@ -665,7 +574,7 @@ fun DescribeTask(pageState: MutableState<Int>,taskDescription:MutableState<Strin
                         .fillMaxWidth()
                         .padding(16.dp),
                     onClick = {
-                        pageState.value = 5
+                        pageState.value = 4
                         taskDescription.value = text.text
                     },
                     colors = ButtonDefaults.buttonColors(buttonColor)
@@ -692,7 +601,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable { pageState.value = 4 }
+                    .clickable { pageState.value = 3 }
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
@@ -712,7 +621,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Where does the Tasker work",
+            text = "Where does the job seeker work",
             style = MaterialTheme.typography.bodyLarge,
             lineHeight = 40.sp,
             fontSize = 40.sp
@@ -743,7 +652,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    pageState.value = 6
+                    pageState.value = 5
                     address.value = text.text
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
@@ -758,6 +667,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -769,7 +679,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable { pageState.value = 5 }
+                    .clickable { pageState.value = 4 }
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
@@ -789,7 +699,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Please indicate the qualifications or certificates that the tasker must have",
+            text = "Please indicate the certificates that the job seeker must have",
             style = MaterialTheme.typography.bodyLarge,
             lineHeight = 40.sp,
             fontSize = 30.sp
@@ -808,6 +718,91 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
                 .padding(16.dp),
             colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
         )
+        Text(
+            text = "You may want to say:",
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp)
+            .padding(horizontal = 16.dp)
+            .clickable {
+                clipboardManager.setText(
+                    AnnotatedString(
+                        text = "Certificate II in Cleaning Operations"
+                    )
+                )
+            },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Certificate II in Cleaning Operations",
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                AnnotatedString(
+                    text = "Certificate II in Cleaning Operations",
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp)
+            .padding(horizontal = 16.dp)
+            .clickable {
+                clipboardManager.setText(
+                    AnnotatedString(
+                        text = "Occupational Health and Safety Certification"
+                    )
+                )
+            },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Occupational Health and Safety Certification",
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .height(30.dp)
+            .padding(horizontal = 16.dp)
+            .clickable {
+                clipboardManager.setText(
+                    AnnotatedString(
+                        text = "Carpet Cleaning Technician Certification"
+                    )
+                )
+            },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Carpet Cleaning Technician Certification",
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -821,7 +816,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    pageState.value = 7
+                    pageState.value = 6
                     requires.value = text.text
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
@@ -848,7 +843,7 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable { pageState.value = 6 }
+                    .clickable { pageState.value = 5 }
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
@@ -868,14 +863,14 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Estimate First, You Will Finlize this Later",
+            text = "Please tell the job seeker your budget",
             style = MaterialTheme.typography.bodyLarge,
             lineHeight = 40.sp,
             fontSize = 35.sp
         )
         Spacer(modifier = Modifier.height(20.dp))
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue("", TextRange(0, 18)))
+            mutableStateOf(TextFieldValue(money.value, TextRange(0, 18)))
         }
         TextField(
             value = text,
@@ -901,7 +896,7 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    pageState.value = 8
+                    pageState.value = 7
                     money.value = text.text
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
@@ -915,9 +910,17 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
-               date:MutableState<String>,taskDescription:MutableState<String>,
-               address:MutableState<String>,money:MutableState<String>){
+fun TaskDetail(
+    pageState:MutableState<Int>,
+    taskTopic:MutableState<String>,
+    date:MutableState<String>,
+    taskDescription:MutableState<String>,
+    address:MutableState<String>,
+    require:MutableState<String>,
+    money:MutableState<String>,
+    startTime:MutableState<String>,
+    endTime:MutableState<String>
+){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1041,7 +1044,7 @@ fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
                     Text(text = "TO BE DONE ON",fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(//text = "Monday April 10",
-                        text = date.value,
+                        text = date.value+" "+startTime.value+" - "+endTime.value,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
@@ -1063,7 +1066,7 @@ fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontWeight = FontWeight.Bold
                     )
-                    Text(//"AU$200",
+                    Text(
                         text = money.value + "$",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontSize = 40.sp,
@@ -1085,7 +1088,7 @@ fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                text = "DETAILS",
+                text = "Task Detail",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp
             )
@@ -1093,8 +1096,24 @@ fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                //text = "Looking for a professional to clean my living room thoroughly",
                 text = taskDescription.value,
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                text = "Certificate the job seeker need",
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 20.sp
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                text = require.value,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -1107,7 +1126,7 @@ fun TaskDetail(pageState:MutableState<Int>,taskTopic:MutableState<String>,
                 onClick = {/*To do something!*/},
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
-                Text("Publish this Task!", fontSize = 20.sp)
+                Text("Post this Task!", fontSize = 20.sp)
             }
         }
     }

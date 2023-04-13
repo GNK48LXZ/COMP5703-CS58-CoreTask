@@ -56,7 +56,7 @@ fun GetItDone(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(30.dp))
         Button(
-            onClick = { navController.navigate(route = Screen.PostTask.route) },
+            onClick = {  },
             colors = ButtonDefaults.buttonColors(buttonColor),
             modifier = Modifier.padding(start = 16.dp).size(width = 250.dp, height = 64.dp)
         ) {
@@ -85,7 +85,7 @@ fun GetItDone(navController: NavController) {
             modifier = Modifier.size(width = 200.dp, height = 150.dp)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .clickable {/* 点击事件 */},
+                .clickable {navController.navigate(route = Screen.PostTask.route)},
             colors = CardDefaults.cardColors(cardColor)
             ) {
                 Column(Modifier.padding(16.dp),
