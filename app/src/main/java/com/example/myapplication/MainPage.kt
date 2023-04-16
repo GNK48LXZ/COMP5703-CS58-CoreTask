@@ -74,7 +74,6 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
-
             ) {
                 Icon(
                     Icons.Filled.Check,

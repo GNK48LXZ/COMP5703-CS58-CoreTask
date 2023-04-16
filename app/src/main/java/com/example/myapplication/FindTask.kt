@@ -143,41 +143,46 @@ fun TaskListScreen(collectionPath: String) {
     val db = FirebaseFirestore.getInstance()
 
     LaunchedEffect(collectionPath) {
-        val taskList = mutableListOf<TaskItem>()
-        val querySnapshot = db.collection(collectionPath).get().await()
-        querySnapshot.documents.forEach { document ->
-            val taskId = document.id
-            Log.d(TAG, "TaskListScreen: $taskId")
-            val taskTopic = document.getString("taskTopic") ?: ""
-            val address = document.getString("address") ?: ""
-            val date = document.getString("date") ?: ""
-            val startTime = document.getString("startTime") ?: ""
-            val endTime = document.getString("endTime") ?: ""
-            val status = document.getString("status") ?: ""
-            val money = document.getString("money") ?: ""
-            val imageUrl = R.drawable.ic_launcher_foreground
-            taskList.add(
-
-                TaskItem(
-                    taskId = taskId,
-                    taskName = taskTopic,
-                    location = address,
-                    date = date,
-                    time = "$startTime - $endTime",
-                    status = status,
-                    bill = money,
-                    imageUrl = imageUrl
-                )
-            )
-        }
-        taskItems = taskList
+        taskItems = loadDataFromFirestore(db, collectionPath)
     }
+
     TaskListLazyColumn(taskItems)
+}
+
+public suspend fun loadDataFromFirestore(db: FirebaseFirestore, collectionPath: String): List<TaskItem> {
+    val taskList = mutableListOf<TaskItem>()
+    val querySnapshot = db.collection(collectionPath).get().await()
+    querySnapshot.documents.forEach { document ->
+        val taskId = document.id
+        Log.d(TAG, "TaskListScreen: $taskId")
+        val taskTopic = document.getString("taskTopic") ?: ""
+        val address = document.getString("address") ?: ""
+        val date = document.getString("date") ?: ""
+        val startTime = document.getString("startTime") ?: ""
+        val endTime = document.getString("endTime") ?: ""
+        val status = document.getString("status") ?: ""
+        val money = document.getString("money") ?: ""
+        val imageUrl = R.drawable.ic_launcher_foreground
+        taskList.add(
+            TaskItem(
+                taskId = taskId,
+                taskName = taskTopic,
+                location = address,
+                date = date,
+                time = "$startTime - $endTime",
+                status = status,
+                bill = money,
+                imageUrl = imageUrl
+            )
+        )
+    }
+    return taskList
 }
 
 @Composable
 fun TaskListLazyColumn(taskItem: List<TaskItem>) {
-    LazyColumn(modifier = Modifier.background(color = Color(0XFFF5F5F5))) {
+    val navController = rememberNavController()
+    LazyColumn(modifier = Modifier.background(color = Color(0XFFF5F5F5)).fillMaxWidth().fillMaxHeight().padding(bottom = 64.dp)) {
         items(taskItem) { taskItem ->
             Surface(
                 //elevation = 8.dp,
@@ -186,7 +191,9 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>) {
                     .fillMaxWidth()
                     .height(200.dp)
                     .padding(16.dp)
-                    .clickable { }
+                    .clickable { navController.navigate(
+                        "Monitoring/${taskItem.taskId}"
+                    )}
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
