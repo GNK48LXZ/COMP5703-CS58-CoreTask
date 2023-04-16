@@ -52,17 +52,6 @@ import androidx.compose.material3.Surface
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostTaskPage(navController: NavController) {
-    /*
-    * pageState:int represents which page should be shown
-    * 1: SimplyDescribeTask
-    * 2: SelectDate
-    * 3: WhenDone
-    * 4: DescribeTask
-    * 5: Select Address
-    * 6: Job require
-    * 7: Suggest Budget
-    * 8: TaskDetail
-    * */
     val pageState = remember { mutableStateOf(1) }
     val taskTopic = remember { mutableStateOf("") }
     val taskDescription = remember { mutableStateOf("") }
@@ -847,7 +836,8 @@ data class Task(
     val require: String? = null,
     val money: String? = null,
     val startTime: String? = null,
-    val endTime: String? = null
+    val endTime: String? = null,
+    val status: String = "open"
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -1080,7 +1070,7 @@ fun TaskDetail(
                     val sdf = SimpleDateFormat("dd-MM-yyyy-hh:mm:ss")
                     val currentDate = sdf.format(Date())
                     var db = Firebase.firestore
-                    db.collection("Task").document(currentDate).set(task)
+                    db.collection("Task").document().set(task)
                     navController.popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
