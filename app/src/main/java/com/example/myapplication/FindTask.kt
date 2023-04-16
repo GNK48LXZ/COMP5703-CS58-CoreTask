@@ -1,16 +1,21 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.myapplication
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.widget.AdapterView.OnItemClickListener
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ListItem
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 @Preview
 @Composable
@@ -44,19 +56,9 @@ fun FindTask() {
         }
         Spacer(modifier = Modifier.height(20.dp))
 
-        ListScreen(list)
+        TaskListScreen("Task")
     }
 }
-
-data class ListItem(
-    val taskname: String,
-    val location: String,
-    val date: String,
-    val time: String,
-    val status: String,
-    val bill: String,
-    val imageUrl: Int
-)
 
 val list = listOf(
     ListItem(
@@ -114,108 +116,166 @@ val list = listOf(
         R.drawable.ic_launcher_foreground
     )
 )
+data class ListItem(
+    val taskname: String,
+    val location: String,
+    val date: String,
+    val time: String,
+    val status: String,
+    val bill: String,
+    val imageUrl: Int
+)
+
+data class TaskItem(
+    val taskId: String,
+    val taskName: String,
+    val location: String,
+    val date: String,
+    val time: String,
+    val status: String,
+    val bill: String,
+    val imageUrl: Int
+)
 
 @Composable
-fun ListItem(item: ListItem) {
-    Surface(
-        //elevation = 8.dp,
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .padding(16.dp)
-            .clickable {  }
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-            ) {
-                Text(
-                    item.taskname,
-                    style = MaterialTheme.typography.h2.copy(
-                        fontSize = 20.sp,
-                        fontFamily = Poppins
-                    ),
-                    color = MaterialTheme.colors.onSurface
-                )
-                Text(
-                    item.location,
-                    style = MaterialTheme.typography.body1.copy(fontSize = 15.sp,fontFamily = Poppins),
-                    color = MaterialTheme.colors.onSurface
-                )
-                Text(
-                    item.date,
-                    style = MaterialTheme.typography.body1.copy(fontSize = 15.sp, fontFamily = Poppins),
-                    color = MaterialTheme.colors.onSurface
-                )
-                Text(
-                    item.time,
-                    style = MaterialTheme.typography.body1.copy(fontSize = 15.sp,fontFamily = Poppins),
-                    color = MaterialTheme.colors.onSurface
-                )
-                Text(
-                    item.status,
-                    style = MaterialTheme.typography.body1.copy(
-                        fontSize = 18.sp,
-                        fontFamily = Poppins
-                    ),
-                    color = Color.Blue,
-                    modifier = Modifier
-                        .padding(top = 5.dp)
-                )
-            }
-            Column(
-                modifier = Modifier.padding(horizontal = 20.dp)
-            ) {
-                Text(
-                    "AU " + item.bill + " $",
-                    style = MaterialTheme.typography.body1.copy(
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center
-                    ),
-                    color = MaterialTheme.colors.onSurface
-                )
-                Image(
-                    painter = painterResource(item.imageUrl),
-                    contentDescription = "Image",
-                    modifier = Modifier.size(80.dp)
-                )
-            }
-        }
-    }
-}
+fun TaskListScreen(collectionPath: String) {
+    var taskItems by remember { mutableStateOf(listOf<TaskItem>()) }
+    val db = FirebaseFirestore.getInstance()
 
-@Composable
-fun ListScreen(list: List<ListItem>) {
-    LazyColumn(modifier = Modifier.background(color = Color(0XFFF5F5F5))) {
-        items(list.size) { index ->
-            ListItem(item = list[index])
-        }
-    }
-}
+    LaunchedEffect(collectionPath) {
+        val taskList = mutableListOf<TaskItem>()
+        val querySnapshot = db.collection(collectionPath).get().await()
+        querySnapshot.documents.forEach { document ->
+            val taskId = document.id
+            Log.d(TAG, "TaskListScreen: $taskId")
+            val taskTopic = document.getString("taskTopic") ?: ""
+            val address = document.getString("address") ?: ""
+            val date = document.getString("date") ?: ""
+            val startTime = document.getString("startTime") ?: ""
+            val endTime = document.getString("endTime") ?: ""
+            val status = document.getString("status") ?: ""
+            val money = document.getString("money") ?: ""
+            val imageUrl = R.drawable.ic_launcher_foreground
+            taskList.add(
 
-@Composable
-fun DetailScreen(title: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Details",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = imageUrl
+                )
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        taskItems = taskList
+    }
+    TaskListLazyColumn(taskItems)
+}
 
+@Composable
+fun TaskListLazyColumn(taskItem: List<TaskItem>) {
+    LazyColumn(modifier = Modifier.background(color = Color(0XFFF5F5F5))) {
+        items(taskItem) { taskItem ->
+            Surface(
+                //elevation = 8.dp,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(16.dp)
+                    .clickable { }
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                    ) {
+                        Text(
+                            taskItem.taskName,
+                            style = MaterialTheme.typography.h2.copy(
+                                fontSize = 20.sp,
+                                fontFamily = Poppins
+                            ),
+                            color = MaterialTheme.colors.onSurface
+                        )
+                        Text(
+                            taskItem.location,
+                            style = MaterialTheme.typography.body1.copy(
+                                fontSize = 15.sp,
+                                fontFamily = Poppins
+                            ),
+                            color = MaterialTheme.colors.onSurface
+                        )
+                        Text(
+                            taskItem.date,
+                            style = MaterialTheme.typography.body1.copy(
+                                fontSize = 15.sp,
+                                fontFamily = Poppins
+                            ),
+                            color = MaterialTheme.colors.onSurface
+                        )
+                        Text(
+                            taskItem.time,
+                            style = MaterialTheme.typography.body1.copy(
+                                fontSize = 15.sp,
+                                fontFamily = Poppins
+                            ),
+                            color = MaterialTheme.colors.onSurface
+                        )
+                        Text(
+                            taskItem.status,
+                            style = MaterialTheme.typography.body1.copy(
+                                fontSize = 18.sp,
+                                fontFamily = Poppins
+                            ),
+                            color = Color.Blue,
+                            modifier = Modifier
+                                .padding(top = 5.dp)
+                        )
+                    }
+                    Column(
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    ) {
+                        Text(
+                            "AU " + taskItem.bill + " $",
+                            style = MaterialTheme.typography.body1.copy(
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Center
+                            ),
+                            color = MaterialTheme.colors.onSurface
+                        )
+                        Image(
+                            painter = painterResource(taskItem.imageUrl),
+                            contentDescription = "Image",
+                            modifier = Modifier.size(80.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TaskListScreen(collectionPath: String, n: Int) {
+    val nthTask = remember { mutableStateOf<Task?>(null) }
+
+    // get data from firebase
+    LaunchedEffect(collectionPath) {
+        val collectionRef = Firebase.firestore.collection(collectionPath)
+        collectionRef.get().addOnSuccessListener { result ->
+            val nthDocument = result.documents.getOrNull(n - 1)
+            if (nthDocument != null) {
+                val task = nthDocument.toObject<Task>()
+                //task?.id = nthDocument.id
+                nthTask.value = task // data in n
+            }
+        }
     }
 }
