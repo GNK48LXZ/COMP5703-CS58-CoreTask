@@ -11,7 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.*
-
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.TextRange
@@ -47,6 +46,8 @@ import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Surface
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -89,10 +90,13 @@ fun PostTaskPage(navController: NavController) {
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<String>) {
+    val openDialog = remember { mutableStateOf(false) }
     MaterialTheme(colorScheme = LightColorScheme) {
+        Dialog(openDialog)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -153,8 +157,14 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                         .padding(16.dp),
                     colors = ButtonDefaults.buttonColors(buttonColor),
                     onClick = {
-                        pageState.value = 2
-                        taskTopic.value = text.text
+                        if(text.text.length<8){
+                            openDialog.value = true
+                        }
+                        else{
+                            openDialog.value = false
+                            pageState.value = 2
+                            taskTopic.value = text.text
+                        }
                     }
                 ) {
                     Text("Continue", fontSize = 20.sp)
@@ -177,7 +187,8 @@ fun SelectRepeatDate(
     val startCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
     val endClockState = rememberSheetState()
-
+    val openDialog = remember { mutableStateOf(false) }
+    DateDialog(openDialog)
     CalendarDialog(
         state = startCalendarState,
         selection = CalendarSelection.Date {
@@ -333,118 +344,21 @@ fun SelectRepeatDate(
                     .fillMaxWidth()
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(buttonColor),
-                onClick = { pageState.value = 3 }
-            ) {
-                Text("Continue", fontSize = 20.sp)
-            }
-        }
-    }
-}
-/*
-@Composable
-fun WhenDone(pageState: MutableState<Int>,option:MutableState<String>) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(){
-            androidx.compose.material.Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                "Icon",
-                modifier = Modifier
-                    .clickable { pageState.value = 1 }
-                    .padding(horizontal = 16.dp)
-                    .size(30.dp),
-                tint = Color(0xff333333)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(
-                text = "Decide on When",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600
-            )
-        }
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        //Title
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            text = "When do you need this done?",
-            style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 40.sp
-        )
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        //Radio button group
-        val radioOptions = listOf("On date", "Before date", "Repeated tasks at regular date")
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf("") }
-        // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
-        Column(Modifier.selectableGroup()) {
-            radioOptions.forEach { text ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .selectable(
-                            selected = (text == selectedOption),
-                            onClick = { onOptionSelected(text) },
-                            role = Role.RadioButton
-                        )
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = (text == selectedOption),
-                        onClick = null,
-                        colors = RadioButtonDefaults.colors(buttonColor)
-                    )
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(start = 16.dp),
-                        fontSize = 20.sp
-                    )
-                }
-            }
-        }
-
-        //continue button
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            FilledTonalButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
                 onClick = {
-                    if(selectedOption!=radioOptions[2]){
-                        pageState.value = 3
-                        option.value = "one day"
+                    if(startDate.value==""||startTime.value==""||endTime.value==""){
+                        openDialog.value = true
                     }
                     else{
-                        pageState.value = 9
-                        option.value = "repeat day"
+                        pageState.value = 3
                     }
-                          },
-                colors = ButtonDefaults.buttonColors(buttonColor)
+                }
             ) {
                 Text("Continue", fontSize = 20.sp)
             }
         }
-
     }
 }
-*/
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -452,6 +366,8 @@ fun DescribeTask(
     pageState: MutableState<Int>,
     taskDescription:MutableState<String>
 ) {
+    val openDialog = remember { mutableStateOf(false) }
+    Dialog(openDialog)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -565,8 +481,13 @@ fun DescribeTask(
                         .fillMaxWidth()
                         .padding(16.dp),
                     onClick = {
-                        pageState.value = 4
-                        taskDescription.value = text.text
+                        if(text.text.length<8){
+                            openDialog.value = true
+                        }
+                        else{
+                            pageState.value = 4
+                            taskDescription.value = text.text
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(buttonColor)
                 ) {
@@ -581,6 +502,8 @@ fun DescribeTask(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
+    val openDialog = remember { mutableStateOf(false) }
+    Dialog(openDialog)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -643,8 +566,13 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    pageState.value = 5
-                    address.value = text.text
+                    if(text.text.length<8){
+                        openDialog.value = true
+                    }
+                    else{
+                        pageState.value = 5
+                        address.value = text.text
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
@@ -659,6 +587,8 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
 @Composable
 fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val openDialog = remember { mutableStateOf(false) }
+    ClipDialog(openDialog)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -724,6 +654,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
                         text = "Certificate II in Cleaning Operations"
                     )
                 )
+                openDialog.value = true
             },
             colors = CardDefaults.cardColors(textFieldColor)
         ){
@@ -753,6 +684,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
                         text = "Occupational Health and Safety Certification"
                     )
                 )
+                openDialog.value = true
             },
             colors = CardDefaults.cardColors(textFieldColor)
         ){
@@ -779,6 +711,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
                         text = "Carpet Cleaning Technician Certification"
                     )
                 )
+                openDialog.value = true
             },
             colors = CardDefaults.cardColors(textFieldColor)
         ){
@@ -822,6 +755,8 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
+    val openDialog = remember { mutableStateOf(false) }
+    BudgetDialog(openDialog)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -861,7 +796,7 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
         )
         Spacer(modifier = Modifier.height(20.dp))
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(money.value, TextRange(0, 18)))
+            mutableStateOf(TextFieldValue(money.value, TextRange(0, 0)))
         }
         TextField(
             value = text,
@@ -887,8 +822,13 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    pageState.value = 7
-                    money.value = text.text
+                    if(text.text.length<1){
+                        openDialog.value = true
+                    }
+                    else{
+                        pageState.value = 7
+                        money.value = text.text
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
@@ -1102,7 +1042,8 @@ fun TaskDetail(
                     .padding(horizontal = 20.dp),
                 text = "Task Detail",
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 modifier = Modifier
@@ -1111,15 +1052,16 @@ fun TaskDetail(
                 text = taskDescription.value,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
             )
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 text = "Certificate the job seeker need",
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 modifier = Modifier
@@ -1127,8 +1069,7 @@ fun TaskDetail(
                     .padding(horizontal = 20.dp),
                 text = require.value,
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 20.sp
             )
 
             FilledTonalButton(
