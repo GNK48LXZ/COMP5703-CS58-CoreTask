@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -21,15 +20,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.google.api.Monitoring
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.text.SimpleDateFormat
 import java.util.*
-import androidx.compose.foundation.text.BasicText
-import androidx.lifecycle.ViewModel
-import androidx.navigation.compose.rememberNavController
 
 
 data class Information(
@@ -46,13 +39,25 @@ data class Information(
 
 val FireStore = Firebase.firestore
 
+// 步骤3：添加读取数据的监听器
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonitoringDetals(taskId: String) {
+fun MonitoringDetails(taskId: String){
     var taskTopic by remember { mutableStateOf("") }
+    var taskDescription by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var money by remember { mutableStateOf("") }
+    var require by remember { mutableStateOf("") }
+    var startTime by remember { mutableStateOf("") }
+    var endTime by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        // 使用addSnapshotListener()监听指定Document ID的数据
+        // 监听指定Document ID的数据
         FireStore.collection("Task")
             .document("E6mUK9QHjJs2leJt0acA")
             .addSnapshotListener { snapshot, error ->
@@ -62,6 +67,13 @@ fun MonitoringDetals(taskId: String) {
                     if (snapshot != null && snapshot.exists()) {
                         // 读取数据并设置到Text位置
                         taskTopic = snapshot.getString("taskTopic") ?: ""
+                        address = snapshot.getString("address") ?: ""
+                        date = snapshot.getString("date") ?: ""
+                        startTime = snapshot.getString("startTime") ?: ""
+                        endTime = snapshot.getString("endTime") ?: ""
+                        money = snapshot.getString("money") ?: ""
+                        taskDescription = snapshot.getString("taskDescription") ?: ""
+                        require = snapshot.getString("require") ?: ""
                     }
                 }
 
@@ -116,7 +128,7 @@ fun MonitoringDetals(taskId: String) {
                 fontWeight = FontWeight.W500
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,8 +138,9 @@ fun MonitoringDetals(taskId: String) {
         ) {
             Text(
                 text = taskTopic,
+                modifier = Modifier.padding(16.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
+                fontSize = 33.sp,
                 lineHeight = 40.sp,
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -148,7 +161,7 @@ fun MonitoringDetals(taskId: String) {
                     Text(text = "POSTED BY", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = "",
+                        text = "Jessica L",
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
                     )
@@ -189,7 +202,7 @@ fun MonitoringDetals(taskId: String) {
                     Text(text = "LOCATION", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = "",
+                        text = address,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
@@ -220,7 +233,7 @@ fun MonitoringDetals(taskId: String) {
                     Text(text = "TO BE DONE ON", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(//text = "Monday April 10",
-                        text = "",
+                        text = date+"  "+startTime+"-"+endTime,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
@@ -244,7 +257,7 @@ fun MonitoringDetals(taskId: String) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "",
+                        text = money+"$",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold
@@ -260,7 +273,7 @@ fun MonitoringDetals(taskId: String) {
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -274,10 +287,11 @@ fun MonitoringDetals(taskId: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                text = "",
+                text = taskDescription,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
             )
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -291,11 +305,68 @@ fun MonitoringDetals(taskId: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                text = "",
+                text = require,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
 
                 )
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                text = "Offers",
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold)
+            Card(
+                modifier = Modifier.size(width = 500.dp, height = 50.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .clickable {/* 点击事件 */},
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(Modifier.padding(16.dp)
+                    .fillMaxWidth())
+                {
+                    androidx.compose.material3.Icon(
+                        painter = painterResource(R.drawable.person),
+                        tint = blackColor,
+                        contentDescription = "the person1"
+                    )
+                    Spacer(modifier = Modifier.width(60.dp))
+                    Text(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.W500,
+                        color= blackColor,
+                        text = "Ruby",
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Card(
+                modifier = Modifier.size(width = 500.dp, height = 50.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .clickable {/* 点击事件 */},
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(Modifier.padding(16.dp))
+                {
+                    androidx.compose.material3.Icon(
+                        painter = painterResource(R.drawable.person),
+                        tint = blackColor,
+                        contentDescription = "the cleaning"
+                    )
+                    Spacer(modifier = Modifier.width(60.dp))
+                    Text(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.W500,
+                        color= blackColor,
+                        text = "Ruby",
+                    )
+                }
+            }
         }
     }
 }

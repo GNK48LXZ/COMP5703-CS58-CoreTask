@@ -39,7 +39,7 @@ fun SetupNavGraph(navController:NavHostController){
             arguments = listOf(navArgument("taskId") { type = NavType.StringType })
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId")?:""
-            MonitoringDetals(taskId)
+            MonitoringDetails(taskId)
         }
     }
 }
