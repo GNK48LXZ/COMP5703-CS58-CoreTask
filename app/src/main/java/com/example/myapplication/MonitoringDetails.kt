@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -46,7 +47,7 @@ val FireStore = Firebase.firestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonitoringDetails(taskId: String){
+fun MonitoringDetails(taskId: String,navController: NavController){
     var taskTopic by remember { mutableStateOf("") }
     var taskDescription by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -266,7 +267,7 @@ fun MonitoringDetails(taskId: String){
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(21.dp),
-                        onClick = { },
+                        onClick = {navController.navigate("MakeAnOffer")},
                         colors = ButtonDefaults.buttonColors(buttonColor)
                     ) {
                         Text("Make an offer", fontSize = 20.sp)

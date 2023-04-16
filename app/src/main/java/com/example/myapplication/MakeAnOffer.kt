@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MakeAnOffer() {
+fun MakeAnOffer(navController: NavController) {
     MaterialTheme(colorScheme = LightColorScheme) {
         Column(
             modifier = Modifier
@@ -104,7 +104,7 @@ fun MakeAnOffer() {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = {},
+                    onClick = {navController.navigate("SubmitInf")},
                     modifier = Modifier.padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)
@@ -118,7 +118,7 @@ fun MakeAnOffer() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubmitInf(pageState: MutableState<Int>,offerPage2:MutableState<String>) {
+fun SubmitInf() {
     MaterialTheme(colorScheme = LightColorScheme) {
         Column(
             modifier = Modifier
