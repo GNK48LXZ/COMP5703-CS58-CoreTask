@@ -34,5 +34,12 @@ fun SetupNavGraph(navController:NavHostController){
             val chatName = backStackEntry.arguments?.getString("chatName") ?: ""
             WeChatChatScreen(chatName)
         }
+        composable(
+            "monitoringDetails/{taskId}",
+            arguments = listOf(navArgument("taskId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getString("taskId")?:""
+            MonitoringDetals(taskId)
+        }
     }
 }

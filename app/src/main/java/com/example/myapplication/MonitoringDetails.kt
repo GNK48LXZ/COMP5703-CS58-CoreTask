@@ -28,6 +28,8 @@ import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.text.BasicText
+import androidx.lifecycle.ViewModel
+import androidx.navigation.compose.rememberNavController
 
 
 data class Information(
@@ -44,14 +46,9 @@ data class Information(
 
 val FireStore = Firebase.firestore
 
-// 步骤3：添加读取数据的监听器
-
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Monitoring() {
+fun MonitoringDetals(taskId: String) {
     var taskTopic by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {

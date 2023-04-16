@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ListItem
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,12 +34,12 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-@Preview
 @Composable
-fun FindTask() {
+fun FindTask(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,7 +58,7 @@ fun FindTask() {
         }
         Spacer(modifier = Modifier.height(20.dp))
 
-        TaskListScreen("Task")
+        TaskListScreen("Task", navController)
     }
 }
 
@@ -116,6 +118,7 @@ val list = listOf(
         R.drawable.ic_launcher_foreground
     )
 )
+
 data class ListItem(
     val taskname: String,
     val location: String,
@@ -138,7 +141,7 @@ data class TaskItem(
 )
 
 @Composable
-fun TaskListScreen(collectionPath: String) {
+fun TaskListScreen(collectionPath: String, navController: NavController) {
     var taskItems by remember { mutableStateOf(listOf<TaskItem>()) }
     val db = FirebaseFirestore.getInstance()
 
@@ -146,10 +149,13 @@ fun TaskListScreen(collectionPath: String) {
         taskItems = loadDataFromFirestore(db, collectionPath)
     }
 
-    TaskListLazyColumn(taskItems)
+    TaskListLazyColumn(taskItems, navController)
 }
 
-public suspend fun loadDataFromFirestore(db: FirebaseFirestore, collectionPath: String): List<TaskItem> {
+public suspend fun loadDataFromFirestore(
+    db: FirebaseFirestore,
+    collectionPath: String
+): List<TaskItem> {
     val taskList = mutableListOf<TaskItem>()
     val querySnapshot = db.collection(collectionPath).get().await()
     querySnapshot.documents.forEach { document ->
@@ -179,10 +185,16 @@ public suspend fun loadDataFromFirestore(db: FirebaseFirestore, collectionPath: 
     return taskList
 }
 
+
 @Composable
-fun TaskListLazyColumn(taskItem: List<TaskItem>) {
-    val navController = rememberNavController()
-    LazyColumn(modifier = Modifier.background(color = Color(0XFFF5F5F5)).fillMaxWidth().fillMaxHeight().padding(bottom = 64.dp)) {
+fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
+    LazyColumn(
+        modifier = Modifier
+            .background(color = Color(0XFFF5F5F5))
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(bottom = 64.dp)
+    ) {
         items(taskItem) { taskItem ->
             Surface(
                 //elevation = 8.dp,
@@ -191,9 +203,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>) {
                     .fillMaxWidth()
                     .height(200.dp)
                     .padding(16.dp)
-                    .clickable { navController.navigate(
-                        "Monitoring/${taskItem.taskId}"
-                    )}
+                    .clickable { navController.navigate("monitoringDetails/${taskItem.taskId}") }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -264,24 +274,6 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>) {
                         )
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun TaskListScreen(collectionPath: String, n: Int) {
-    val nthTask = remember { mutableStateOf<Task?>(null) }
-
-    // get data from firebase
-    LaunchedEffect(collectionPath) {
-        val collectionRef = Firebase.firestore.collection(collectionPath)
-        collectionRef.get().addOnSuccessListener { result ->
-            val nthDocument = result.documents.getOrNull(n - 1)
-            if (nthDocument != null) {
-                val task = nthDocument.toObject<Task>()
-                //task?.id = nthDocument.id
-                nthTask.value = task // data in n
             }
         }
     }

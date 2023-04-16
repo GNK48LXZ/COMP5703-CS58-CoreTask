@@ -37,10 +37,10 @@ fun MainPage(
                 GetItDone(navController)
             }
             if(pageState.value==2){
-                FindTask()
+                FindTask(navController)
             }
             if(pageState.value==3){
-                MyTask()
+                MyTask(navController)
             }
             if(pageState.value==4){
                 //WeChatApp()
