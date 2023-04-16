@@ -29,6 +29,10 @@ class MainActivity : ComponentActivity() {
             ){
                 navController = rememberNavController()
                 SetupNavGraph(navController = navController)
+               //MakeAnOffer()
+                //SubmitInf()
+                //Monitoring()
+                //MyTask()
             }
         }
     }
@@ -41,6 +45,7 @@ val textFieldColor = Color(0xFFF5F5F5)
 val textColor = Color(0xFFFFFFFF)
 val cardColor = Color(0xFF0A65FC)
 val whiteColor = Color(0xFFFFFFFF)
+val blackColor = Color(0x00000000)
 val LightColorScheme = lightColorScheme ()
 val Poppins = FontFamily(
     Font(R.font.poppins)
