@@ -6,17 +6,14 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.runtime.*
@@ -27,8 +24,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.font.FontWeight
@@ -37,9 +32,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.navigation.NavController
 import com.example.myapplication.ui.theme.Purple200
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.auth.User
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -47,21 +45,17 @@ import kotlinx.coroutines.tasks.await
 val auth = Firebase.auth
 
 @Composable
-fun login() {
-
-
+fun Login(navController: NavController) {
     val pageState = remember {
         mutableStateOf(1)
     }
     if (pageState.value == 1) {
-        LoginScreen(pageState)
+        LoginScreen(pageState,navController)
     } else if (pageState.value == 2) {
         SignUpScreen(pageState)
     } else if (pageState.value == 3) {
         ForgotPassword(pageState)
     }
-
-
 }
 
 var user = ""
@@ -69,7 +63,7 @@ var user = ""
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun LoginScreen(pageState: MutableState<Int>) {
+fun LoginScreen(pageState: MutableState<Int>,navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -154,7 +148,8 @@ fun LoginScreen(pageState: MutableState<Int>) {
                             try {
                                 auth.signInWithEmailAndPassword(email, password).await()
                                 Log.d(TAG, "signInWithEmail:success")
-                                // 登录成功，转到主页面
+                                user = auth.currentUser?.email.toString()
+                                navController.navigate(route = Screen.GetItDone.route)
                             } catch (e: FirebaseAuthException) {
                                 // 显示错误消息
                                 scaffoldState.snackbarHostState.showSnackbar(
@@ -170,13 +165,15 @@ fun LoginScreen(pageState: MutableState<Int>) {
         }
     )
 }
-
-
-
-
-
-
-
+data class UserProfile(
+    val id: String? = null,
+    val name: String? = null,
+    val introduction: String? = null,
+    val location: String? = null,
+    val skill: String? = null,
+    val certificate: String? = null,
+    val starRate: String? = null,
+)
 @Composable
 fun SignUpScreen(pageState: MutableState<Int>) {
     var email by remember { mutableStateOf("") }
@@ -233,11 +230,14 @@ fun SignUpScreen(pageState: MutableState<Int>) {
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(ContentValues.TAG, "createUserWithEmail:success")
-                            val user = auth.currentUser
+                            val userId = auth.currentUser?.email.toString()
+                            user = auth.currentUser?.email.toString()
+                            val db = Firebase.firestore
+                            val userProfile = UserProfile(id = userId)
+                            db.collection("User").document(userId).set(userProfile)
                             //转到用户界面
                             pageState.value = 1
                         } else {
-
                             // If sign in fails, display a message to the user.
                             Log.w(ContentValues.TAG, "createUserWithEmail:failure", task.exception)
                         }
@@ -246,7 +246,7 @@ fun SignUpScreen(pageState: MutableState<Int>) {
             colors = ButtonDefaults.buttonColors(buttonColor),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Sign up")
+            Text(text = "Sign up + $email + $password")
         }
     }
 }

@@ -92,7 +92,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable { }
+                        .clickable {}
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)

@@ -193,7 +193,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
             .background(color = Color(0XFFF5F5F5))
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(bottom = 64.dp)
+            //.padding(bottom = 30.dp)
     ) {
         items(taskItem) { taskItem ->
             Surface(
@@ -206,11 +206,13 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                     .clickable { navController.navigate("monitoringDetails/${taskItem.taskId}") }
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.background(color = background)
                 ) {
                     Column(
                         modifier = Modifier
                             .weight(1f)
+                            .background(color = background)
                             .padding(horizontal = 20.dp, vertical = 10.dp)
                     ) {
                         Text(
@@ -257,7 +259,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                         )
                     }
                     Column(
-                        modifier = Modifier.padding(horizontal = 20.dp)
+                        modifier = Modifier.padding(horizontal = 20.dp).background(color = background)
                     ) {
                         Text(
                             "AU " + taskItem.bill + " $",

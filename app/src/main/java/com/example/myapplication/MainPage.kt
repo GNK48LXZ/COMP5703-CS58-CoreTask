@@ -23,7 +23,7 @@ import androidx.navigation.compose.rememberNavController
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainPage(
-    navController: NavController
+    navController: NavController,
 ){
     val pageState = remember { mutableStateOf(1)}
     Scaffold(

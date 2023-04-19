@@ -4,6 +4,8 @@ import WeChatChatScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,8 +17,13 @@ import androidx.navigation.navArgument
 fun SetupNavGraph(navController:NavHostController){
     NavHost(
         navController = navController,
-        startDestination = Screen.GetItDone.route
+        startDestination = "Login"
     ){
+        composable(
+            route = "Login"
+        ){
+            Login(navController)
+        }
         composable(
             route = Screen.GetItDone.route
         ){
