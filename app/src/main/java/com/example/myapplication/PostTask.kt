@@ -1069,7 +1069,7 @@ fun TaskDetail(
                 onClick = {
                     val sdf = SimpleDateFormat("dd-MM-yyyy-hh:mm:ss")
                     val currentDate = sdf.format(Date())
-                    var db = Firebase.firestore
+                    val db = Firebase.firestore
                     db.collection("Task").document().set(task)
                     navController.popBackStack()
                 },
