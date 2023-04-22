@@ -60,7 +60,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
     LaunchedEffect(Unit) {
         // 监听指定Document ID的数据
         FireStore.collection("Task")
-            .document("E6mUK9QHjJs2leJt0acA")
+            .document(taskId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     // 处理错误
