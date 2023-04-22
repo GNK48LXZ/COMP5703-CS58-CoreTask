@@ -29,10 +29,6 @@ class MainActivity : ComponentActivity() {
             ){
                 navController = rememberNavController()
                 SetupNavGraph(navController = navController)
-               //MakeAnOffer()
-                //SubmitInf()
-                //Monitoring()
-                //MyTask()
             }
         }
     }
