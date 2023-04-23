@@ -46,3 +46,6 @@ val LightColorScheme = lightColorScheme ()
 val Poppins = FontFamily(
     Font(R.font.poppins)
 )
+val switchButtonColor = Color.DarkGray
+val lightColor = Color.Yellow
+val darkColor = Color.Gray
