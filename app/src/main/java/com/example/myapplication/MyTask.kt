@@ -270,7 +270,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
             .background(color = Color(0XFFF5F5F5))
             .fillMaxWidth()
             .fillMaxHeight()
-        //.padding(bottom = 30.dp)
+            .padding(top = 70.dp)
     ) {
         items(taskItem) { taskItem ->
             Surface(
