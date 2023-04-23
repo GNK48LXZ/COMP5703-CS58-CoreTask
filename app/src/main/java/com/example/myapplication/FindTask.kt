@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.ListItem
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -62,73 +61,6 @@ fun FindTask(navController: NavController) {
     }
 }
 
-val list = listOf(
-    ListItem(
-        "Task name",
-        "Location",
-        "Date(4th April, Tuesday)",
-        "Time",
-        "Open",
-        "80",
-        R.drawable.ic_launcher_foreground
-    ),
-    ListItem(
-        "Task name",
-        "Location",
-        "Date(4th April, Tuesday)",
-        "Time",
-        "Open",
-        "80",
-        R.drawable.ic_launcher_foreground
-    ),
-    ListItem(
-        "Task name",
-        "Location",
-        "Date(4th April, Tuesday)",
-        "Time",
-        "Open",
-        "80",
-        R.drawable.ic_launcher_foreground
-    ),
-    ListItem(
-        "Task name",
-        "Location",
-        "Date(4th April, Tuesday)",
-        "Time",
-        "Open",
-        "80",
-        R.drawable.ic_launcher_foreground
-    ),
-    ListItem(
-        "Task name",
-        "Location",
-        "Date(4th April, Tuesday)",
-        "Time",
-        "Open",
-        "80",
-        R.drawable.ic_launcher_foreground
-    ),
-    ListItem(
-        "Task name",
-        "Location",
-        "Date(4th April, Tuesday)",
-        "Time",
-        "Open",
-        "80",
-        R.drawable.ic_launcher_foreground
-    )
-)
-
-data class ListItem(
-    val taskname: String,
-    val location: String,
-    val date: String,
-    val time: String,
-    val status: String,
-    val bill: String,
-    val imageUrl: Int
-)
-
 data class TaskItem(
     val taskId: String,
     val taskName: String,
@@ -160,7 +92,6 @@ public suspend fun loadDataFromFirestore(
     val querySnapshot = db.collection(collectionPath).get().await()
     querySnapshot.documents.forEach { document ->
         val taskId = document.id
-        Log.d(TAG, "TaskListScreen: $taskId")
         val taskTopic = document.getString("taskTopic") ?: ""
         val address = document.getString("address") ?: ""
         val date = document.getString("date") ?: ""
