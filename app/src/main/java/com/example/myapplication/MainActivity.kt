@@ -29,11 +29,11 @@ class MainActivity : ComponentActivity() {
             ){
                 navController = rememberNavController()
                 SetupNavGraph(navController = navController)
+                //MonitoringDetails("E6mUK9QHjJs2leJt0acA",navController)
             }
         }
     }
 }
-
 
 val background = Color (0xFFFFFFFF)
 val buttonColor = Color(0xFF0A65FC)

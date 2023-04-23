@@ -161,21 +161,22 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
-                    Text(
-                        text = "Jessica L",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 25.sp
-                    )
+                    Row(){
+                        Text(
+                            text = "Jessica L",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 25.sp
+                        )
+                        Spacer(modifier = Modifier.width(100.dp))
+                        androidx.compose.material3.Icon(
+                            painter = painterResource(R.drawable.chat),
+                            tint = Color.Black,
+                            contentDescription = "chat",
+                            modifier = Modifier.size(30.dp)
+                                .clickable { }
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.padding(start = 300.dp))
-                androidx.compose.material3.Icon(
-                    painter = painterResource(R.drawable.chat),
-                    tint = blackColor,
-                    contentDescription = "chat",
-                    modifier = Modifier
-                        .height(70.dp)
-                        .width(70.dp)
-                )
             }
             Divider(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -332,15 +333,17 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                 {
                     androidx.compose.material3.Icon(
                         painter = painterResource(R.drawable.person),
-                        tint = blackColor,
-                        contentDescription = "the person1"
+                        tint = Color.Black,
+                        contentDescription = "the person1",
+                        modifier = Modifier.size(20.dp)
+                            .clickable { }
                     )
-                    Spacer(modifier = Modifier.width(60.dp))
+                    Spacer(modifier = Modifier.width(20.dp))
                     Text(
-                        fontSize = 28.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.W500,
-                        color= blackColor,
-                        text = "Ruby",
+                        color= Color.Black,
+                        text = "Lily",
                     )
                 }
             }
@@ -352,19 +355,22 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                     .clickable {/* 点击事件 */},
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Row(Modifier.padding(16.dp))
+                Row(Modifier.padding(16.dp)
+                    .fillMaxWidth())
                 {
-                    androidx.compose.material3.Icon(
+                    Icon(
                         painter = painterResource(R.drawable.person),
-                        tint = blackColor,
-                        contentDescription = "the cleaning"
+                        tint = Color.Black,
+                        contentDescription = "offer",
+                        modifier = Modifier.size(20.dp)
+                            .clickable { }
                     )
-                    Spacer(modifier = Modifier.width(60.dp))
+                    Spacer(modifier = Modifier.width(20.dp))
                     Text(
-                        fontSize = 28.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.W500,
-                        color= blackColor,
-                        text = "Ruby",
+                        color= Color.Black,
+                        text = "William",
                     )
                 }
             }
