@@ -64,7 +64,6 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 70.dp)
                 .padding(horizontal = 12.dp)
                 .height(38.dp)
                 .background(Color.LightGray, RoundedCornerShape(25.dp))
@@ -91,6 +90,7 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
                         .weight(1f)
                         .height(38.dp)
                         .padding(horizontal = 8.dp)
+                        .padding(vertical = 4.dp)
                         .clickable { pageState.value = 2 },
                     contentAlignment = Alignment.Center
                 ) {
@@ -128,7 +128,6 @@ fun ShowGetTask(pageState: MutableState<Int>, navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 70.dp)
                 .padding(horizontal = 12.dp)
                 .height(38.dp)
                 .background(Color.LightGray, RoundedCornerShape(25.dp))
@@ -155,6 +154,7 @@ fun ShowGetTask(pageState: MutableState<Int>, navController: NavController) {
                         .weight(1f)
                         .height(38.dp)
                         .padding(horizontal = 8.dp)
+                        .padding(vertical = 4.dp)
                         .clickable { pageState.value = 2 }
                         .background(Color.Gray, RoundedCornerShape(25.dp)),
                     contentAlignment = Alignment.Center
