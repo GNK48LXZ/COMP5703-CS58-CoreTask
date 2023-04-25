@@ -61,49 +61,48 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        TaskPostListScreen("Task", navController)
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 70.dp)
-            .padding(horizontal = 12.dp)
-            .height(38.dp)
-            .background(Color.LightGray, RoundedCornerShape(25.dp))
-    ) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(38.dp)
-                    .padding(horizontal = 8.dp)
-                    .padding(vertical = 4.dp)
-                    .clickable { pageState.value = 1 }
-                    .background(Color.Gray, RoundedCornerShape(25.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "My Posted Task",
-                    fontSize = 12.sp,
-                    color = Color.White
-                )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .height(38.dp)
+                .background(Color.LightGray, RoundedCornerShape(25.dp))
+        ) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(38.dp)
+                        .padding(horizontal = 8.dp)
+                        .padding(vertical = 4.dp)
+                        .clickable { pageState.value = 1 }
+                        .background(Color.Gray, RoundedCornerShape(25.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "My Posted Task",
+                        fontSize = 12.sp,
+                        color = Color.White
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(38.dp)
+                        .padding(horizontal = 8.dp)
+                        .padding(vertical = 4.dp)
+                        .clickable { pageState.value = 2 },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "My Assign Task",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
+                }
             }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(38.dp)
-                    .padding(horizontal = 8.dp)
-                    .clickable { pageState.value = 2 },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "My Assign Task",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colors.onSurface
-                )
-            }
-            TaskPostListScreen("Task", navController)
         }
+        TaskPostListScreen("Task", navController)
     }
 }
 
@@ -126,50 +125,50 @@ fun ShowGetTask(pageState: MutableState<Int>, navController: NavController) {
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 70.dp)
-            .padding(horizontal = 12.dp)
-            .height(38.dp)
-            .background(Color.LightGray, RoundedCornerShape(25.dp))
-    ) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(38.dp)
-                    .padding(horizontal = 8.dp)
-                    .padding(vertical = 4.dp)
-                    .clickable { pageState.value = 1 }
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "My Posted Task",
-                    fontSize = 12.sp,
-                    color = Color.White
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(38.dp)
-                    .padding(horizontal = 8.dp)
-                    .clickable { pageState.value = 2 }
-                    .background(Color.Gray, RoundedCornerShape(25.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "My Assign Task",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colors.onSurface
-                )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .height(38.dp)
+                .background(Color.LightGray, RoundedCornerShape(25.dp))
+        ) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(38.dp)
+                        .padding(horizontal = 8.dp)
+                        .padding(vertical = 4.dp)
+                        .clickable { pageState.value = 1 }
+                        .background(Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "My Posted Task",
+                        fontSize = 12.sp,
+                        color = Color.White
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(38.dp)
+                        .padding(horizontal = 8.dp)
+                        .padding(vertical = 4.dp)
+                        .clickable { pageState.value = 2 }
+                        .background(Color.Gray, RoundedCornerShape(25.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "My Assign Task",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
+                }
             }
         }
+        TaskGetListScreen("Task", navController)
     }
-    TaskGetListScreen("Task", navController)
 }
 
 @Composable
@@ -213,7 +212,6 @@ suspend fun loadMyPostDataFromFirestore(
         val money = document.getString("money") ?: ""
         val imageUrl = R.drawable.ic_launcher_foreground
         if (user == document.getString("UserID")) {
-            println(taskId+"----"+user)
             postTaskList.add(
                 TaskItem(
                     taskId = taskId,
@@ -272,7 +270,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
             .background(color = Color(0XFFF5F5F5))
             .fillMaxWidth()
             .fillMaxHeight()
-        //.padding(bottom = 30.dp)
+        //.padding(top = 70.dp)
     ) {
         items(taskItem) { taskItem ->
             Surface(
