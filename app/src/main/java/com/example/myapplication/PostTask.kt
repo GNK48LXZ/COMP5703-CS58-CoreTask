@@ -837,7 +837,10 @@ data class Task(
     val money: String? = null,
     val startTime: String? = null,
     val endTime: String? = null,
-    val status: String = "open"
+    val status: String = "open",
+    val AssignID: String? = null,
+    val UserID: String = user,
+    val offerList : List<String>
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -853,6 +856,7 @@ fun TaskDetail(
     endTime:MutableState<String>,
     navController: NavController
 ){
+    val list = ArrayList<String>()
     val task = Task(
         taskTopic.value,
         date.value,
@@ -861,7 +865,11 @@ fun TaskDetail(
         require.value,
         money.value,
         startTime.value,
-        endTime.value
+        endTime.value,
+        "open",
+        "",
+        user,
+        list
     )
     Column(
         modifier = Modifier

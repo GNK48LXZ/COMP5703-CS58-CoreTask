@@ -58,7 +58,7 @@ fun Login(navController: NavController) {
     }
 }
 
-var user = ""
+var user = "lxz@test.com"
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

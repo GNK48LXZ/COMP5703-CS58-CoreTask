@@ -17,7 +17,7 @@ import androidx.navigation.navArgument
 fun SetupNavGraph(navController:NavHostController){
     NavHost(
         navController = navController,
-        startDestination = "Login"
+        startDestination = Screen.GetItDone.route
     ){
         composable(
             route = "Login"
@@ -57,6 +57,11 @@ fun SetupNavGraph(navController:NavHostController){
             "SubmitInf"
         ){
             SubmitInf()
+        }
+        composable(
+            "image"
+        ){
+            RequestContentPermission()
         }
     }
 }

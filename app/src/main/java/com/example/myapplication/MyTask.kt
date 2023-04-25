@@ -61,6 +61,7 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
+        TaskPostListScreen("Task", navController)
     }
     Box(
         modifier = Modifier
@@ -101,9 +102,9 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
                     color = MaterialTheme.colors.onSurface
                 )
             }
+            TaskPostListScreen("Task", navController)
         }
     }
-    TaskPostListScreen("Task", navController)
 }
 
 @Composable
@@ -212,6 +213,7 @@ suspend fun loadMyPostDataFromFirestore(
         val money = document.getString("money") ?: ""
         val imageUrl = R.drawable.ic_launcher_foreground
         if (user == document.getString("UserID")) {
+            println(taskId+"----"+user)
             postTaskList.add(
                 TaskItem(
                     taskId = taskId,

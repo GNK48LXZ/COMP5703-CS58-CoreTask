@@ -1,19 +1,12 @@
 package com.example.myapplication
 
-import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.widget.ImageView
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-//import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -23,26 +16,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.ui.theme.Purple200
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.selects.select
+import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
 
 @Composable
 fun AccountManagement() {
@@ -67,6 +54,19 @@ fun AccountMain(pageState: MutableState<Int>){
     var location by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var skill by remember { mutableStateOf("") }
+
+    val storage = Firebase.storage
+    var storageRef = storage.reference
+    val avatarImagesRef = storageRef.child("avatar/"+user+".jpg")
+    val avatar =  remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
+        avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+    }.addOnFailureListener {
+        // Handle any errors
+    }
+
     LaunchedEffect(Unit) {
         // 监听指定Document ID的数据
         FireStore.collection("User")
@@ -102,15 +102,22 @@ fun AccountMain(pageState: MutableState<Int>){
         Row(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
-                .padding(top = 50.dp)
+                .padding(top = 30.dp)
                 .height(100.dp)
                 .fillMaxWidth()
         ) {
             IconButton(
-                onClick = { pageState.value = 3 },
-                modifier = Modifier.padding(top = 20.dp)
+                onClick = { /*pageState.value = 3*/ },
+                modifier = Modifier.padding(top = 20.dp).size(80.dp)
             ) {
-                Icon(Icons.Filled.Person,modifier = Modifier.size(70.dp), contentDescription = "person")
+                avatar.value?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription =null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.clip(CircleShape)
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column() {
@@ -213,7 +220,6 @@ fun AccountMain(pageState: MutableState<Int>){
             text = "Certificate",
             style = MaterialTheme.typography.headlineSmall,
         )
-
     }
 }
 
@@ -364,6 +370,10 @@ fun EditUserProfile(pageState: MutableState<Int>){
     var name by remember { mutableStateOf("") }
     var skill by remember { mutableStateOf("") }
 
+    val storage = Firebase.storage
+    var storageRef = storage.reference
+    val avatarImagesRef = storageRef.child("avatar/"+user+".jpg")
+
     LaunchedEffect(Unit) {
         // 监听指定Document ID的数据
         FireStore.collection("User")
@@ -402,6 +412,12 @@ fun EditUserProfile(pageState: MutableState<Int>){
                 .padding(it)
                 .verticalScroll(rememberScrollState())
         ) {
+            val bitmap = RequestContentPermission()
+            val baos = ByteArrayOutputStream()
+            if (bitmap != null) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            }
+            val data = baos.toByteArray()
             Text(
                 "Name",
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -487,6 +503,8 @@ fun EditUserProfile(pageState: MutableState<Int>){
                     updateUserProfile.update("location",location)
                     updateUserProfile.update("skill",skill)
                     pageState.value = 1
+                    if(bitmap!=null)
+                        avatarImagesRef.putBytes(data)
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
