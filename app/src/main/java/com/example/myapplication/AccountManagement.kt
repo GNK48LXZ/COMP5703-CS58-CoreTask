@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory
 import android.widget.ImageView
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,20 +28,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 
 @Composable
-fun AccountManagement() {
+fun AccountManagement(
+    navController: NavController
+) {
     val pageState = remember {
         mutableStateOf(1)
     }
     if (pageState.value == 1) {
         AccountMain(pageState)
     } else if (pageState.value == 2) {
-        Settings(pageState)
+        Settings(pageState,navController)
     } else if (pageState.value == 3) {
         Account(pageState)
     } else if (pageState.value == 4){
@@ -108,19 +113,21 @@ fun AccountMain(pageState: MutableState<Int>){
         ) {
             IconButton(
                 onClick = { /*pageState.value = 3*/ },
-                modifier = Modifier.padding(top = 20.dp).size(80.dp)
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .size(80.dp)
             ) {
                 avatar.value?.let {
                     Image(
                         bitmap = it.asImageBitmap(),
-                        contentDescription =null,
+                        contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.clip(CircleShape)
                     )
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Column() {
+            Column {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = user,
@@ -129,17 +136,7 @@ fun AccountMain(pageState: MutableState<Int>){
                 )
                 Spacer(modifier = Modifier.width(50.dp))
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "Last Online",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "Member Since",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
-                )
+                StarRate()
             }
 
         }
@@ -226,7 +223,7 @@ fun AccountMain(pageState: MutableState<Int>){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Settings(pageState: MutableState<Int>){
+fun Settings(pageState: MutableState<Int>,navController: NavController){
 
     Scaffold(
         topBar = {
@@ -278,7 +275,18 @@ fun Settings(pageState: MutableState<Int>){
             Divider()
             SettingItem(title = "Legal", icon = Icons.Outlined.Info, onClick = {})
             Divider()
-            SettingItem(title = "Logout", icon = Icons.Outlined.Info, onClick = {})
+            SettingItem(
+                title = "Logout", 
+                icon = Icons.Outlined.Info, 
+                onClick = {
+                    user = ""
+                    navController.navigate(route = "Login"){
+                        popUpTo(Screen.GetItDone.route){
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
     }
 }

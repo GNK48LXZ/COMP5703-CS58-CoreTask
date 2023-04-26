@@ -149,7 +149,11 @@ fun LoginScreen(pageState: MutableState<Int>,navController: NavController) {
                                 auth.signInWithEmailAndPassword(email, password).await()
                                 Log.d(TAG, "signInWithEmail:success")
                                 user = auth.currentUser?.email.toString()
-                                navController.navigate(route = Screen.GetItDone.route)
+                                navController.navigate(route = Screen.GetItDone.route){
+                                    popUpTo("Login"){
+                                        inclusive = true
+                                    }
+                                }
                             } catch (e: FirebaseAuthException) {
                                 // 显示错误消息
                                 scaffoldState.snackbarHostState.showSnackbar(

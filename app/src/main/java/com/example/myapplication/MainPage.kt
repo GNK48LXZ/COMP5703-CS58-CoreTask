@@ -47,7 +47,7 @@ fun MainPage(
                 WeChatMainScreen(navController)
             }
             if(pageState.value==5){
-                AccountManagement()
+                AccountManagement(navController)
             }
         }
         Column(

@@ -63,5 +63,11 @@ fun SetupNavGraph(navController:NavHostController){
         ){
             RequestContentPermission()
         }
+        composable(
+            "test"
+        )
+        {
+
+        }
     }
 }
