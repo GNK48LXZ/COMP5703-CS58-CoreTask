@@ -32,18 +32,19 @@ data class Offer(
     val recommendation: String? = null,
     val userID: String? = null,
     val taskID: String? = null,
-    val status: String = "open"
+    val status: String = "Pending"
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MakeAnOffer(navController: NavController) {
+fun MakeAnOffer(taskId: String,navController: NavController) {
     val recommendation = remember { mutableStateOf("") }
     val userID = remember { mutableStateOf("") }
     val db = FirebaseFirestore.getInstance()
 
     val offer = Offer(recommendation.value,
         userID.value,
+        taskId
     )
     userID.value = auth.currentUser?.email.toString()
     MaterialTheme(colorScheme = LightColorScheme) {
