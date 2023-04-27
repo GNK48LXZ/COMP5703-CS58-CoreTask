@@ -7,6 +7,8 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -83,7 +85,8 @@ fun LoginScreen(pageState: MutableState<Int>, navController: NavController) {
         androidx.compose.material3.Text(
             text = "Login to Your Account!",
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
         )
         Spacer(modifier = Modifier.height(60.dp))
         androidx.compose.material3.OutlinedTextField(
@@ -102,7 +105,7 @@ fun LoginScreen(pageState: MutableState<Int>, navController: NavController) {
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         androidx.compose.material3.TextButton(
             onClick = { pageState.value = 3 },
             colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Color.Blue),
@@ -141,7 +144,7 @@ fun LoginScreen(pageState: MutableState<Int>, navController: NavController) {
             colors = androidx.compose.material3.ButtonDefaults.buttonColors(buttonColor),
             modifier = Modifier.fillMaxWidth()
         ) {
-            androidx.compose.material3.Text(text = "Log in")
+            androidx.compose.material3.Text(text = "Login")
         }
         Spacer(modifier = Modifier.height(25.dp))
         androidx.compose.material3.Text(
@@ -158,6 +161,46 @@ fun LoginScreen(pageState: MutableState<Int>, navController: NavController) {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             androidx.compose.material3.Text(text = "Sign Up")
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        androidx.compose.material3.Button(
+            modifier = Modifier
+                .fillMaxWidth(),
+            border = BorderStroke(2.dp, color = Color.Black),
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
+            onClick = { /*TODO*/ }
+        ) {
+            Image(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(id = R.drawable.google),
+                //painter = painterResource(id = R.drawable.google),
+                contentDescription = null
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            androidx.compose.material3.Text(
+                "Login with Google",
+                color = Color.Black
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        androidx.compose.material3.Button(
+            modifier = Modifier
+                .fillMaxWidth(),
+            border = BorderStroke(2.dp, color = Color.Black),
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
+            onClick = { /*TODO*/ }
+        ) {
+            Image(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(id = R.drawable.facebook),
+                //painter = painterResource(id = R.drawable.google),
+                contentDescription = null
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            androidx.compose.material3.Text(
+                "Login with Facebook",
+                color = Color.Black
+            )
         }
     }
 }
