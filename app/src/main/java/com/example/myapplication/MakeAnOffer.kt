@@ -23,12 +23,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
-
+data class Offer(
+    val recommendation: String? = null,
+    val userID: String? = null,
+    val taskID: String? = null,
+    val status: String = "open"
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MakeAnOffer(navController: NavController) {
+    val recommendation = remember { mutableStateOf("") }
+    val userID = remember { mutableStateOf("") }
+    val db = FirebaseFirestore.getInstance()
+
+    val offer = Offer(recommendation.value,
+        userID.value,
+    )
+    userID.value = auth.currentUser?.email.toString()
     MaterialTheme(colorScheme = LightColorScheme) {
         Column(
             modifier = Modifier
@@ -89,8 +106,8 @@ fun MakeAnOffer(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(20.dp))
             TextField(
-                value = "",
-                onValueChange = { },
+                value = recommendation.value,
+                onValueChange = {recommendation.value = it},
                 modifier = Modifier
                     .padding(16.dp)
                     .width(350.dp)
@@ -104,7 +121,9 @@ fun MakeAnOffer(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = {navController.navigate("SubmitInf")},
+                    onClick = { val db = Firebase.firestore
+                        db.collection("Offer").document().set(offer)
+                        navController.navigate("SubmitInf") },
                     modifier = Modifier.padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)

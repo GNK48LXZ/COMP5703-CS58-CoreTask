@@ -35,7 +35,8 @@ data class Information(
     val money: String? = null,
     val startTime: String? = null,
     val endTime: String? = null,
-    val status: String = "open"
+    val status: String = "open",
+    //val UserID: String? = null
 )
 
 val FireStore = Firebase.firestore
@@ -56,6 +57,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
     var require by remember { mutableStateOf("") }
     var startTime by remember { mutableStateOf("") }
     var endTime by remember { mutableStateOf("") }
+    var UserID by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         // 监听指定Document ID的数据
@@ -75,6 +77,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                         money = snapshot.getString("money") ?: ""
                         taskDescription = snapshot.getString("taskDescription") ?: ""
                         require = snapshot.getString("require") ?: ""
+                        UserID = snapshot.getString("UserID") ?: ""
                     }
                 }
 
@@ -163,9 +166,9 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                     Spacer(modifier = Modifier.height(3.dp))
                     Row(){
                         Text(
-                            text = "Jessica L",
+                            text = UserID,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 25.sp
+                            fontSize = 20.sp
                         )
                         Spacer(modifier = Modifier.width(100.dp))
                         androidx.compose.material3.Icon(
