@@ -49,9 +49,11 @@ fun SetupNavGraph(navController:NavHostController){
             MonitoringDetails(taskId,navController)
         }
         composable(
-            "MakeAnOffer"
-        ){
-            MakeAnOffer(navController)
+            "MakeAnOffer/{taskId}",
+            arguments = listOf(navArgument("taskId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getString("taskId")?:""
+            MakeAnOffer(taskId,navController)
         }
         composable(
             "SubmitInf"

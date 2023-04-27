@@ -271,7 +271,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(21.dp),
-                        onClick = {navController.navigate("MakeAnOffer")},
+                        onClick = {navController.navigate("MakeAnOffer/${taskId}")},
                         colors = ButtonDefaults.buttonColors(buttonColor)
                     ) {
                         Text("Make an offer", fontSize = 20.sp)
