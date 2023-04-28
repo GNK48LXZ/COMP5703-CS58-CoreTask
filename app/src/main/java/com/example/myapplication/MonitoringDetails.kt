@@ -2,7 +2,11 @@ package com.example.myapplication
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -15,14 +19,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 import java.util.*
 
 
@@ -43,12 +51,127 @@ val FireStore = Firebase.firestore
 
 // 步骤3：添加读取数据的监听器
 
+data class OfferItem(
+    val recommendation: String? = null,
+    val userID: String? = null,
+    val taskID: String? = null,
+    val status: String,
+    //val time: String,
+    //val imageUrl: Int
+)
 
+//@Composable
+/*fun OfferListScreen(collectionPath: String) {
+    var offerItems by remember { mutableStateOf(listOf<OfferItem>()) }
+    val db = FirebaseFirestore.getInstance()
 
-
+    LaunchedEffect(collectionPath) {
+        offerItems = loadOfferDataFromFirestore(db,collectionPath)
+    }
+    OfferListLazyColumn(offerItems)
+} */
+public suspend fun loadOfferDataFromFirestore(
+    db: FirebaseFirestore,
+    collectionPath: String,taskId: String
+): List<OfferItem> {
+    val offerList = mutableListOf<OfferItem>()
+    val querySnapshot = db.collection(collectionPath).whereEqualTo("taskID", taskId).get().await()
+    querySnapshot.documents.forEach { document ->
+        val recommendation = document.getString("recommendation") ?: ""
+        val taskID = document.getString("taskID") ?: ""
+        val userID = document.getString("userID") ?: ""
+        val status = document.getString("status") ?: ""
+        offerList.add(OfferItem(
+            recommendation = recommendation,
+            userID = userID,
+            taskID = taskID,
+            status = status))
+    }
+    return offerList
+}
+@Composable
+fun OfferListLazyColumn(offerItem: List<OfferItem>) {
+    LazyColumn(
+        modifier = Modifier
+            .background(background)
+            .fillMaxWidth()
+            .height(500.dp),
+        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(offerItem) { offerItem ->
+            // 对于每个 Offer 进行 UI 的渲染
+            // ...
+            Card(
+                modifier = Modifier.height(200.dp)
+                    .padding(horizontal = 16.dp)
+                    .clickable {/* 点击事件 */ },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Column(
+                    Modifier.padding(10.dp).fillMaxSize(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(
+                        Modifier.padding(10.dp)
+                            .fillMaxWidth()
+                    )
+                    {
+                        androidx.compose.material3.Icon(
+                            painter = painterResource(R.drawable.person),
+                            tint = Color.Black,
+                            contentDescription = "the person1",
+                            modifier = Modifier.size(50.dp)
+                                .clickable { }
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        offerItem.userID?.let {
+                            Text(
+                                it,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.W500,
+                                color = Color.Black,
+                            )
+                        }
+                    }
+                    offerItem.recommendation?.let {
+                        Text(
+                            "\"$it\"",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.W500,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color.Black,
+                            modifier = Modifier.padding(start = 16.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                        Spacer(
+                            modifier = Modifier.weight(1f).fillMaxHeight().padding(bottom = 5.dp)
+                        )
+                        Box(
+                            Modifier.fillMaxSize().padding(5.dp),
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+                            Button(
+                                onClick = { },
+                                modifier = Modifier.height(40.dp).width(100.dp),
+                                colors = ButtonDefaults.buttonColors(buttonColor)
+                            ) {
+                                Text(
+                                    text = "Accept", lineHeight = 20.sp,
+                                    fontSize = 15.sp, fontWeight = FontWeight.W500
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonitoringDetails(taskId: String,navController: NavController){
+fun MonitoringDetails(taskId: String,navController: NavController) {
     var taskTopic by remember { mutableStateOf("") }
     var taskDescription by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -59,7 +182,8 @@ fun MonitoringDetails(taskId: String,navController: NavController){
     var endTime by remember { mutableStateOf("") }
     var UserID by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect("Task") {
         // 监听指定Document ID的数据
         FireStore.collection("Task")
             .document(taskId)
@@ -80,9 +204,9 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                         UserID = snapshot.getString("UserID") ?: ""
                     }
                 }
-
             }
     }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -164,20 +288,23 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
-                    Row(){
+                    Row() {
                         Text(
                             text = UserID,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
                         )
                         Spacer(modifier = Modifier.width(100.dp))
-                        androidx.compose.material3.Icon(
-                            painter = painterResource(R.drawable.chat),
-                            tint = Color.Black,
-                            contentDescription = "chat",
-                            modifier = Modifier.size(30.dp)
-                                .clickable { }
-                        )
+                        Box(Modifier.fillMaxSize().padding(5.dp),
+                            contentAlignment = Alignment.BottomEnd) {
+                            androidx.compose.material3.Icon(
+                                painter = painterResource(R.drawable.chat),
+                                tint = Color.Black,
+                                contentDescription = "chat",
+                                modifier = Modifier.size(30.dp)
+                                    .clickable { }
+                            )
+                        }
                     }
                 }
             }
@@ -238,7 +365,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                     Text(text = "TO BE DONE ON", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(//text = "Monday April 10",
-                        text = date+"  "+startTime+"-"+endTime,
+                        text = date + "  " + startTime + "-" + endTime,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
@@ -262,7 +389,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = money+"$",
+                        text = money + "$",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold
@@ -271,7 +398,7 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(21.dp),
-                        onClick = {navController.navigate("MakeAnOffer/${taskId}")},
+                        onClick = { navController.navigate("MakeAnOffer/${taskId}") },
                         colors = ButtonDefaults.buttonColors(buttonColor)
                     ) {
                         Text("Make an offer", fontSize = 20.sp)
@@ -323,60 +450,17 @@ fun MonitoringDetails(taskId: String,navController: NavController){
                 text = "Offers",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold)
-            Card(
-                modifier = Modifier.size(width = 500.dp, height = 50.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */},
-                colors = CardDefaults.cardColors(textFieldColor)
-            ) {
-                Row(Modifier.padding(16.dp)
-                    .fillMaxWidth())
-                {
-                    androidx.compose.material3.Icon(
-                        painter = painterResource(R.drawable.person),
-                        tint = Color.Black,
-                        contentDescription = "the person1",
-                        modifier = Modifier.size(20.dp)
-                            .clickable { }
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.W500,
-                        color= Color.Black,
-                        text = "Lily",
-                    )
-                }
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            //OfferListScreen("Offer")
+            var offerItems by remember { mutableStateOf(listOf<OfferItem>()) }
+            val db = FirebaseFirestore.getInstance()
+
+            LaunchedEffect("Offer") {
+                offerItems = loadOfferDataFromFirestore(db, "Offer",taskId)
             }
-            Spacer(modifier = Modifier.height(20.dp))
-            Card(
-                modifier = Modifier.size(width = 500.dp, height = 50.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */},
-                colors = CardDefaults.cardColors(textFieldColor)
-            ) {
-                Row(Modifier.padding(16.dp)
-                    .fillMaxWidth())
-                {
-                    Icon(
-                        painter = painterResource(R.drawable.person),
-                        tint = Color.Black,
-                        contentDescription = "offer",
-                        modifier = Modifier.size(20.dp)
-                            .clickable { }
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.W500,
-                        color= Color.Black,
-                        text = "William",
-                    )
-                }
-            }
+            OfferListLazyColumn(offerItems)
         }
     }
 }
