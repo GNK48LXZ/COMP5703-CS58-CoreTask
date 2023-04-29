@@ -96,7 +96,6 @@ public suspend fun loadOfferDataFromFirestore(
             starRate = document.getDouble("starRate") ?: 0.0
         }
         val avatarImagesRef = storageRef.child("avatar/"+userID+".jpg")
-        println(avatarImagesRef.toString()+"-------------------------")
 
         avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
             avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)

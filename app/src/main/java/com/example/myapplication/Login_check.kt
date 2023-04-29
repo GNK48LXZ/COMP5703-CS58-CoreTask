@@ -467,7 +467,7 @@ fun EditUserProfile_sign(pageState: MutableState<Int>){
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(720.dp)
+                .fillMaxHeight()
                 .background(background)
                 .padding(it)
                 .verticalScroll(rememberScrollState())
