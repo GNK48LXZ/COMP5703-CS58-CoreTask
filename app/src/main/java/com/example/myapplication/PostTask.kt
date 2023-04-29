@@ -840,7 +840,8 @@ data class Task(
     val status: String = "open",
     val AssignID: String? = null,
     val UserID: String = user,
-    val offerList : List<String>
+    val offerList : List<String>,
+    val starRate : Double = 0.0
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,14 +1,14 @@
 package com.example.myapplication
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,6 +32,7 @@ import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 import java.util.*
 
@@ -56,6 +59,8 @@ data class OfferItem(
     val userID: String? = null,
     val taskID: String? = null,
     val status: String,
+    val starRate: Double = 0.0,
+    val avatar: MutableState<Bitmap?>
     //val time: String,
     //val imageUrl: Int
 )
@@ -72,20 +77,42 @@ data class OfferItem(
 } */
 public suspend fun loadOfferDataFromFirestore(
     db: FirebaseFirestore,
-    collectionPath: String,taskId: String
+    collectionPath: String,
+    taskId: String,
+    avatar: MutableState<Bitmap?>
 ): List<OfferItem> {
     val offerList = mutableListOf<OfferItem>()
     val querySnapshot = db.collection(collectionPath).whereEqualTo("taskID", taskId).get().await()
+    val storage = Firebase.storage
+    var storageRef = storage.reference
     querySnapshot.documents.forEach { document ->
         val recommendation = document.getString("recommendation") ?: ""
         val taskID = document.getString("taskID") ?: ""
         val userID = document.getString("userID") ?: ""
         val status = document.getString("status") ?: ""
+        var starRate = 0.0
+        val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
+        querySnapshotUser.documents.forEach { document ->
+            starRate = document.getDouble("starRate") ?: 0.0
+        }
+        val avatarImagesRef = storageRef.child("avatar/"+userID+".jpg")
+        println(avatarImagesRef.toString()+"-------------------------")
+
+        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
+            avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+
+        }.addOnFailureListener {
+
+        }
+
         offerList.add(OfferItem(
             recommendation = recommendation,
             userID = userID,
             taskID = taskID,
-            status = status))
+            status = status,
+            starRate = starRate,
+            avatar = avatar
+        ))
     }
     return offerList
 }
@@ -103,35 +130,55 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>) {
             // 对于每个 Offer 进行 UI 的渲染
             // ...
             Card(
-                modifier = Modifier.height(200.dp)
+                modifier = Modifier
+                    .height(200.dp)
                     .padding(horizontal = 16.dp)
                     .clickable {/* 点击事件 */ },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
                 Column(
-                    Modifier.padding(10.dp).fillMaxSize(),
+                    Modifier
+                        .padding(10.dp)
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.Start
                 ) {
                     Row(
-                        Modifier.padding(10.dp)
+                        Modifier
+                            .padding(10.dp)
                             .fillMaxWidth()
                     )
                     {
-                        androidx.compose.material3.Icon(
-                            painter = painterResource(R.drawable.person),
-                            tint = Color.Black,
-                            contentDescription = "the person1",
-                            modifier = Modifier.size(50.dp)
-                                .clickable { }
-                        )
+                        offerItem.avatar.value.let {
+                            if (it != null) {
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.clip(CircleShape).size(50.dp)
+                                )
+                            }
+                            else{
+                                androidx.compose.material3.Icon(
+                                    painter = painterResource(R.drawable.person),
+                                    tint = Color.Black,
+                                    contentDescription = "the person1",
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clickable { }
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.width(5.dp))
-                        offerItem.userID?.let {
-                            Text(
-                                it,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.W500,
-                                color = Color.Black,
-                            )
+                        Column {
+                            offerItem.userID?.let {
+                                Text(
+                                    it,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.W500,
+                                    color = Color.Black,
+                                )
+                            }
+                            StarRate(offerItem.starRate)
                         }
                     }
                     offerItem.recommendation?.let {
@@ -142,19 +189,27 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>) {
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             color = Color.Black,
-                            modifier = Modifier.padding(start = 16.dp)
+                            modifier = Modifier
+                                .padding(start = 16.dp)
                                 .clip(MaterialTheme.shapes.medium)
                         )
                         Spacer(
-                            modifier = Modifier.weight(1f).fillMaxHeight().padding(bottom = 5.dp)
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .padding(bottom = 5.dp)
                         )
                         Box(
-                            Modifier.fillMaxSize().padding(5.dp),
+                            Modifier
+                                .fillMaxSize()
+                                .padding(5.dp),
                             contentAlignment = Alignment.BottomEnd
                         ) {
                             Button(
                                 onClick = { },
-                                modifier = Modifier.height(40.dp).width(100.dp),
+                                modifier = Modifier
+                                    .height(40.dp)
+                                    .width(100.dp),
                                 colors = ButtonDefaults.buttonColors(buttonColor)
                             ) {
                                 Text(
@@ -181,7 +236,9 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
     var startTime by remember { mutableStateOf("") }
     var endTime by remember { mutableStateOf("") }
     var UserID by remember { mutableStateOf("") }
-
+    var avatar : MutableState<Bitmap?> = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
 
     LaunchedEffect("Task") {
         // 监听指定Document ID的数据
@@ -295,13 +352,17 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                             fontSize = 20.sp
                         )
                         Spacer(modifier = Modifier.width(100.dp))
-                        Box(Modifier.fillMaxSize().padding(5.dp),
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .padding(5.dp),
                             contentAlignment = Alignment.BottomEnd) {
                             androidx.compose.material3.Icon(
                                 painter = painterResource(R.drawable.chat),
                                 tint = Color.Black,
                                 contentDescription = "chat",
-                                modifier = Modifier.size(30.dp)
+                                modifier = Modifier
+                                    .size(30.dp)
                                     .clickable { }
                             )
                         }
@@ -458,7 +519,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             val db = FirebaseFirestore.getInstance()
 
             LaunchedEffect("Offer") {
-                offerItems = loadOfferDataFromFirestore(db, "Offer",taskId)
+                offerItems = loadOfferDataFromFirestore(db, "Offer",taskId,avatar)
             }
             OfferListLazyColumn(offerItems)
         }
