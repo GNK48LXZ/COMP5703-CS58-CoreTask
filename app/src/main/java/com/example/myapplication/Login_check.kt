@@ -450,19 +450,6 @@ fun EditUserProfile_sign(pageState: MutableState<Int>){
             }
     }
     androidx.compose.material3.Scaffold(
-        topBar = {
-            androidx.compose.material3.TopAppBar(
-                title = { androidx.compose.material3.Text(text = "Edit My Information") },
-                navigationIcon = {
-                    androidx.compose.material3.IconButton(onClick = { pageState.value = 1 }) {
-                        androidx.compose.material3.Icon(
-                            Icons.Filled.ArrowBack,
-                            contentDescription = "返回"
-                        )
-                    }
-                },
-            )
-        }
     ) {
         Column(
             modifier = Modifier
