@@ -134,7 +134,8 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                     .fillMaxWidth()
                     .height(200.dp)
                     .padding(16.dp)
-                    .clickable { navController.navigate("monitoringDetails/${taskItem.taskId}") }
+                    .clickable { navController.navigate("monitoringDetails/${taskItem.taskId}")
+                    }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
