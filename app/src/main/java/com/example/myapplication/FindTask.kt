@@ -753,7 +753,7 @@ public suspend fun loadClassificationDataFromFirestore(
         val imageUrl = R.drawable.ic_launcher_foreground
         val classification = document.getString("classification")
 
-        if (classification == document.getString("Cleaning")) {
+        if (document.getString("classification")=="Cleaning") {
             taskList1.add(
                 TaskItem(
                     taskId = taskId,
