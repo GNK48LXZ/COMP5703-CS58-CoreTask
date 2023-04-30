@@ -211,7 +211,7 @@ suspend fun loadMyPostDataFromFirestore(
         val status = document.getString("status") ?: ""
         val money = document.getString("money") ?: ""
         val imageUrl = R.drawable.ic_launcher_foreground
-        if (user == document.getString("UserID")) {
+        if (user == document.getString("userID")) {
             postTaskList.add(
                 TaskItem(
                     taskId = taskId,
@@ -245,7 +245,7 @@ suspend fun loadMyGetDataFromFirestore(
         val status = document.getString("status") ?: ""
         val money = document.getString("money") ?: ""
         val imageUrl = R.drawable.ic_launcher_foreground
-        if (user == document.getString("AssignID")) {
+        if (user == document.getString("assignID")) {
             getTaskList.add(
                 TaskItem(
                     taskId = taskId,
