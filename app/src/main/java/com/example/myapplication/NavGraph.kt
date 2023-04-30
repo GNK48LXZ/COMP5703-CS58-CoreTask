@@ -17,7 +17,7 @@ import androidx.navigation.navArgument
 fun SetupNavGraph(navController:NavHostController){
     NavHost(
         navController = navController,
-        startDestination = Screen.GetItDone.route
+        startDestination = "Login"
     ){
         composable(
             route = "Login"
@@ -56,9 +56,11 @@ fun SetupNavGraph(navController:NavHostController){
             MakeAnOffer(taskId,navController)
         }
         composable(
-            "SubmitInf"
-        ){
-            SubmitInf(navController)
+            "SubmitInf/{taskId}",
+            arguments = listOf(navArgument("taskId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getString("taskId")?:""
+            SubmitInf(taskId,navController)
         }
         composable(
             "image"

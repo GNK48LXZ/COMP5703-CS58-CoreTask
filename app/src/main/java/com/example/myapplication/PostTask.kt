@@ -837,7 +837,8 @@ data class Task(
     val AssignID: String? = null,
     val UserID: String = user,
     val offerList : List<String>,
-    val starRate : Double = 0.0
+    val starRate : Double = 0.0,
+    val classification : String = "Cleaning"
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -928,7 +929,7 @@ fun TaskDetail(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY",fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
-                    Text(text = "Jessica L",
+                    Text(text = user,
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
                     )
