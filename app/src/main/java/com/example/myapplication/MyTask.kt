@@ -295,7 +295,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                         Text(
                             taskItem.taskName,
                             style = MaterialTheme.typography.h2.copy(
-                                fontSize = 20.sp,
+                                fontSize = 16.sp,
                                 fontFamily = Poppins
                             ),
                             color = MaterialTheme.colors.onSurface
@@ -303,7 +303,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                         Text(
                             taskItem.location,
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 15.sp,
+                                fontSize = 10.sp,
                                 fontFamily = Poppins
                             ),
                             color = MaterialTheme.colors.onSurface
@@ -311,7 +311,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                         Text(
                             taskItem.date,
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 15.sp,
+                                fontSize = 10.sp,
                                 fontFamily = Poppins
                             ),
                             color = MaterialTheme.colors.onSurface
@@ -319,7 +319,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                         Text(
                             taskItem.time,
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 15.sp,
+                                fontSize = 10.sp,
                                 fontFamily = Poppins
                             ),
                             color = MaterialTheme.colors.onSurface
@@ -327,7 +327,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                         Text(
                             taskItem.status,
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 18.sp,
+                                fontSize = 12.sp,
                                 fontFamily = Poppins
                             ),
                             color = Color.Blue,
@@ -343,7 +343,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                         Text(
                             "AU " + taskItem.bill + " $",
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 18.sp,
+                                fontSize = 12.sp,
                                 textAlign = TextAlign.Center
                             ),
                             color = MaterialTheme.colors.onSurface
