@@ -837,7 +837,8 @@ data class Task(
     val AssignID: String? = null,
     val UserID: String = user,
     val offerList : List<String>,
-    val starRate : Double = 0.0
+    val starRate : Double = 0.0,
+    val classification : String = "Cleaning"
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

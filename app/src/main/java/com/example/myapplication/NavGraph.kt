@@ -17,7 +17,7 @@ import androidx.navigation.navArgument
 fun SetupNavGraph(navController:NavHostController){
     NavHost(
         navController = navController,
-        startDestination = Screen.GetItDone.route
+        startDestination = "Login"
     ){
         composable(
             route = "Login"
