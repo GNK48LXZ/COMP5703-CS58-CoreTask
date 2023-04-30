@@ -53,7 +53,7 @@ fun Login(navController: NavController) {
     }
 }
 
-var user = "lxz@test.com"
+var user = ""
 var exception = ""
 
 @OptIn(ExperimentalMaterial3Api::class)
