@@ -124,7 +124,7 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
                 Button(
                     onClick = { val db = Firebase.firestore
                         db.collection("Offer").document().set(offer)
-                        navController.navigate("SubmitInf") },
+                        navController.navigate("SubmitInf/${taskId}") },
                     modifier = Modifier.padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)
@@ -138,7 +138,7 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubmitInf(navController: NavController) {
+fun SubmitInf(taskId: String,navController: NavController) {
     MaterialTheme(colorScheme = LightColorScheme) {
         Column(
             modifier = Modifier
@@ -196,7 +196,7 @@ fun SubmitInf(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = {},
+                    onClick = {navController.navigate("monitoringDetails/${taskId}")},
                     modifier = Modifier.padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)

@@ -929,7 +929,7 @@ fun TaskDetail(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY",fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
-                    Text(text = "Jessica L",
+                    Text(text = user,
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
                     )
