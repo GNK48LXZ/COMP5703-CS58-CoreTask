@@ -19,13 +19,14 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
+val page = mutableStateOf(1)
 @OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainPage(
     navController: NavController,
 ){
-    val pageState = remember { mutableStateOf(1)}
+    val pageState = page
     Scaffold(
         bottomBar ={
             BottomToolbar(pageState = pageState)
@@ -43,7 +44,6 @@ fun MainPage(
                 MyTask(navController)
             }
             if(pageState.value==4){
-                //WeChatApp()
                 WeChatMainScreen(navController)
             }
             if(pageState.value==5){
@@ -69,7 +69,10 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
             IconButton(
-                onClick = { pageState.value = 1 },
+                onClick = {
+                    pageState.value = 1
+                    page.value = 1
+                          },
                 //selected = true,
                 modifier = Modifier
                     .padding(8.dp)
@@ -84,7 +87,10 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { pageState.value = 2 },
+                onClick = {
+                    pageState.value = 2
+                    page.value = 2
+                          },
                 //selected = false,
                 modifier = Modifier
                     .padding(8.dp)
@@ -98,7 +104,10 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { pageState.value = 3 },
+                onClick = {
+                    pageState.value = 3
+                    page.value = 3
+                          },
                 //selected = false,
                 modifier = Modifier
                     .padding(8.dp)
@@ -112,7 +121,10 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { pageState.value = 4 },
+                onClick = {
+                    pageState.value = 4
+                    page.value = 4
+                          },
                 //selected = true,
                 modifier = Modifier
                     .padding(8.dp)
@@ -126,7 +138,10 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
-                onClick = { pageState.value = 5 },
+                onClick = {
+                    pageState.value = 5
+                    page.value = 5
+                          },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
@@ -138,23 +153,6 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     tint = buttonColor
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun ButtonTest(){
-    var selectedItem by remember{ mutableStateOf(0) }
-    val items = listOf("Home", "Browser", "My tasks","Message", "Account")
-
-    BottomNavigation {
-        items.forEachIndexed { index, item ->
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
-                label = { Text(item) },
-                selected = selectedItem == index,
-                onClick = { selectedItem = index }
-            )
         }
     }
 }

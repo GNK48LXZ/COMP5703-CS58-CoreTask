@@ -78,8 +78,7 @@ data class OfferItem(
 public suspend fun loadOfferDataFromFirestore(
     db: FirebaseFirestore,
     collectionPath: String,
-    taskId: String,
-    avatar: MutableState<Bitmap?>
+    taskId: String
 ): List<OfferItem> {
     val offerList = mutableListOf<OfferItem>()
     val querySnapshot = db.collection(collectionPath).whereEqualTo("taskID", taskId).get().await()
@@ -92,14 +91,14 @@ public suspend fun loadOfferDataFromFirestore(
         val status = document.getString("status") ?: ""
         var starRate = 0.0
         val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
+        val b : Bitmap? = null
+        val a = mutableStateOf(b)
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
         val avatarImagesRef = storageRef.child("avatar/"+userID+".jpg")
-
         avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-            avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
-
+            a.value = BitmapFactory.decodeByteArray(it,0,it.size)
         }.addOnFailureListener {
 
         }
@@ -110,7 +109,7 @@ public suspend fun loadOfferDataFromFirestore(
             taskID = taskID,
             status = status,
             starRate = starRate,
-            avatar = avatar
+            avatar = a
         ))
     }
     return offerList
@@ -153,7 +152,9 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
                                     bitmap = it.asImageBitmap(),
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
-                                    modifier = Modifier.clip(CircleShape).size(50.dp)
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .size(50.dp)
                                 )
                             }
                             else{
@@ -241,6 +242,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
     var avatar : MutableState<Bitmap?> = remember {
         mutableStateOf<Bitmap?>(null)
     }
+    val storage = Firebase.storage
+    var storageRef = storage.reference
 
     LaunchedEffect("Task") {
         FireStore.collection("Task")
@@ -258,7 +261,13 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                         money = snapshot.getString("money") ?: ""
                         taskDescription = snapshot.getString("taskDescription") ?: ""
                         require = snapshot.getString("require") ?: ""
-                        UserID = snapshot.getString("UserID") ?: ""
+                        UserID = snapshot.getString("userID") ?: ""
+                        val avatarImagesRef = storageRef.child("avatar/"+UserID+".jpg")
+                        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
+                            avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+                        }.addOnFailureListener {
+
+                        }
                     }
                 }
             }
@@ -277,7 +286,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable {navController.popBackStack()}
+                        .clickable { navController.popBackStack() }
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)
@@ -337,11 +346,22 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     .height(70.dp)
                     .fillMaxWidth()
             ) {
-                androidx.compose.material3.Icon(
-                    Icons.Outlined.Person,
-                    modifier = Modifier.size(70.dp),
-                    contentDescription = "User",
-                )
+                Column() {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    avatar.value.let {
+                        if (it != null) {
+                            Image(
+                                bitmap = it.asImageBitmap(),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(50.dp)
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.width(20.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY", fontSize = 13.sp)
@@ -532,7 +552,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             val db = FirebaseFirestore.getInstance()
 
             LaunchedEffect("Offer") {
-                offerItems = loadOfferDataFromFirestore(db, "Offer",taskId,avatar)
+                offerItems = loadOfferDataFromFirestore(db, "Offer",taskId)
             }
             OfferListLazyColumn(offerItems,userId=UserID)
 
