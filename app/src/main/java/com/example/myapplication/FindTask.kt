@@ -47,48 +47,6 @@ fun FindTask(navController: NavController) {
             ShowPaintingTask(pageState = pageState, navController = navController)
         }
     }
-
-    /*val showDialog = remember {
-        mutableStateOf(false)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-            .height(720.dp)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Browse tasks",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(onClick = { showDialog.value = true }) {
-            Text(text = "Show Filters")
-        }
-
-        TaskListScreen("Task", navController)*/
-
-
-    /*TopAppBar(title = { Text(text = "Browse tasks") },
-        actions = {
-            IconButton(onClick = { isFilterVisible = true }) {
-                Icon(imageVector = Icons.Default.List, contentDescription = "Filter")
-            }
-        })
-
-    if (isFilterVisible) {
-
-    }
-    }*/
-
 }
 
 @Composable
@@ -244,7 +202,7 @@ fun ShowCleaningTask(pageState: MutableState<Int>, navController: NavController)
                     Text(
                         "All",
                         fontSize = 12.sp,
-                        color = Color.White
+                        color = MaterialTheme.colors.onSurface
                     )
                 }
                 Box(
@@ -260,7 +218,7 @@ fun ShowCleaningTask(pageState: MutableState<Int>, navController: NavController)
                     Text(
                         "Cleaning",
                         fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
+                        color = Color.White
                     )
                 }
                 Box(
@@ -357,7 +315,7 @@ fun ShowRemovalsTask(pageState: MutableState<Int>, navController: NavController)
                     Text(
                         "All",
                         fontSize = 12.sp,
-                        color = Color.White
+                        color = MaterialTheme.colors.onSurface
                     )
                 }
                 Box(
@@ -389,7 +347,7 @@ fun ShowRemovalsTask(pageState: MutableState<Int>, navController: NavController)
                     Text(
                         "Removals",
                         fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
+                        color = Color.White
                     )
                 }
                 Box(
@@ -470,7 +428,7 @@ fun ShowRepairsTask(pageState: MutableState<Int>, navController: NavController) 
                     Text(
                         "All",
                         fontSize = 12.sp,
-                        color = Color.White
+                        color = MaterialTheme.colors.onSurface
                     )
                 }
                 Box(
@@ -518,7 +476,7 @@ fun ShowRepairsTask(pageState: MutableState<Int>, navController: NavController) 
                     Text(
                         "Repairs",
                         fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
+                        color = Color.White
                     )
                 }
                 Box(
@@ -583,7 +541,7 @@ fun ShowPaintingTask(pageState: MutableState<Int>, navController: NavController)
                     Text(
                         "All",
                         fontSize = 12.sp,
-                        color = Color.White
+                        color = MaterialTheme.colors.onSurface
                     )
                 }
                 Box(
@@ -647,7 +605,7 @@ fun ShowPaintingTask(pageState: MutableState<Int>, navController: NavController)
                     Text(
                         "Painting",
                         fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
+                        color = Color.White
                     )
                 }
             }
@@ -753,7 +711,7 @@ public suspend fun loadClassificationDataFromFirestore(
         val imageUrl = R.drawable.ic_launcher_foreground
         val classification = document.getString("classification")
 
-        if (classification == document.getString("Cleaning")) {
+        if ("Cleaning" == classification) {
             taskList1.add(
                 TaskItem(
                     taskId = taskId,
@@ -767,7 +725,7 @@ public suspend fun loadClassificationDataFromFirestore(
                 )
             )
         }
-        if (classification == document.getString("Removals")) {
+        if ("Removals" == classification) {
             taskList2.add(
                 TaskItem(
                     taskId = taskId,
@@ -781,7 +739,7 @@ public suspend fun loadClassificationDataFromFirestore(
                 )
             )
         }
-        if (classification == document.getString("Repairs")) {
+        if ("Repairs" == classification) {
             taskList3.add(
                 TaskItem(
                     taskId = taskId,
@@ -795,7 +753,7 @@ public suspend fun loadClassificationDataFromFirestore(
                 )
             )
         }
-        if (classification == document.getString("Painting")) {
+        if (classification == "Painting") {
             taskList4.add(
                 TaskItem(
                     taskId = taskId,
