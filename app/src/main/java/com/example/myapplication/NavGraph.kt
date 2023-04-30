@@ -58,7 +58,7 @@ fun SetupNavGraph(navController:NavHostController){
         composable(
             "SubmitInf"
         ){
-            SubmitInf()
+            SubmitInf(navController)
         }
         composable(
             "image"

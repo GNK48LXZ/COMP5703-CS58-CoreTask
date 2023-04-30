@@ -60,7 +60,7 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable {/* */ }
+                        .clickable {navController.popBackStack()}
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)
@@ -138,7 +138,7 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubmitInf() {
+fun SubmitInf(navController: NavController) {
     MaterialTheme(colorScheme = LightColorScheme) {
         Column(
             modifier = Modifier
@@ -152,7 +152,7 @@ fun SubmitInf() {
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable {/* */ }
+                        .clickable {navController.popBackStack() }
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)

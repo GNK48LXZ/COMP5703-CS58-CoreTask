@@ -116,7 +116,7 @@ public suspend fun loadOfferDataFromFirestore(
     return offerList
 }
 @Composable
-fun OfferListLazyColumn(offerItem: List<OfferItem>) {
+fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
     LazyColumn(
         modifier = Modifier
             .background(background)
@@ -204,18 +204,21 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>) {
                                 .padding(5.dp),
                             contentAlignment = Alignment.BottomEnd
                         ) {
-                            Button(
-                                onClick = { },
-                                modifier = Modifier
-                                    .height(40.dp)
-                                    .width(100.dp),
-                                colors = ButtonDefaults.buttonColors(buttonColor)
-                            ) {
-                                Text(
-                                    text = "Accept", lineHeight = 20.sp,
-                                    fontSize = 15.sp, fontWeight = FontWeight.W500
-                                )
+                            if (userId == user) {
+                                Button(
+                                    onClick = { },
+                                    modifier = Modifier
+                                        .height(40.dp)
+                                        .width(100.dp),
+                                    colors = ButtonDefaults.buttonColors(buttonColor)
+                                ) {
+                                    Text(
+                                        text = "Accept", lineHeight = 20.sp,
+                                        fontSize = 15.sp, fontWeight = FontWeight.W500
+                                    )
+                                }
                             }
+
                         }
                     }
                 }
@@ -240,15 +243,13 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
     }
 
     LaunchedEffect("Task") {
-        // 监听指定Document ID的数据
         FireStore.collection("Task")
             .document(taskId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    // 处理错误
+                    //
                 } else {
                     if (snapshot != null && snapshot.exists()) {
-                        // 读取数据并设置到Text位置
                         taskTopic = snapshot.getString("taskTopic") ?: ""
                         address = snapshot.getString("address") ?: ""
                         date = snapshot.getString("date") ?: ""
@@ -263,6 +264,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             }
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -275,7 +277,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable {}
+                        .clickable {navController.popBackStack()}
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)
@@ -454,14 +456,26 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    FilledTonalButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(21.dp),
-                        onClick = { navController.navigate("MakeAnOffer/${taskId}") },
-                        colors = ButtonDefaults.buttonColors(buttonColor)
-                    ) {
-                        Text("Make an offer", fontSize = 20.sp)
+                    if (UserID == user) {
+                        FilledTonalButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(21.dp),
+                            onClick = { /* 处理 Change 按钮的单击事件 */ },
+                            colors = ButtonDefaults.buttonColors(buttonColor)
+                        ) {
+                            Text("Change", fontSize = 20.sp)
+                        }
+                    } else {
+                        FilledTonalButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(21.dp),
+                            onClick = { navController.navigate("MakeAnOffer/${taskId}") },
+                            colors = ButtonDefaults.buttonColors(buttonColor)
+                        ) {
+                            Text("Make an offer", fontSize = 20.sp)
+                        }
                     }
                 }
             }
@@ -520,7 +534,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             LaunchedEffect("Offer") {
                 offerItems = loadOfferDataFromFirestore(db, "Offer",taskId,avatar)
             }
-            OfferListLazyColumn(offerItems)
+            OfferListLazyColumn(offerItems,userId=UserID)
+
         }
     }
 }
