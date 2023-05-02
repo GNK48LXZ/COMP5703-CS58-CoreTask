@@ -1,4 +1,6 @@
 package com.example.myapplication
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -29,7 +31,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Send
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.*
+
 data class Message(val sender: String, val content: String, val isMe: Boolean)
+
 
 
 
@@ -79,7 +86,10 @@ fun MessageListAndInput() {
                 trailingIcon = {
                     IconButton(onClick = {
                         if (inputText.isNotEmpty()) {
-                            messages.add(Message("Lucas", inputText, true))
+                            val message= Message("Lucas", inputText, true)
+                            messages.add(message)
+                            uploadMessage(message)
+                            saveMessage(message)
                             inputText = ""
                         }
                     }) {
@@ -196,5 +206,18 @@ fun PreviewConversation() {
     }
 }
 
+private fun uploadMessage(message: Message) {
+    val collection = FirebaseFirestore.getInstance().collection("messages")
+    collection.add(message)
+        .addOnSuccessListener { documentReference ->
+            Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+        }
+        .addOnFailureListener { e ->
+            Log.w(TAG, "Error adding document", e)
+        }
+}
 
-
+private fun saveMessage(message: Message) {
+    val database = FirebaseDatabase.getInstance().reference
+    database.child("messages").push().setValue(message)
+}
