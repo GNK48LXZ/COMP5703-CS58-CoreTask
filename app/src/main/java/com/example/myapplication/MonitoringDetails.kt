@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
@@ -59,6 +60,7 @@ data class OfferItem(
     val userID: String? = null,
     val taskID: String? = null,
     val status: String,
+    val offerID: String,
     val starRate: Double = 0.0,
     val avatar: MutableState<Bitmap?>
     //val time: String,
@@ -89,6 +91,7 @@ public suspend fun loadOfferDataFromFirestore(
         val taskID = document.getString("taskID") ?: ""
         val userID = document.getString("userID") ?: ""
         val status = document.getString("status") ?: ""
+        val offerID = document.id
         var starRate = 0.0
         val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
         val b : Bitmap? = null
@@ -108,6 +111,7 @@ public suspend fun loadOfferDataFromFirestore(
             userID = userID,
             taskID = taskID,
             status = status,
+            offerID = offerID,
             starRate = starRate,
             avatar = a
         ))
@@ -127,6 +131,8 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
         items(offerItem) { offerItem ->
             // 对于每个 Offer 进行 UI 的渲染
             // ...
+            val openDialog = remember { mutableStateOf(false) }
+            DeleteOfferDialog(offerID = offerItem.offerID, openDialog = openDialog)
             Card(
                 modifier = Modifier
                     .height(200.dp)
@@ -179,6 +185,20 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
                                 )
                             }
                             StarRate(offerItem.starRate)
+                        }
+                        Spacer(modifier = Modifier.width(35.dp))
+                        if(offerItem.userID == user){
+                            androidx.compose.material3.Icon(
+                                imageVector = Icons.Filled.Delete,
+                                "Icon",
+                                modifier = Modifier
+                                    .clickable {
+                                        openDialog.value = true
+                                    }
+                                    .padding(horizontal = 10.dp)
+                                    .size(40.dp),
+                                tint = Color(0xff333333)
+                            )
                         }
                     }
                     offerItem.recommendation?.let {
@@ -549,6 +569,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             Spacer(modifier = Modifier.height(5.dp))
             //OfferListScreen("Offer")
             var offerItems by remember { mutableStateOf(listOf<OfferItem>()) }
+            //var offerItems by remember { mutableListOf<OfferItem>() }
+            //var offerItems = mutableListOf<OfferItem>()
             val db = FirebaseFirestore.getInstance()
 
             LaunchedEffect("Offer") {

@@ -5,6 +5,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun Dialog(openDialog: MutableState<Boolean>){
@@ -232,6 +236,43 @@ fun ForgetPasswordDialog(pageState: MutableState<Int>,openDialog: MutableState<B
                     }
                 ) {
                     Text("Confirm")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun DeleteOfferDialog(offerID:String,openDialog: MutableState<Boolean>){
+    if(openDialog.value){
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = {
+                Text(text = "Reminder")
+            },
+            text = {
+                Text(text = "Do you want to cancel your offer?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val db = Firebase.firestore
+                        db.collection("Offer").document(offerID).delete()
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("No")
                 }
             }
         )

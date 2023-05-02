@@ -105,14 +105,27 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                     fontWeight = FontWeight.W600
                 )
             }
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+            Divider()
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                text = "Describe what you need done in a few word.",
-                lineHeight = 40.sp,
-                fontSize = 40.sp
+                //text = "Describe what you need done in a few word.",
+                text = "Task title",
+                style = MaterialTheme.typography.headlineLarge
+                //lineHeight = 40.sp,
+                //fontSize = 40.sp
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                //text = "Describe what you need done in a few word.",
+                text = "In a few words, what do you need?",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Gray
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -124,7 +137,7 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                 onValueChange = { text = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
@@ -220,17 +233,31 @@ fun SelectRepeatDate(
             )
         }
 
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
 
         //Title
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Tell the job seeker your preferred time",
+            //text = "Tell the job seeker your preferred time",
+            text = "Date",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "When do you want to start?",
             style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 40.sp
+            color = Color.Gray
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -276,7 +303,7 @@ fun SelectRepeatDate(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Start Time:  ",
+                    text = "From:  ",
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -304,7 +331,7 @@ fun SelectRepeatDate(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "End Time:  ",
+                    text = "To:  ",
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -387,21 +414,24 @@ fun DescribeTask(
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
         //Content
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .background(background)
-                .verticalScroll(rememberScrollState())
         ) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                text = "Summarize the detail of the task",
-                style = MaterialTheme.typography.bodyLarge,
-                lineHeight = 40.sp,
-                fontSize = 40.sp
+                //text = "Summarize the detail of the task",
+                text = "Detail",
+                style = MaterialTheme.typography.headlineLarge,
+                //lineHeight = 40.sp,
+                //fontSize = 40.sp
             )
             Spacer(modifier = Modifier.height(20.dp))
             //Title2
@@ -411,8 +441,9 @@ fun DescribeTask(
                     .padding(16.dp),
                 text = "Help the tasker understand what you need to do",
                 style = MaterialTheme.typography.bodyLarge,
-                lineHeight = 40.sp,
-                fontSize = 20.sp
+                color = Color.Gray
+                //lineHeight = 40.sp,
+                //fontSize = 20.sp
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -435,8 +466,9 @@ fun DescribeTask(
                     .padding(16.dp),
                 text = "You can upload photos(Optional)",
                 style = MaterialTheme.typography.bodyLarge,
-                lineHeight = 40.sp,
-                fontSize = 20.sp
+                color = Color.Gray
+                //lineHeight = 40.sp,
+                //fontSize = 20.sp
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -513,18 +545,31 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
             )
         }
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
 
         //Title
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Where does the job seeker work",
-            style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 40.sp
+            text = "Location",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
         )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            text = "Where do you need this done?",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Gray
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+
 
         Spacer(modifier = Modifier.height(20.dp))
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -598,17 +643,27 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
             )
         }
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
 
         //Title
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
+            text = "Certificate",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 30.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             text = "Please indicate the certificates that the job seeker must have",
             style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 30.sp
+            color = Color.Gray
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -767,17 +822,29 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
             )
         }
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
 
         //Title
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Please tell the job seeker your budget",
+            text = "Hour rate",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 35.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            text = "You will pay based on the number of hours",
             style = MaterialTheme.typography.bodyLarge,
-            lineHeight = 40.sp,
-            fontSize = 35.sp
+            color = Color.Gray
+            //lineHeight = 40.sp,
+            //fontSize = 35.sp
         )
         Spacer(modifier = Modifier.height(20.dp))
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -895,6 +962,7 @@ fun TaskDetail(
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
+        Divider()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1039,7 +1107,8 @@ fun TaskDetail(
                 text = "Task Detail",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray
             )
             Text(
                 modifier = Modifier
@@ -1050,6 +1119,12 @@ fun TaskDetail(
                 fontSize = 20.sp,
             )
             Spacer(modifier = Modifier.height(5.dp))
+            Divider(
+                modifier = Modifier.padding(horizontal = 25.dp),
+                thickness = 1.5.dp,
+                color = textFieldColor,
+            )
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1057,7 +1132,8 @@ fun TaskDetail(
                 text = "Certificate the job seeker need",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray
             )
             Text(
                 modifier = Modifier
@@ -1073,8 +1149,8 @@ fun TaskDetail(
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    val sdf = SimpleDateFormat("dd-MM-yyyy-hh:mm:ss")
-                    val currentDate = sdf.format(Date())
+                    //val sdf = SimpleDateFormat("dd-MM-yyyy-hh:mm:ss")
+                    //val currentDate = sdf.format(Date())
                     val db = Firebase.firestore
                     db.collection("Task").document().set(task)
                     navController.popBackStack()
