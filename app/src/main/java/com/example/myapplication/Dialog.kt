@@ -278,3 +278,39 @@ fun DeleteOfferDialog(offerID:String,openDialog: MutableState<Boolean>){
         )
     }
 }
+@Composable
+fun DeleteTaskDialog(taskID:String,openDialog: MutableState<Boolean>){
+    if(openDialog.value){
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = {
+                Text(text = "Reminder")
+            },
+            text = {
+                Text(text = "Do you want to cancel your Task?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val db = Firebase.firestore
+                        db.collection("Task").document(taskID).delete()
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("No")
+                }
+            }
+        )
+    }
+}

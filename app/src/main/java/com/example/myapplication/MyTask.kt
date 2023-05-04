@@ -1,6 +1,15 @@
 package com.example.myapplication
 
 import android.widget.ToggleButton
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +22,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,9 +46,9 @@ fun MyTask(navController: NavController) {
     val pageState = remember { mutableStateOf(1) }
 
     if (pageState.value == 1) {
-        ShowPostTask(pageState,navController,)
+        ShowPostTask(pageState, navController)
     } else if (pageState.value == 2) {
-        ShowGetTask(pageState,navController)
+        ShowGetTask(pageState, navController)
     }
 }
 
@@ -265,6 +276,7 @@ suspend fun loadMyGetDataFromFirestore(
 
 @Composable
 fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
+
     LazyColumn(
         modifier = Modifier
             .background(color = Color(0XFFF5F5F5))
@@ -273,6 +285,8 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
         //.padding(top = 70.dp)
     ) {
         items(taskItem) { taskItem ->
+            val openDialog = remember { mutableStateOf(false) }
+            DeleteTaskDialog(taskID = taskItem.taskId, openDialog = openDialog)
             Surface(
                 //elevation = 8.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -354,8 +368,25 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                             modifier = Modifier.size(80.dp)
                         )
                     }
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .background(Color.Transparent)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Delete",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    openDialog.value = true
+                                }
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+

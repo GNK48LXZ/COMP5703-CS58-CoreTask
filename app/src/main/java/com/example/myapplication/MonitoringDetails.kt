@@ -1,7 +1,11 @@
 package com.example.myapplication
 
+import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -14,6 +18,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
@@ -38,7 +43,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.maxkeppeker.sheets.core.models.base.rememberSheetState
+import com.maxkeppeler.sheets.calendar.CalendarDialog
+import com.maxkeppeler.sheets.calendar.models.CalendarConfig
+import com.maxkeppeler.sheets.calendar.models.CalendarSelection
+import com.maxkeppeler.sheets.clock.ClockDialog
+import com.maxkeppeler.sheets.clock.models.ClockSelection
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 
@@ -571,7 +583,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(21.dp),
-                            onClick = { /* 处理 Change 按钮的单击事件 */ },
+                            onClick = { navController.navigate("EditTask/${taskId}") },
                             colors = ButtonDefaults.buttonColors(buttonColor)
                         ) {
                             Text("Change", fontSize = 20.sp)
@@ -673,6 +685,328 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                 }
             }
 
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditTask(taskId: String, navController: NavController){
+    var money by remember { mutableStateOf("") }
+    var require by remember { mutableStateOf("") }
+    var taskDescription by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+
+    val storage = Firebase.storage
+
+    LaunchedEffect(Unit) {
+        // 监听指定Document ID的数据
+        FireStore.collection("User")
+            .document(user)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    // 处理错误
+                } else {
+                    if (snapshot != null && snapshot.exists()) {
+                        money = snapshot.getString("money")?:""
+                        require = snapshot.getString("require")?:""
+                        taskDescription = snapshot.getString("location")?:""
+                        address = snapshot.getString("name")?:""
+                    }
+                }
+            }
+    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Edit Task details") },
+                navigationIcon = {
+                    IconButton(onClick = { }) {
+                        androidx.compose.material3.Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = "返回"
+                        )
+                    }
+                },
+            )
+        }
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(720.dp)
+                .background(background)
+                .padding(it)
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            Text(
+                "taskDescription",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            TextField(
+                value = taskDescription,
+                onValueChange = { taskDescription = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
+            )
+            Text(
+                "address",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            TextField(
+                value = address,
+                onValueChange = { address = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
+            )
+            Text(
+                "Address",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            TextField(
+                value = require,
+                onValueChange = { require = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
+            )
+
+            Text(
+                "money",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            TextField(
+                value = money,
+                onValueChange = { money = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
+            )
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                onClick = {
+                    val db = Firebase.firestore
+                    val edidTask = db.collection("Task").document(taskId)
+                    edidTask.update("address",address)
+                    edidTask.update("require",require)
+                    edidTask.update("taskDescription",taskDescription)
+                    edidTask.update("money",money)
+                    navController.navigate("editDate/${taskId}")
+                },
+                colors = ButtonDefaults.buttonColors(buttonColor)
+            ) {
+                Text("Continue", fontSize = 20.sp)
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun editDate(
+    taskId: String, navController: NavController
+) {
+    var startDate by remember { mutableStateOf("") }
+    var startTime by remember { mutableStateOf("") }
+    var endTime by remember { mutableStateOf("") }
+    val startCalendarState = rememberSheetState()
+    val startClockState = rememberSheetState()
+    val endClockState = rememberSheetState()
+    val openDialog = remember { mutableStateOf(false) }
+    DateDialog(openDialog)
+    CalendarDialog(
+        state = startCalendarState,
+        selection = CalendarSelection.Date {
+            startDate = it.toString()
+        },
+        config = CalendarConfig(
+            monthSelection = true,
+            yearSelection = true,
+        )
+    )
+    ClockDialog(
+        state = startClockState,
+        selection = ClockSelection.HoursMinutes{
+                hours, minutes ->  startTime = "$hours:$minutes"
+        }
+    )
+    ClockDialog(
+        state = endClockState,
+        selection = ClockSelection.HoursMinutes{
+                hours, minutes ->  endTime = "$hours:$minutes"
+        }
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(){
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Choose a time",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
+
+        //Title
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "Date",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "When do you want to start?",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Gray
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .padding(horizontal = 16.dp)
+            .clickable { startCalendarState.show() },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Date:  ",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    text = startDate,
+                    fontSize = 20.sp,
+                    color = buttonColor,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .padding(horizontal = 16.dp)
+            .clickable { startClockState.show() },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "From:  ",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    text = startTime,
+                    fontSize = 20.sp,
+                    color = buttonColor,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+        Card(modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .padding(horizontal = 16.dp)
+            .clickable { endClockState.show() },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "To:  ",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    text = endTime,
+                    fontSize = 20.sp,
+                    color = buttonColor,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(background),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(buttonColor),
+                onClick = {
+                    val db = Firebase.firestore
+                    val edidDate = db.collection("Task").document(taskId)
+                    edidDate.update("startTime",startTime)
+                    edidDate.update("endTime",endTime)
+                    edidDate.update("date",startDate)
+                    navController.navigate("monitoringDetails/${taskId}")
+                }
+            ) {
+                Text("Save", fontSize = 20.sp)
+            }
         }
     }
 }
