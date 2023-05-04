@@ -60,7 +60,9 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable {navController.popBackStack()}
+                        .clickable {
+                            navController.popBackStack()
+                        }
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)
@@ -196,7 +198,14 @@ fun SubmitInf(taskId: String,navController: NavController) {
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = {navController.navigate("monitoringDetails/${taskId}")},
+                    onClick = {
+                        //navController.navigate("monitoringDetails/${taskId}")
+                        navController.navigate(route = "monitoringDetails/${taskId}") {
+                            popUpTo(Screen.GetItDone.route) {
+                                inclusive = true
+                            }
+                        }
+                              },
                     modifier = Modifier.padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)

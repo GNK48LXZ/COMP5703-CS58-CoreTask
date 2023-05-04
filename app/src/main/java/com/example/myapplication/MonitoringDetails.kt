@@ -82,7 +82,7 @@ data class OfferItem(
     //val time: String,
     //val imageUrl: Int
 )
-
+var assignId = ""
 
 public suspend fun loadOfferDataFromFirestore(
     db: FirebaseFirestore,
@@ -253,6 +253,7 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                                                         .update("status", "Assigned")
                                                     db.collection("Task").document(taskId)
                                                         .update("assignID", offerItem.userID)
+                                                    assignId = offerItem.userID?:""
                                                 }
                                             isButtonClicked = true
                                             isButtonClickable = false
@@ -675,8 +676,11 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                             .fillMaxWidth()
                     ) {
                         Button(
-                            onClick = { db.collection("Task").document(taskId)
-                                .update("status", "Completed")},
+                            onClick = {
+                                db.collection("Task").document(taskId)
+                                    .update("status", "Completed")
+                                navController.navigate("Feedback/${taskId}/${assignId}")
+                                      },
                             modifier = Modifier.fillMaxWidth()
                                 .padding(16.dp),
                             colors = ButtonDefaults.buttonColors(buttonColor)

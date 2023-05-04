@@ -81,7 +81,4 @@ dependencies {
     implementation 'io.github.a914-gowtham:compose-ratingbar:1.2.3'
     // Firebase Realtime Database
     implementation 'com.google.firebase:firebase-database-ktx:19.7.0'
-
-    // Firebase Authentication (如果需要进行用户认证)
-    implementation 'com.google.firebase:firebase-auth-ktx:19.7.0'
 }

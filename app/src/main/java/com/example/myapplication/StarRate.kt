@@ -23,7 +23,7 @@ fun StarRate(){
             .style(RatingBarStyle.HighLighted)
             .hideInactiveStars(false),
         onValueChange = {
-            rating = rating
+            rating = it
         },
         onRatingChanged = {
         }
@@ -45,4 +45,22 @@ fun StarRate(rate:Double){
         onRatingChanged = {
         }
     )
+}
+
+@Composable
+fun StarRateFeedback(): Double{
+    var rating: Float by remember { mutableStateOf(0.0f) }
+
+    RatingBar(
+        value = rating,
+        config = RatingBarConfig()
+            .style(RatingBarStyle.HighLighted)
+            .hideInactiveStars(false),
+        onValueChange = {
+            rating = it
+        },
+        onRatingChanged = {
+        }
+    )
+    return rating.toDouble()
 }
