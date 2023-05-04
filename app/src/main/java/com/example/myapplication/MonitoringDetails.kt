@@ -251,6 +251,8 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                                                     offerStatus.value = "Assigned"
                                                     db.collection("Task").document(taskId)
                                                         .update("status", "Assigned")
+                                                    db.collection("Task").document(taskId)
+                                                        .update("assignID", offerItem.userID)
                                                 }
                                             isButtonClicked = true
                                             isButtonClickable = false
@@ -387,8 +389,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     modifier = Modifier
                         .background(
                             color = when (status) {
-                                "open" -> Color.Blue // 椭圆形蓝色
-                                else -> Color.Transparent // 没有背景颜色
+                                "open" -> Color.Blue
+                                else -> Color.Transparent
                             },
                             shape = RoundedCornerShape(20.dp)
                         )
@@ -402,8 +404,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     modifier = Modifier
                         .background(
                             color = when (status) {
-                                "Assigned" -> Color.Blue // 椭圆形蓝色
-                                else -> Color.Transparent // 没有背景颜色
+                                "Assigned" -> Color.Blue
+                                else -> Color.Transparent
                             },
                             shape = RoundedCornerShape(20.dp)
                         )
@@ -417,8 +419,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     modifier = Modifier
                         .background(
                             color = when (status) {
-                                "Completed" -> Color.Blue // 椭圆形蓝色
-                                else -> Color.Transparent // 没有背景颜色
+                                "Completed" -> Color.Blue
+                                else -> Color.Transparent
                             },
                             shape = RoundedCornerShape(20.dp)
                         )
@@ -701,8 +703,8 @@ fun EditTask(taskId: String, navController: NavController){
 
     LaunchedEffect(Unit) {
         // 监听指定Document ID的数据
-        FireStore.collection("User")
-            .document(user)
+        FireStore.collection("Task")
+            .document(taskId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     // 处理错误
@@ -710,8 +712,8 @@ fun EditTask(taskId: String, navController: NavController){
                     if (snapshot != null && snapshot.exists()) {
                         money = snapshot.getString("money")?:""
                         require = snapshot.getString("require")?:""
-                        taskDescription = snapshot.getString("location")?:""
-                        address = snapshot.getString("name")?:""
+                        taskDescription = snapshot.getString("taskDescription")?:""
+                        address = snapshot.getString("address")?:""
                     }
                 }
             }
@@ -754,7 +756,7 @@ fun EditTask(taskId: String, navController: NavController){
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
             Text(
-                "address",
+                "Address",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -767,7 +769,7 @@ fun EditTask(taskId: String, navController: NavController){
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
             Text(
-                "Address",
+                "Require",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.headlineMedium
             )
