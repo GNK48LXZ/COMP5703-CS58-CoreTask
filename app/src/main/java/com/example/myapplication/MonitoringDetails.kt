@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,7 +31,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -59,7 +63,7 @@ data class OfferItem(
     val recommendation: String? = null,
     val userID: String? = null,
     val taskID: String? = null,
-    val status: String,
+    var status: String,
     val offerID: String,
     val starRate: Double = 0.0,
     val avatar: MutableState<Bitmap?>
@@ -67,16 +71,7 @@ data class OfferItem(
     //val imageUrl: Int
 )
 
-//@Composable
-/*fun OfferListScreen(collectionPath: String) {
-    var offerItems by remember { mutableStateOf(listOf<OfferItem>()) }
-    val db = FirebaseFirestore.getInstance()
 
-    LaunchedEffect(collectionPath) {
-        offerItems = loadOfferDataFromFirestore(db,collectionPath)
-    }
-    OfferListLazyColumn(offerItems)
-} */
 public suspend fun loadOfferDataFromFirestore(
     db: FirebaseFirestore,
     collectionPath: String,
@@ -90,7 +85,7 @@ public suspend fun loadOfferDataFromFirestore(
         val recommendation = document.getString("recommendation") ?: ""
         val taskID = document.getString("taskID") ?: ""
         val userID = document.getString("userID") ?: ""
-        val status = document.getString("status") ?: ""
+        var status = document.getString("status") ?: ""
         val offerID = document.id
         var starRate = 0.0
         val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
@@ -105,7 +100,6 @@ public suspend fun loadOfferDataFromFirestore(
         }.addOnFailureListener {
 
         }
-
         offerList.add(OfferItem(
             recommendation = recommendation,
             userID = userID,
@@ -119,7 +113,11 @@ public suspend fun loadOfferDataFromFirestore(
     return offerList
 }
 @Composable
-fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
+fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: String) {
+    data class ButtonState(
+        val isClickable: Boolean,
+        val text: String
+    )
     LazyColumn(
         modifier = Modifier
             .background(background)
@@ -132,6 +130,10 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
             // 对于每个 Offer 进行 UI 的渲染
             // ...
             val openDialog = remember { mutableStateOf(false) }
+            val offerStatus = MutableLiveData<String>()
+            var isButtonClicked by remember { mutableStateOf(false) }
+            var isButtonClickable by remember { mutableStateOf(true) }
+            var buttonState by remember { mutableStateOf(mutableMapOf<String, ButtonState>()) }
             DeleteOfferDialog(offerID = offerItem.offerID, openDialog = openDialog)
             Card(
                 modifier = Modifier
@@ -225,18 +227,51 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
                                 .padding(5.dp),
                             contentAlignment = Alignment.BottomEnd
                         ) {
+                            val db = FirebaseFirestore.getInstance()
                             if (userId == user) {
                                 Button(
-                                    onClick = { },
+                                    onClick = {
+                                        if (isButtonClickable) {
+                                            db.collection("Offer").document(offerItem.offerID)
+                                                .update("status", "Assigned")
+                                                .addOnSuccessListener {
+                                                    // 更新ViewModel中的状态值
+                                                    offerStatus.value = "Assigned"
+                                                    db.collection("Task").document(taskId)
+                                                        .update("status", "Assigned")
+                                                }
+                                            isButtonClicked = true
+                                            isButtonClickable = false
+                                            buttonState = buttonState.mapValues {
+                                                if (it.key == offerItem.offerID) {
+                                                    ButtonState(false, "Accepted")
+                                                } else {
+                                                    ButtonState(false, it.value.text)
+                                                }
+                                            } as MutableMap<String, ButtonState>
+                                        }
+                                    },
                                     modifier = Modifier
                                         .height(40.dp)
                                         .width(100.dp),
-                                    colors = ButtonDefaults.buttonColors(buttonColor)
+                                    colors = ButtonDefaults.buttonColors(
+                                        if (isButtonClicked) Color.Gray else buttonColor
+                                    ),
+                                    enabled = isButtonClickable // 将按钮禁用除非offer已被分配
                                 ) {
-                                    Text(
-                                        text = "Accept", lineHeight = 20.sp,
-                                        fontSize = 15.sp, fontWeight = FontWeight.W500
-                                    )
+                                    if (isButtonClicked) {
+                                        Text(
+                                            text = "Accepted",
+                                            lineHeight = 20.sp,
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.W500
+                                        )
+                                    } else {Text(
+                                        text = "Accept",
+                                        lineHeight = 20.sp,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.W500
+                                    ) }
                                 }
                             }
 
@@ -247,6 +282,10 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?) {
         }
     }
 }
+
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonitoringDetails(taskId: String,navController: NavController) {
@@ -258,6 +297,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
     var require by remember { mutableStateOf("") }
     var startTime by remember { mutableStateOf("") }
     var endTime by remember { mutableStateOf("") }
+    var status by remember { mutableStateOf("") }
     var UserID by remember { mutableStateOf("") }
     var avatar : MutableState<Bitmap?> = remember {
         mutableStateOf<Bitmap?>(null)
@@ -282,6 +322,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                         taskDescription = snapshot.getString("taskDescription") ?: ""
                         require = snapshot.getString("require") ?: ""
                         UserID = snapshot.getString("userID") ?: ""
+                        status= snapshot.getString("status") ?: ""
                         val avatarImagesRef = storageRef.child("avatar/"+UserID+".jpg")
                         avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
                             avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
@@ -319,31 +360,60 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                 )
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
-        )
-        {
-            Text(
-                text = "Open",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.W500
-            )
-            Text(
-                text = "Assigned",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.W500
-            )
-            Text(
-                text = "Completed",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.W500
-            )
+        ) {
+            Box(modifier = Modifier.padding(5.dp)) {
+                Text(
+                    text = "Open",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.W500,
+                    modifier = Modifier
+                        .background(
+                            color = when (status) {
+                                "open" -> Color.Blue // 椭圆形蓝色
+                                else -> Color.Transparent // 没有背景颜色
+                            },
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                )
+            }
+            Box(modifier = Modifier.padding(5.dp)) {
+                Text(
+                    text = "Assigned",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.W500,
+                    modifier = Modifier
+                        .background(
+                            color = when (status) {
+                                "Assigned" -> Color.Blue // 椭圆形蓝色
+                                else -> Color.Transparent // 没有背景颜色
+                            },
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                )
+            }
+            Box(modifier = Modifier.padding(5.dp)) {
+                Text(
+                    text = "Completed",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.W500,
+                    modifier = Modifier
+                        .background(
+                            color = when (status) {
+                                "Completed" -> Color.Blue // 椭圆形蓝色
+                                else -> Color.Transparent // 没有背景颜色
+                            },
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -576,7 +646,32 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             LaunchedEffect("Offer") {
                 offerItems = loadOfferDataFromFirestore(db, "Offer",taskId)
             }
-            OfferListLazyColumn(offerItems,userId=UserID)
+            OfferListLazyColumn(offerItems,userId= UserID, taskId =taskId)
+            if(status=="Assigned" && UserID == user) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(16.dp)
+                        .background(background),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = { db.collection("Task").document(taskId)
+                                .update("status", "Completed")},
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(16.dp),
+                            colors = ButtonDefaults.buttonColors(buttonColor)
+                        ) {
+                            Text("Completed")
+                        }
+                    }
+                }
+            }
 
         }
     }
