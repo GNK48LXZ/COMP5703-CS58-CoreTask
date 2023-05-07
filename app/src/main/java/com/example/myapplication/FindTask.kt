@@ -3,7 +3,6 @@ package com.example.myapplication
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,6 +27,9 @@ import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
+
+
+
 @ExperimentalMaterial3Api
 @Composable
 fun FindTask(navController: NavController) {
@@ -41,101 +43,466 @@ fun FindTask(navController: NavController) {
     var filterText by remember { mutableStateOf("") }
     val pageState = remember { mutableStateOf(1) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-            .height(720.dp)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Browse Tasks",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row {
-            androidx.compose.material.TextField(
-                value = filterText,
-                onValueChange = { filterText = it },
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth()
-                    .background(Color.White),
-                textStyle = MaterialTheme.typography.body2,
-                placeholder = { androidx.compose.material.Text("Filter by task name") },
-                trailingIcon = {
-                    androidx.compose.material.Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search icon",
-                        tint = Color.Gray,
-                        modifier = Modifier.clickable(onClick = { pageState.value = 6 })
-                    )
-                }
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            FilterDropdown(
-                pageState,
-                options = options1,
-                selectedOption = selectedOption1,
-                onOptionSelected = { option ->
-                    selectedOption1 = option
-                },
-                modifier = Modifier.weight(1f)
-            )
-            FilterDropdown(
-                pageState,
-                options = options2,
-                selectedOption = selectedOption2,
-                onOptionSelected = { option ->
-                    selectedOption2 = option
-                },
-                modifier = Modifier.weight(1f)
-            )
-            FilterDropdown(
-                pageState,
-                options = options3,
-                selectedOption = selectedOption3,
-                onOptionSelected = { option ->
-                    selectedOption3 = option
-                },
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
     when (pageState.value) {
         1 -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(background)
+                    .height(720.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "Browse Tasks",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = Poppins
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    androidx.compose.material.TextField(
+                        value = filterText,
+                        onValueChange = { filterText = it },
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        textStyle = MaterialTheme.typography.body2,
+                        placeholder = { androidx.compose.material.Text("Filter by task name") },
+                        trailingIcon = {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search icon",
+                                tint = Color.Gray,
+                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
+                            )
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilterDropdown(
+                        pageState,
+                        options = options1,
+                        selectedOption = selectedOption1,
+                        onOptionSelected = { option ->
+                            selectedOption1 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options2,
+                        selectedOption = selectedOption2,
+                        onOptionSelected = { option ->
+                            selectedOption2 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options3,
+                        selectedOption = selectedOption3,
+                        onOptionSelected = { option ->
+                            selectedOption3 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
             TaskListScreen("Task", navController)
         }
 
         2 -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(background)
+                    .height(720.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "Browse Tasks",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = Poppins
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    androidx.compose.material.TextField(
+                        value = filterText,
+                        onValueChange = { filterText = it },
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        textStyle = MaterialTheme.typography.body2,
+                        placeholder = { androidx.compose.material.Text("Filter by task name") },
+                        trailingIcon = {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search icon",
+                                tint = Color.Gray,
+                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
+                            )
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilterDropdown(
+                        pageState,
+                        options = options1,
+                        selectedOption = selectedOption1,
+                        onOptionSelected = { option ->
+                            selectedOption1 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options2,
+                        selectedOption = selectedOption2,
+                        onOptionSelected = { option ->
+                            selectedOption2 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options3,
+                        selectedOption = selectedOption3,
+                        onOptionSelected = { option ->
+                            selectedOption3 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
             TaskListOthersScreen("Task", navController, 1)
         }
 
         3 -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(background)
+                    .height(720.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "Browse Tasks",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = Poppins
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    androidx.compose.material.TextField(
+                        value = filterText,
+                        onValueChange = { filterText = it },
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        textStyle = MaterialTheme.typography.body2,
+                        placeholder = { androidx.compose.material.Text("Filter by task name") },
+                        trailingIcon = {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search icon",
+                                tint = Color.Gray,
+                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
+                            )
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilterDropdown(
+                        pageState,
+                        options = options1,
+                        selectedOption = selectedOption1,
+                        onOptionSelected = { option ->
+                            selectedOption1 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options2,
+                        selectedOption = selectedOption2,
+                        onOptionSelected = { option ->
+                            selectedOption2 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options3,
+                        selectedOption = selectedOption3,
+                        onOptionSelected = { option ->
+                            selectedOption3 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
             TaskListOthersScreen("Task", navController, 2)
         }
 
         4 -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(background)
+                    .height(720.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "Browse Tasks",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = Poppins
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    androidx.compose.material.TextField(
+                        value = filterText,
+                        onValueChange = { filterText = it },
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        textStyle = MaterialTheme.typography.body2,
+                        placeholder = { androidx.compose.material.Text("Filter by task name") },
+                        trailingIcon = {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search icon",
+                                tint = Color.Gray,
+                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
+                            )
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilterDropdown(
+                        pageState,
+                        options = options1,
+                        selectedOption = selectedOption1,
+                        onOptionSelected = { option ->
+                            selectedOption1 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options2,
+                        selectedOption = selectedOption2,
+                        onOptionSelected = { option ->
+                            selectedOption2 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options3,
+                        selectedOption = selectedOption3,
+                        onOptionSelected = { option ->
+                            selectedOption3 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
             TaskListOthersScreen("Task", navController, 3)
         }
 
         5 -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(background)
+                    .height(720.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "Browse Tasks",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = Poppins
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    androidx.compose.material.TextField(
+                        value = filterText,
+                        onValueChange = { filterText = it },
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        textStyle = MaterialTheme.typography.body2,
+                        placeholder = { androidx.compose.material.Text("Filter by task name") },
+                        trailingIcon = {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search icon",
+                                tint = Color.Gray,
+                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
+                            )
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilterDropdown(
+                        pageState,
+                        options = options1,
+                        selectedOption = selectedOption1,
+                        onOptionSelected = { option ->
+                            selectedOption1 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options2,
+                        selectedOption = selectedOption2,
+                        onOptionSelected = { option ->
+                            selectedOption2 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options3,
+                        selectedOption = selectedOption3,
+                        onOptionSelected = { option ->
+                            selectedOption3 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
             TaskListOthersScreen("Task", navController, 4)
         }
 
         6 -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(background)
+                    .height(720.dp)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "Browse Tasks",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = Poppins
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    androidx.compose.material.TextField(
+                        value = filterText,
+                        onValueChange = { filterText = it },
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        textStyle = MaterialTheme.typography.body2,
+                        placeholder = { androidx.compose.material.Text("Filter by task name") },
+                        trailingIcon = {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search icon",
+                                tint = Color.Gray,
+                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
+                            )
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilterDropdown(
+                        pageState,
+                        options = options1,
+                        selectedOption = selectedOption1,
+                        onOptionSelected = { option ->
+                            selectedOption1 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options2,
+                        selectedOption = selectedOption2,
+                        onOptionSelected = { option ->
+                            selectedOption2 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterDropdown(
+                        pageState,
+                        options = options3,
+                        selectedOption = selectedOption3,
+                        onOptionSelected = { option ->
+                            selectedOption3 = option
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
             TaskListFilterScreen("Task", navController, filterText)
         }
     }
@@ -219,6 +586,7 @@ fun FilterDropdown(
             }
         )
     }
+
 }
 
 @Composable
