@@ -3,17 +3,23 @@ package com.example.myapplication
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,35 +28,19 @@ import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
+@ExperimentalMaterial3Api
 @Composable
 fun FindTask(navController: NavController) {
+    val options1 = listOf("All Task", "Cleaning", "Removals", "Repairs", "Painting")
+    var selectedOption1 by remember { mutableStateOf(options1[0]) }
+    val options2 = listOf("Bill", "0-50", "51-100", "100-200", "200~")
+    var selectedOption2 by remember { mutableStateOf(options2[0]) }
+    val options3 = listOf("Status", "Open", "Assigned")
+    var selectedOption3 by remember { mutableStateOf(options3[0]) }
+
+    var filterText by remember { mutableStateOf("") }
     val pageState = remember { mutableStateOf(1) }
 
-    when (pageState.value) {
-        1 -> {
-            ShowAllTask(pageState = pageState, navController = navController)
-        }
-
-        2 -> {
-            ShowCleaningTask(pageState = pageState, navController = navController)
-        }
-
-        3 -> {
-            ShowRemovalsTask(pageState = pageState, navController = navController)
-        }
-
-        4 -> {
-            ShowRepairsTask(pageState = pageState, navController = navController)
-        }
-
-        5 -> {
-            ShowPaintingTask(pageState = pageState, navController = navController)
-        }
-    }
-}
-
-@Composable
-fun ShowAllTask(pageState: MutableState<Int>, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,551 +57,89 @@ fun ShowAllTask(pageState: MutableState<Int>, navController: NavController) {
                 fontFamily = Poppins
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .height(38.dp)
-                .background(Color.LightGray, RoundedCornerShape(25.dp))
-        ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .clickable { pageState.value = 1 }
-                        .background(Color.Gray, RoundedCornerShape(25.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "All",
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 2 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Cleaning",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 3 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Removals",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 4 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Repairs",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 5 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Painting",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-            }
-        }
-        TaskListScreen("Task", navController)
-    }
-}
-
-@Composable
-fun ShowCleaningTask(pageState: MutableState<Int>, navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-            .height(720.dp)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Browse Tasks",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
+            androidx.compose.material.TextField(
+                value = filterText,
+                onValueChange = { filterText = it },
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .fillMaxWidth()
+                    .background(Color.White),
+                textStyle = MaterialTheme.typography.body2,
+                placeholder = { androidx.compose.material.Text("Filter by task name") },
+                trailingIcon = {
+                    androidx.compose.material.Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search icon",
+                        tint = Color.Gray,
+                        modifier = Modifier.clickable(onClick = { pageState.value = 6 })
+                    )
+                }
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .height(38.dp)
-                .background(Color.LightGray, RoundedCornerShape(25.dp))
+                .height(48.dp)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 1 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "All",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.Gray, RoundedCornerShape(25.dp))
-                        .clickable { pageState.value = 2 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Cleaning",
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 3 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Removals",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 4 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Repairs",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 5 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Painting",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-            }
-        }
-        TaskListOthersScreen("Task", navController, 1)
-    }
-}
-
-@Composable
-fun ShowRemovalsTask(pageState: MutableState<Int>, navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-            .height(720.dp)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Browse Tasks",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
+            FilterDropdown(
+                pageState,
+                options = options1,
+                selectedOption = selectedOption1,
+                onOptionSelected = { option ->
+                    selectedOption1 = option
+                },
+                modifier = Modifier.weight(1f)
+            )
+            FilterDropdown(
+                pageState,
+                options = options2,
+                selectedOption = selectedOption2,
+                onOptionSelected = { option ->
+                    selectedOption2 = option
+                },
+                modifier = Modifier.weight(1f)
+            )
+            FilterDropdown(
+                pageState,
+                options = options3,
+                selectedOption = selectedOption3,
+                onOptionSelected = { option ->
+                    selectedOption3 = option
+                },
+                modifier = Modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .height(38.dp)
-                .background(Color.LightGray, RoundedCornerShape(25.dp))
-        ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 1 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "All",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 2 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Cleaning",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.Gray, RoundedCornerShape(25.dp))
-                        .clickable { pageState.value = 3 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Removals",
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 4 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Repairs",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 5 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Painting",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
+        when (pageState.value) {
+            1 -> {
+                TaskListScreen("Task", navController)
             }
-        }
-        TaskListOthersScreen("Task", navController, 2)
-    }
-}
 
-@Composable
-fun ShowRepairsTask(pageState: MutableState<Int>, navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-            .height(720.dp)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Browse Tasks",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .height(38.dp)
-                .background(Color.LightGray, RoundedCornerShape(25.dp))
-        ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 1 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "All",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 2 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Cleaning",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 3 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Removals",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.Gray, RoundedCornerShape(25.dp))
-                        .clickable { pageState.value = 4 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Repairs",
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 5 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Painting",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
+            2 -> {
+                TaskListOthersScreen("Task", navController, 1)
             }
-        }
-        TaskListOthersScreen("Task", navController, 3)
-    }
-}
 
-@Composable
-fun ShowPaintingTask(pageState: MutableState<Int>, navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(background)
-            .height(720.dp)
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Browse Tasks",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .height(38.dp)
-                .background(Color.LightGray, RoundedCornerShape(25.dp))
-        ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 1 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "All",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 2 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Cleaning",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 3 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Removals",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.LightGray)
-                        .clickable { pageState.value = 4 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Repairs",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colors.onSurface
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp)
-                        .padding(vertical = 4.dp)
-                        .background(Color.Gray, RoundedCornerShape(25.dp))
-                        .clickable { pageState.value = 5 },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Painting",
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
+            3 -> {
+                TaskListOthersScreen("Task", navController, 2)
+            }
+
+            4 -> {
+                TaskListOthersScreen("Task", navController, 3)
+            }
+
+            5 -> {
+                TaskListOthersScreen("Task", navController, 4)
+            }
+
+            6 -> {
+                TaskListFilterScreen("Task", navController, filterText)
             }
         }
-        TaskListOthersScreen("Task", navController, 4)
     }
+
 }
 
 data class TaskItem(
@@ -626,12 +154,93 @@ data class TaskItem(
 )
 
 @Composable
+fun FilterDropdown(
+    pageState: MutableState<Int>,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier) {
+        val selectedItemModifier = Modifier.selectable(
+            selected = expanded,
+            onClick = { expanded = true },
+            role = Role.Button
+        )
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = selectedItemModifier) {
+            androidx.compose.material.Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier.padding(2.dp)
+            )
+            androidx.compose.material.Text(
+                text = selectedOption,
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+        androidx.compose.material.DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                options.forEach { option ->
+                    androidx.compose.material.DropdownMenuItem(
+                        modifier = Modifier.selectable(
+                            selected = (option == selectedOption),
+                            onClick = {
+                                onOptionSelected(option)
+                                expanded = false
+                                if (option == "All Task") {
+                                    pageState.value = 1
+                                }
+                                if (option == "Cleaning") {
+                                    pageState.value = 2
+                                }
+                                if (option == "Removals") {
+                                    pageState.value = 3
+                                }
+                                if (option == "Repairs") {
+                                    pageState.value = 4
+                                }
+                                if (option == "Painting") {
+                                    pageState.value = 5
+                                }
+                            }
+                        ),
+                        onClick = {
+                            onOptionSelected(option)
+                            expanded = false
+                        }
+                    ) {
+                        androidx.compose.material.Text(option)
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Composable
 fun TaskListScreen(collectionPath: String, navController: NavController) {
     var taskItems by remember { mutableStateOf(listOf<TaskItem>()) }
     val db = FirebaseFirestore.getInstance()
 
     LaunchedEffect(collectionPath) {
         taskItems = loadDataFromFirestore(db, collectionPath)
+    }
+
+    TaskListLazyColumn(taskItems, navController)
+}
+
+@Composable
+fun TaskListFilterScreen(collectionPath: String, navController: NavController, filterText: String) {
+    var taskItems by remember { mutableStateOf(listOf<TaskItem>()) }
+    val db = FirebaseFirestore.getInstance()
+
+    LaunchedEffect(collectionPath) {
+        taskItems = loadSearchDataFromFirestore(db, collectionPath, filterText)
     }
 
     TaskListLazyColumn(taskItems, navController)
@@ -784,6 +393,41 @@ public suspend fun loadClassificationDataFromFirestore(
     return taskList1 + taskList2 + taskList3 + taskList4
 }
 
+public suspend fun loadSearchDataFromFirestore(
+    db: FirebaseFirestore,
+    collectionPath: String,
+    filterText: String
+): List<TaskItem> {
+    val taskList = mutableListOf<TaskItem>()
+    val querySnapshot = db.collection(collectionPath).get().await()
+    querySnapshot.documents.forEach { document ->
+        val taskId = document.id
+        val taskTopic = document.getString("taskTopic") ?: ""
+        val address = document.getString("address") ?: ""
+        val date = document.getString("date") ?: ""
+        val startTime = document.getString("startTime") ?: ""
+        val endTime = document.getString("endTime") ?: ""
+        val status = document.getString("status") ?: ""
+        val money = document.getString("money") ?: ""
+        val imageUrl = R.drawable.ic_launcher_foreground
+
+        if (taskTopic.contains(filterText, ignoreCase = true)) {
+            taskList.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = imageUrl
+                )
+            )
+        }
+    }
+    return taskList
+}
 
 @Composable
 fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
@@ -884,31 +528,3 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
     }
 }
 
-@Composable
-fun Filter() {
-    val selectedFilters = remember { mutableStateListOf<String>() }
-    val filters = listOf("Filter 1", "Filter 2", "Filter 3", "Filter 4")
-
-    Column {
-        Text(text = "Filters")
-
-        filters.forEach { filter ->
-            Row(
-                modifier = Modifier.padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = selectedFilters.contains(filter),
-                    onCheckedChange = { checked ->
-                        if (checked) {
-                            selectedFilters.add(filter)
-                        } else {
-                            selectedFilters.remove(filter)
-                        }
-                    }
-                )
-                Text(text = filter)
-            }
-        }
-    }
-}
