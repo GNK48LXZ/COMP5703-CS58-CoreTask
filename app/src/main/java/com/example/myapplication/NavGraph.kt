@@ -21,7 +21,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 fun SetupNavGraph(navController:NavHostController){
     NavHost(
         navController = navController,
-        startDestination = Screen.PostTask.route
+        startDestination = "Login"
     ){
         composable(
             route = "Login"
@@ -98,6 +98,18 @@ fun SetupNavGraph(navController:NavHostController){
             val taskId = backStackEntry.arguments?.getString("taskId")?:""
             val assignId = backStackEntry.arguments?.getString("assignId")?:""
             FeedBack(taskId,assignId,navController)
+        }
+        composable(
+            "OfferDetails/{offerItem.recommendation}/{offerItem.userID}",
+            arguments = listOf(navArgument("offerItem.recommendation") { type = NavType.StringType },
+                //navArgument("offerItem.starRate") { type = NavType },
+                navArgument("offerItem.userID") { type = NavType.StringType },
+                //navArgument("offerItem.avatar.value") { type = NavType.StringType }
+                )
+        ) { backStackEntry ->
+            val recommendation = backStackEntry.arguments?.getString("offerItem.recommendation")?:""
+            val userID = backStackEntry.arguments?.getString("offerItem.userID")?:""
+            OfferDetails(recommendation,userID,navController)
         }
         composable(
             "test"

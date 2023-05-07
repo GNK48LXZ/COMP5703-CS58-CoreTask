@@ -64,7 +64,6 @@ fun BottomToolbar(pageState: MutableState<Int>) {
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()
     ) {
-
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
         ) {

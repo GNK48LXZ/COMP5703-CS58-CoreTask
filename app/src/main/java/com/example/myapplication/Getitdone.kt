@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.graphics.Color
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.MutableState
@@ -12,13 +11,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.DividerDefaults.color
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +39,7 @@ fun GetItDone(navController: NavController) {
         )
         Text(
             text = "Let's get your things done!",
-            fontSize = 38.sp,
+            fontSize = 30.sp,
             fontWeight = FontWeight.W500,
             lineHeight = 40.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -55,22 +53,28 @@ fun GetItDone(navController: NavController) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(30.dp))
-        Button(
-            onClick = {  },
-            colors = ButtonDefaults.buttonColors(buttonColor),
-            modifier = Modifier.padding(start = 16.dp).size(width = 250.dp, height = 64.dp)
+        Text(text = "Let's choose your task category to create your task.",
+            fontSize = 22.sp,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = buttonColor,
+            fontWeight = FontWeight.W500,
+        )
+        /*Card(
+            colors = CardDefaults.cardColors(cardColor),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
         ) {
-            Row {
-                Text(text = "Post a task",
+            Column (
+                modifier = Modifier.padding(16.dp)
+            ){
+                Text(text = "Let's choose your task category to create your task.",
                     fontSize = 28.sp,
-                    modifier = Modifier.padding(end = 10.dp))
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Arrow Forward",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.padding(end = 10.dp)
                 )
+
             }
-        }
+        }*/
         Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = "Top trending categories",
@@ -181,9 +185,33 @@ fun GetItDone(navController: NavController) {
                 }
             }
         }
-        Text("35435345")
-        Text("5345345")
-        Text("5345345")
+        Spacer(modifier = Modifier.height(22.dp))
+        Row{
+            Card(
+                modifier = Modifier.size(width = 200.dp, height = 150.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .clickable {/* 点击事件 */},
+                colors = CardDefaults.cardColors(cardColor)
+            ) {
+                Column(Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center) {
+                    Icon(
+                        painter = painterResource(R.drawable.build),
+                        contentDescription = "the repairs",
+                        tint = whiteColor
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.W500,
+                        color= textColor,
+                        text = "Others",
+                        modifier = Modifier.padding(bottom = 10.dp)
+                    )
+                }
+            }
+        }
     }
 }
 

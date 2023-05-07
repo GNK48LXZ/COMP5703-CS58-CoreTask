@@ -126,7 +126,9 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
                 Button(
                     onClick = { val db = Firebase.firestore
                         db.collection("Offer").document().set(offer)
-                        navController.navigate("SubmitInf/${taskId}") },
+                        //navController.navigate("SubmitInf/${taskId}")
+                        navController.popBackStack()
+                              },
                     modifier = Modifier.padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)

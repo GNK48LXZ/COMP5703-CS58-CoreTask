@@ -41,7 +41,6 @@ data class Message(val sender: String, val content: String, val isMe: Boolean)
 
 
 
-
 @Composable
 fun MessageListAndInput() {
     var inputText by remember { mutableStateOf("") }

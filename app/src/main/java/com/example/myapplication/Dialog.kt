@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -296,6 +297,44 @@ fun DeleteTaskDialog(taskID:String,openDialog: MutableState<Boolean>){
                     onClick = {
                         val db = Firebase.firestore
                         db.collection("Task").document(taskID).delete()
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("No")
+                }
+            }
+        )
+    }
+}
+@Composable
+fun CompletedDialog(taskId:String,assignId:String,openDialog: MutableState<Boolean>,navController: NavController){
+    if(openDialog.value){
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = {
+                Text(text = "Reminder")
+            },
+            text = {
+                Text(text = "Are you sure you want to change the status of the task to completed? (This action cannot be undone)")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val db = Firebase.firestore
+                        db.collection("Task").document(taskId)
+                            .update("status", "Completed")
+                        navController.navigate("Feedback/${taskId}/${assignId}")
                         openDialog.value = false
                     }
                 ) {

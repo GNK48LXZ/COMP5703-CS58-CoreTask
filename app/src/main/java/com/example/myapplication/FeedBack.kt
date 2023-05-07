@@ -75,35 +75,7 @@ fun FeedBack(
                     }
                 }
         }
-        /*val docRef = db.collection("Task").document(taskId)
-        var assignID by remember { mutableStateOf("") }
-        var taskTopic by remember { mutableStateOf("") }
-        docRef.get().addOnSuccessListener { document ->
-            if (document != null) {
-                assignID = document.getString("assignID")?:""
-                taskTopic = document.getString("taskTopic")?:""
-                println(assignID+"++++++++++++++++++++++++")
-            } else {
-                println("No such document")
-            }
-        }.addOnFailureListener { exception ->
-            println("get failed with")
-        }
-        println(assignID+"------------------------")
-        val docRef2 = db.collection("User").document(assignID)
-        var starRate by remember { mutableStateOf(0.0) }
-        var feedbackCount by remember { mutableStateOf(0.0) }
-        var newRate by remember { mutableStateOf(0.0) }
-        docRef2.get().addOnSuccessListener { document ->
-            if (document != null) {
-                starRate = document.getDouble("starRate")?:0.0
-                feedbackCount = document.getDouble("feedbackCount")?:0.0
-            } else {
-                println("No such document")
-            }
-        }.addOnFailureListener { exception ->
-            println("get failed with")
-        }*/
+
         Spacer(modifier = Modifier.height(20.dp))
         Row(){
             Icon(
