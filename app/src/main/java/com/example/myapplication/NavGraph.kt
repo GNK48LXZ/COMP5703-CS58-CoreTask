@@ -99,6 +99,18 @@ fun SetupNavGraph(navController:NavHostController){
             FeedBack(taskId,assignId,navController)
         }
         composable(
+            "OfferDetails/{offerItem.recommendation}/{offerItem.userID}",
+            arguments = listOf(navArgument("offerItem.recommendation") { type = NavType.StringType },
+                //navArgument("offerItem.starRate") { type = NavType },
+                navArgument("offerItem.userID") { type = NavType.StringType },
+                //navArgument("offerItem.avatar.value") { type = NavType.StringType }
+                )
+        ) { backStackEntry ->
+            val recommendation = backStackEntry.arguments?.getString("offerItem.recommendation")?:""
+            val userID = backStackEntry.arguments?.getString("offerItem.userID")?:""
+            OfferDetails(recommendation,userID,navController)
+        }
+        composable(
             "test"
         )
         {
