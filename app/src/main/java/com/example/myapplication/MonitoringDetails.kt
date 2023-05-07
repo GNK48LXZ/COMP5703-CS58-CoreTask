@@ -698,7 +698,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        "TASK PRICE",
+                        "TASK BUDGET",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontWeight = FontWeight.Bold
                     )

@@ -1160,7 +1160,7 @@ fun TaskDetail(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text("TASK PRICE",
+                    Text("TASK BUDGET",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontWeight = FontWeight.Bold
                     )
