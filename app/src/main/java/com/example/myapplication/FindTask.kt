@@ -117,8 +117,8 @@ fun FindTask(navController: NavController) {
                         modifier = Modifier.weight(1f)
                     )
                 }
+                TaskListScreen("Task", navController)
             }
-            TaskListScreen("Task", navController)
         }
 
         2 -> {
@@ -194,8 +194,8 @@ fun FindTask(navController: NavController) {
                         modifier = Modifier.weight(1f)
                     )
                 }
+                TaskListOthersScreen("Task", navController, 1)
             }
-            TaskListOthersScreen("Task", navController, 1)
         }
 
         3 -> {
@@ -271,8 +271,8 @@ fun FindTask(navController: NavController) {
                         modifier = Modifier.weight(1f)
                     )
                 }
+                TaskListOthersScreen("Task", navController, 2)
             }
-            TaskListOthersScreen("Task", navController, 2)
         }
 
         4 -> {
@@ -348,8 +348,8 @@ fun FindTask(navController: NavController) {
                         modifier = Modifier.weight(1f)
                     )
                 }
+                TaskListOthersScreen("Task", navController, 3)
             }
-            TaskListOthersScreen("Task", navController, 3)
         }
 
         5 -> {
@@ -425,8 +425,8 @@ fun FindTask(navController: NavController) {
                         modifier = Modifier.weight(1f)
                     )
                 }
+                TaskListOthersScreen("Task", navController, 4)
             }
-            TaskListOthersScreen("Task", navController, 4)
         }
 
         6 -> {
@@ -502,8 +502,8 @@ fun FindTask(navController: NavController) {
                         modifier = Modifier.weight(1f)
                     )
                 }
+                TaskListFilterScreen("Task", navController, filterText)
             }
-            TaskListFilterScreen("Task", navController, filterText)
         }
     }
 }
