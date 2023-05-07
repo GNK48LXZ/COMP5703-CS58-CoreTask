@@ -13,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.google.android.gms.location.FusedLocationProviderClient
 
 @OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -20,7 +21,7 @@ import androidx.navigation.navArgument
 fun SetupNavGraph(navController:NavHostController){
     NavHost(
         navController = navController,
-        startDestination = "Login"
+        startDestination = Screen.PostTask.route
     ){
         composable(
             route = "Login"
@@ -102,7 +103,7 @@ fun SetupNavGraph(navController:NavHostController){
             "test"
         )
         {
-
+            //Map(fusedLocationProviderClient)
         }
     }
 }

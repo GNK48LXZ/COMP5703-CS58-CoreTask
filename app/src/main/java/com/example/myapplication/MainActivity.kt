@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
+
 class MainActivity : ComponentActivity() {
 
     lateinit var navController: NavHostController

@@ -681,7 +681,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                                     .update("status", "Completed")
                                 navController.navigate("Feedback/${taskId}/${assignId}")
                                       },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(16.dp),
                             colors = ButtonDefaults.buttonColors(buttonColor)
                         ) {
@@ -727,7 +728,7 @@ fun EditTask(taskId: String, navController: NavController){
             TopAppBar(
                 title = { Text(text = "Edit Task details") },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navController.popBackStack()}) {
                         androidx.compose.material3.Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "返回"
@@ -740,7 +741,7 @@ fun EditTask(taskId: String, navController: NavController){
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(720.dp)
+                .fillMaxHeight()
                 .background(background)
                 .padding(it)
                 .verticalScroll(rememberScrollState())
@@ -799,6 +800,12 @@ fun EditTask(taskId: String, navController: NavController){
                     .padding(16.dp),
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
+        }
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
             FilledTonalButton(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -810,7 +817,8 @@ fun EditTask(taskId: String, navController: NavController){
                     edidTask.update("require",require)
                     edidTask.update("taskDescription",taskDescription)
                     edidTask.update("money",money)
-                    navController.navigate("editDate/${taskId}")
+                    //navController.navigate("editDate/${taskId}")
+                    navController.popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {

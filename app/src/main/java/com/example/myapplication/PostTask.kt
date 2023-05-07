@@ -19,15 +19,18 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
@@ -37,9 +40,13 @@ import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.maps.android.compose.*
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import java.text.SimpleDateFormat
@@ -515,7 +522,6 @@ fun DescribeTask(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
@@ -547,7 +553,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
 
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         //Title
         Text(
@@ -556,8 +562,6 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                 .padding(16.dp),
             text = "Location",
             style = MaterialTheme.typography.headlineLarge,
-            //lineHeight = 40.sp,
-            //fontSize = 40.sp
         )
         Text(
             modifier = Modifier
@@ -566,23 +570,69 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
             text = "Where do you need this done?",
             style = MaterialTheme.typography.bodyLarge,
             color = Color.Gray
-            //lineHeight = 40.sp,
-            //fontSize = 40.sp
-        )
 
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
-        var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(address.value, TextRange(0,0)))
+
+        var text by remember {
+            mutableStateOf(address.value)
         }
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
-        )
+        var la = remember {
+            mutableStateOf(-33.91409339)
+        }
+        var lo = remember {
+            mutableStateOf(151.2058800)
+        }
+
+        var s by remember {
+            mutableStateOf(false)
+        }
+        if(!s){
+            var current = getCurrentLocation(la.value, lo.value)
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.LocationOn,
+                        contentDescription = "Localized description",
+                        modifier = Modifier.clickable {
+                            address.value = current
+                            text = current
+                            s = true
+                        }
+                    )
+                }
+            )
+        }
+        else{
+            var current = getCurrentLocation(la.value, lo.value)
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.LocationOn,
+                        contentDescription = "Localized description",
+                        modifier = Modifier.clickable {
+                            address.value = current
+                            text = current
+                            s = false
+                        }
+                    )
+                }
+            )
+        }
+        MapContent(la,lo)
 
         Column(
             modifier = Modifier
@@ -596,12 +646,12 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    if(text.text.length<8){
+                    if(text.length<8){
                         openDialog.value = true
                     }
                     else{
                         pageState.value = 5
-                        address.value = text.text
+                        address.value = text
                     }
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
@@ -611,6 +661,38 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
         }
     }
 
+}
+
+@Composable
+fun MapContent(la:MutableState<Double>,lo:MutableState<Double>)  {
+    val pos = LatLng(-33.91409339, 151.2058800)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(pos, 12f)
+    }
+    val mapState = rememberMarkerState(position = pos)
+
+    Column(
+        modifier = Modifier
+            .height(400.dp)
+            .padding(16.dp)
+    ) {
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            uiSettings = MapUiSettings(zoomControlsEnabled = true)
+
+        ) {
+            Marker(
+                state = mapState,
+                draggable = true,
+                onClick = {
+                    la.value = it.position.latitude
+                    lo.value = it.position.longitude
+                    false
+                }
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
