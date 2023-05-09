@@ -197,7 +197,7 @@ fun GetItDone(navController: NavController) {
                 Column(Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.Center) {
                     Icon(
-                        painter = painterResource(R.drawable.build),
+                        painter = painterResource(R.drawable.others),
                         contentDescription = "the repairs",
                         tint = whiteColor
                     )

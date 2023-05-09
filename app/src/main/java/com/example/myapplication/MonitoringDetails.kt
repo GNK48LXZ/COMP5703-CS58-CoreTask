@@ -500,25 +500,37 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Box(modifier = Modifier.padding(5.dp)) {
+            Box(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .background(
+                        color = when (status) {
+                        "open" -> Color(0xFF9BEDAD)
+                        else -> Color.Transparent },
+                        shape = RoundedCornerShape(20.dp)
+                    )
+
+            ) {
                 Text(
                     text = "Open",
+                    modifier = Modifier.padding(5.dp),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W500,
                     color = when (status) {
-                        "open" -> Color.White
-                        else -> Color.Black},
-                    modifier = Modifier
-                        .background(
-                            color = when (status) {
-                                "open" -> buttonColor
-                                else -> Color.Transparent
-                            },
-                            shape = RoundedCornerShape(20.dp)
-                        )
+                        "open" -> Color.Black
+                        else -> Color.Black}
                 )
             }
-            Box(modifier = Modifier.padding(5.dp)) {
+            Box(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .background(
+                        color = when (status) {
+                            "Assigned" -> buttonColor
+                            else -> Color.Transparent },
+                        shape = RoundedCornerShape(20.dp)
+                    )
+            ) {
                 Text(
                     text = "Assigned",
                     fontSize = 15.sp,
@@ -526,17 +538,20 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     color = when (status) {
                         "Assigned" -> Color.White
                         else -> Color.Black},
-                    modifier = Modifier
-                        .background(
-                            color = when (status) {
-                                "Assigned" -> buttonColor
-                                else -> Color.Transparent
-                            },
-                            shape = RoundedCornerShape(20.dp)
-                        )
+                    modifier = Modifier.padding(5.dp)
                 )
             }
-            Box(modifier = Modifier.padding(5.dp)) {
+            Box(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .background(
+                        color = when (status) {
+                            "Completed" -> Color(0xFFFF0000)
+                            else -> Color.Transparent },
+                        shape = RoundedCornerShape(20.dp)
+                    )
+
+            ) {
                 Text(
                     text = "Completed",
                     fontSize = 15.sp,
@@ -545,13 +560,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                         "Completed" -> Color.White
                         else -> Color.Black},
                     modifier = Modifier
-                        .background(
-                            color = when (status) {
-                                "Completed" -> buttonColor
-                                else -> Color.Transparent
-                            },
-                            shape = RoundedCornerShape(20.dp)
-                        )
+                        .padding(5.dp)
                 )
             }
         }

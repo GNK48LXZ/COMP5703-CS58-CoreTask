@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
@@ -139,16 +140,20 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
             var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
                 mutableStateOf(TextFieldValue(taskTopic.value, TextRange(0,0)))
             }
-            TextField(
-                value = text,
-                onValueChange = { text = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
-            )
-
+            Row(
+                modifier = Modifier.padding(16.dp)
+            ){
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                        //.padding(horizontal = 16.dp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
+                    placeholder = { Text("eg. Cleaning my living room") }
+                )
+            }
             Spacer(modifier = Modifier.height(70.dp))
             Column(
                 modifier = Modifier
@@ -471,7 +476,7 @@ fun DescribeTask(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                text = "You can upload photos(Optional)",
+                text = "You can upload photos to help job seekers understand your task(Optional)",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
                 //lineHeight = 40.sp,
@@ -479,19 +484,18 @@ fun DescribeTask(
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            ElevatedButton(
+            Button(
                 onClick = { /* Do something! */ },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .height(110.dp)
-                    .width(160.dp),
-                colors = ButtonDefaults.buttonColors(textFieldColor)
+                colors = ButtonDefaults.buttonColors(Color.Gray),
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                androidx.compose.material.Icon(
-                    Icons.Outlined.Add,
+                Icon(
+                    Icons.Filled.Add,
                     contentDescription = "Add",
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
                 )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("Upload Photos")
             }
             //continue button
             Column(
@@ -743,7 +747,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = "Please indicate the certificates that the job seeker must have",
+            text = "Please indicate the certificates that the job seeker must have (Optional)",
             style = MaterialTheme.typography.bodyLarge,
             color = Color.Gray
         )
@@ -913,7 +917,7 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            text = "Hour rate",
+            text = "Hourly rate",
             style = MaterialTheme.typography.headlineLarge,
             //lineHeight = 40.sp,
             //fontSize = 35.sp
@@ -932,16 +936,37 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue(money.value, TextRange(0, 0)))
         }
-        TextField(
+        Row(
+            modifier = Modifier.padding(16.dp)
+        ){
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                //modifier = Modifier
+                //.fillMaxWidth()
+                //.padding(horizontal = 16.dp),
+                singleLine = true,
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
+                placeholder = { Text("eg. 50") }
+            )
+            Column() {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "$/Hour",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+        }
+        /*TextField(
             value = text,
             onValueChange = { text = it },
-            label = { Text(text = "Enter the Price in AU$") },
+            placeholder = { Text("Enter the Price in AU$") },
             modifier = Modifier
                 .height(90.dp)
                 .fillMaxWidth()
                 .padding(16.dp),
-            colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
-        )
+            colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
+        )*/
 
         Spacer(modifier = Modifier.height(20.dp))
 

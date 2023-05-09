@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,131 +70,152 @@ fun LoginScreen(pageState: MutableState<Int>, navController: NavController) {
     EmptyDialog(openDialog_empty)
 
     Column(
-        modifier = Modifier
-            .padding(horizontal = 5.dp),
-        verticalArrangement = Arrangement.Center
+        //modifier = Modifier
+            //.padding(horizontal = 5.dp),
+        //verticalArrangement = Arrangement.Center,
     ) {
-        Spacer(modifier = Modifier.height(100.dp))
-        androidx.compose.material3.Text(
-            text = "Login to Your Account!",
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(60.dp))
-        androidx.compose.material3.OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { androidx.compose.material3.Text("Email") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        androidx.compose.material3.OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { androidx.compose.material3.Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        androidx.compose.material3.TextButton(
-            onClick = { pageState.value = 3 },
-            colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Color.Blue),
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            androidx.compose.material3.Text(text = "Forgot Password")
-        }
-        androidx.compose.material3.Button(
-            onClick = {
-                if (email.isEmpty() || password.isEmpty()) {
-                    openDialog_empty.value = true
-                } else {
-                    auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success")
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ){
+            Image(
+                painter = painterResource(R.drawable.login_background),
+                contentDescription = null,
+                modifier = Modifier.fillMaxHeight(),
+                contentScale = ContentScale.Crop,
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(horizontal = 15.dp)
+            ) {
+                Spacer(modifier = Modifier.height(100.dp))
+                androidx.compose.material3.Text(
+                    text = "Login to Your Account!",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
+                )
+                Spacer(modifier = Modifier.height(60.dp))
+                androidx.compose.material3.OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { androidx.compose.material3.Text("Email") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                androidx.compose.material3.OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { androidx.compose.material3.Text("Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                androidx.compose.material3.TextButton(
+                    onClick = { pageState.value = 3 },
+                    colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Color.Blue),
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    androidx.compose.material3.Text(text = "Forgot Password")
+                }
+                androidx.compose.material3.Button(
+                    onClick = {
+                        if (email.isEmpty() || password.isEmpty()) {
+                            openDialog_empty.value = true
+                        } else {
+                            auth.signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d(TAG, "signInWithEmail:success")
 
-                                user = auth.currentUser?.email.toString()
-                                navController.navigate(route = Screen.GetItDone.route) {
-                                    popUpTo("Login") {
-                                        inclusive = true
+                                        user = auth.currentUser?.email.toString()
+                                        navController.navigate(route = Screen.GetItDone.route) {
+                                            popUpTo("Login") {
+                                                inclusive = true
+                                            }
+                                        }
+//                            AccountMain(pageState = mutableStateOf(1))
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w(TAG, "signInWithEmail:failure", task.exception)
+                                        exception = task.exception.toString().substringAfter(": ")
+                                        openDialog.value = true
                                     }
                                 }
-//                            AccountMain(pageState = mutableStateOf(1))
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithEmail:failure", task.exception)
-                                exception = task.exception.toString().substringAfter(": ")
-                                openDialog.value = true
-                            }
                         }
-                }
 
-            },
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(buttonColor),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            androidx.compose.material3.Text(text = "Login")
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(buttonColor),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    androidx.compose.material3.Text(text = "Login")
+                }
+                Spacer(modifier = Modifier.height(25.dp))
+                androidx.compose.material3.Text(
+                    text = "Don't have an account?",
+                    fontWeight = FontWeight.Thin,
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                androidx.compose.material3.TextButton(
+                    onClick = {
+                        pageState.value = 2
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Color.Blue),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    androidx.compose.material3.Text(text = "Sign Up")
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                androidx.compose.material3.Button(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    border = BorderStroke(2.dp, color = Color.Black),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
+                    onClick = { /*TODO*/ }
+                ) {
+                    Image(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(id = R.drawable.google),
+                        //painter = painterResource(id = R.drawable.google),
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    androidx.compose.material3.Text(
+                        "Login with Google",
+                        color = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                androidx.compose.material3.Button(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    border = BorderStroke(2.dp, color = Color.Black),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
+                    onClick = { /*TODO*/ }
+                ) {
+                    Image(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(id = R.drawable.facebook),
+                        //painter = painterResource(id = R.drawable.google),
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    androidx.compose.material3.Text(
+                        "Login with Facebook",
+                        color = Color.Black
+                    )
+                }
+            }
+
         }
-        Spacer(modifier = Modifier.height(25.dp))
-        androidx.compose.material3.Text(
-            text = "Don't have an account?",
-            fontWeight = FontWeight.Thin,
-            fontSize = 20.sp,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        androidx.compose.material3.TextButton(
-            onClick = {
-                pageState.value = 2
-            },
-            colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Color.Blue),
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            androidx.compose.material3.Text(text = "Sign Up")
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        androidx.compose.material3.Button(
-            modifier = Modifier
-                .fillMaxWidth(),
-            border = BorderStroke(2.dp, color = Color.Black),
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
-            onClick = { /*TODO*/ }
-        ) {
-            Image(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = R.drawable.google),
-                //painter = painterResource(id = R.drawable.google),
-                contentDescription = null
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            androidx.compose.material3.Text(
-                "Login with Google",
-                color = Color.Black
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        androidx.compose.material3.Button(
-            modifier = Modifier
-                .fillMaxWidth(),
-            border = BorderStroke(2.dp, color = Color.Black),
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
-            onClick = { /*TODO*/ }
-        ) {
-            Image(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = R.drawable.facebook),
-                //painter = painterResource(id = R.drawable.google),
-                contentDescription = null
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            androidx.compose.material3.Text(
-                "Login with Facebook",
-                color = Color.Black
-            )
-        }
+
     }
 }
 
