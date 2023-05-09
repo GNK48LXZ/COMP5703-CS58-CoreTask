@@ -53,6 +53,8 @@ import com.maxkeppeler.sheets.clock.models.ClockSelection
 import java.text.SimpleDateFormat
 import java.util.*
 
+var dateType = ""
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostTaskPage(navController: NavController) {
@@ -67,17 +69,18 @@ fun PostTaskPage(navController: NavController) {
     val require = remember { mutableStateOf("") }
     val startTime = remember { mutableStateOf("") }
     val endTime = remember { mutableStateOf("") }
+    val repeat = remember { mutableStateOf("") }
 
     if (pageState.value == 1) {
         SimplyDescribeTask(pageState,taskTopic)
     } else if(pageState.value == 8){
         SelectTaskType(pageState)
     }else if(pageState.value == 2){
-        SelectRepeatDate(pageState,date,startTime,endTime)
+        SelectRepeatDate(pageState,startDate,startTime,endTime)
     } else if(pageState.value == 9){
         SpecificPeriod(pageState,startDate,endDate,startTime,endTime)
     }else if(pageState.value == 10){
-        RecurringTask(pageState,startDate,endDate,startTime,endTime)
+        RecurringTask(pageState,startDate,endDate,startTime,endTime,repeat)
     }else if (pageState.value == 3) {
         DescribeTask(pageState,taskDescription)
     } else if (pageState.value == 4) {
@@ -87,7 +90,12 @@ fun PostTaskPage(navController: NavController) {
     } else if (pageState.value == 6) {
         SuggestBudget(pageState,money)
     } else if (pageState.value == 7) {
-        TaskDetail(pageState,taskTopic,date,taskDescription,address,require,money,startTime,endTime,navController)
+        TaskDetail(
+            pageState,taskTopic,startDate,
+            taskDescription,address,require,money,
+            endDate,startTime,endTime,repeat,
+            navController
+        )
     }
 }
 
@@ -251,7 +259,10 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 16.dp)
-                .clickable { pageState.value = 2 },
+                .clickable {
+                    pageState.value = 2
+                    dateType = "oneday"
+                           },
             colors = CardDefaults.cardColors(textFieldColor)
         ) {
             Row(
@@ -273,7 +284,10 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 16.dp)
-                .clickable { pageState.value = 9 },
+                .clickable {
+                    pageState.value = 9
+                    dateType = "period"
+                           },
             colors = CardDefaults.cardColors(textFieldColor)
         ) {
             Row(
@@ -295,7 +309,10 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 16.dp)
-                .clickable { pageState.value = 10 },
+                .clickable {
+                    pageState.value = 10
+                    dateType = "recurring"
+                           },
             colors = CardDefaults.cardColors(textFieldColor)
         ) {
             Row(
@@ -759,12 +776,16 @@ enum class RepeatFrequency {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecurringTask(pageState: MutableState<Int>,
-                   startDate:MutableState<String>,
-                   endDate:MutableState<String>,
-                   startTime:MutableState<String>,
-                   endTime:MutableState<String>)
-{val startCalendarState = rememberSheetState()
+fun RecurringTask(
+    pageState: MutableState<Int>,
+    startDate:MutableState<String>,
+    endDate:MutableState<String>,
+    startTime:MutableState<String>,
+    endTime:MutableState<String>,
+    repeat:MutableState<String>
+)
+{
+    val startCalendarState = rememberSheetState()
     val endCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
     val endClockState = rememberSheetState()
@@ -986,7 +1007,10 @@ fun RecurringTask(pageState: MutableState<Int>,
                         .height(56.dp)
                         .selectable(
                             selected = (text == selectedOption),
-                            onClick = { onOptionSelected(text) },
+                            onClick = {
+                                onOptionSelected(text)
+                                repeat.value = selectedOption
+                                      },
                             role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp),
@@ -994,7 +1018,10 @@ fun RecurringTask(pageState: MutableState<Int>,
                 ) {
                     RadioButton(
                         selected = (text == selectedOption),
-                        onClick = { }
+                        onClick = {
+                            onOptionSelected(text)
+                            //repeat.value = selectedOption
+                        }
                     )
                     Text(
                         text = text,
@@ -1675,30 +1702,53 @@ data class Task(
 fun TaskDetail(
     pageState:MutableState<Int>,
     taskTopic:MutableState<String>,
-    date:MutableState<String>,
+    startDate:MutableState<String>,
     taskDescription:MutableState<String>,
     address:MutableState<String>,
     require:MutableState<String>,
     money:MutableState<String>,
+    endDate: MutableState<String>,
     startTime:MutableState<String>,
     endTime:MutableState<String>,
+    repeat: MutableState<String>,
     navController: NavController
 ){
     val list = ArrayList<String>()
-    val task = Task(
+    var task = Task(
         taskTopic.value,
-        date.value,
+        startDate.value + "-" + endDate.value,
         taskDescription.value,
         address.value,
         require.value,
         money.value,
         startTime.value,
-        endTime.value,
+        endTime.value + " " + repeat,
         "open",
         "",
         user,
         list
     )
+    if(dateType=="oneday"){
+        task = Task(taskTopic.value, startDate.value,
+            taskDescription.value, address.value, require.value,
+            money.value, startTime.value, endTime.value,
+            "open", "", user, list
+        )
+    }
+    if(dateType=="period"){
+        task = Task(taskTopic.value, startDate.value+" to " + endDate.value,
+            taskDescription.value, address.value, require.value,
+            money.value, startTime.value, endTime.value,
+            "open", "", user, list
+        )
+    }
+    if(dateType=="recurring"){
+        task = Task(taskTopic.value, startDate.value+" to " + endDate.value,
+            taskDescription.value, address.value, require.value,
+            money.value, startTime.value, endTime.value+", "+repeat.value,
+            "open", "", user, list
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1822,11 +1872,27 @@ fun TaskDetail(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "TO BE DONE ON",fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
-                    Text(//text = "Monday April 10",
-                        text = date.value+" "+startTime.value+" - "+endTime.value,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
+                    if(dateType=="oneday") {
+                        Text(//text = "Monday April 10",
+                            text = startDate.value + " " + startTime.value + "-" + endTime.value,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    }
+                    if(dateType=="period"){
+                        Text(//text = "Monday April 10",
+                            text = startDate.value + " to " + endDate.value + " " + startTime.value + "-" + endTime.value,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    }
+                    if(dateType=="recurring"){
+                        Text(//text = "Monday April 10",
+                            text = startDate.value + " to " + endDate.value + " " + startTime.value + "-" + endTime.value + ", " + repeat.value,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    }
                 }
             }
 
