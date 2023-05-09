@@ -2,8 +2,7 @@ package com.example.myapplication
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,9 +17,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
@@ -40,6 +39,7 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -60,6 +60,8 @@ fun PostTaskPage(navController: NavController) {
     val taskTopic = remember { mutableStateOf("") }
     val taskDescription = remember { mutableStateOf("") }
     val date = remember { mutableStateOf("") }
+    val startDate = remember { mutableStateOf("") }
+    val endDate = remember { mutableStateOf("") }
     val address = remember { mutableStateOf("") }
     val money = remember { mutableStateOf("") }
     val require = remember { mutableStateOf("") }
@@ -68,9 +70,15 @@ fun PostTaskPage(navController: NavController) {
 
     if (pageState.value == 1) {
         SimplyDescribeTask(pageState,taskTopic)
-    } else if(pageState.value == 2){
+    } else if(pageState.value == 8){
+        SelectTaskType(pageState)
+    }else if(pageState.value == 2){
         SelectRepeatDate(pageState,date,startTime,endTime)
-    } else if (pageState.value == 3) {
+    } else if(pageState.value == 9){
+        SpecificPeriod(pageState,startDate,endDate,startTime,endTime)
+    }else if(pageState.value == 10){
+        RecurringTask(pageState,startDate,endDate,startTime,endTime)
+    }else if (pageState.value == 3) {
         DescribeTask(pageState,taskDescription)
     } else if (pageState.value == 4) {
         SelectAddress(pageState,address)
@@ -172,7 +180,7 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                         }
                         else{
                             openDialog.value = false
-                            pageState.value = 2
+                            pageState.value = 8
                             taskTopic.value = text.text
                         }
                     }
@@ -184,6 +192,128 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectTaskType(pageState: MutableState<Int>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row() {
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable { pageState.value = 1 }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Decide on When",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
+
+        //Title
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "Task type",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "Select your preferred task frequency",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Gray
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { pageState.value = 2 },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "A specific time",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { pageState.value = 9 },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "A specific period",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { pageState.value = 10 },
+            colors = CardDefaults.cardColors(textFieldColor)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "A Recurring task",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+        }
+    }
+}
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -232,14 +362,14 @@ fun SelectRepeatDate(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable { pageState.value = 1 }
+                    .clickable { pageState.value = 8 }
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = "Choose a time",
+                text = "Decide on When",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600
             )
@@ -283,8 +413,9 @@ fun SelectRepeatDate(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center
+                    .fillMaxHeight()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.Start
             ) {
                 Text(
                     text = "Date:  ",
@@ -292,14 +423,13 @@ fun SelectRepeatDate(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = startDate.value,
+                    text = startDate.value.ifEmpty { "eg 05/08/2023" },
                     fontSize = 20.sp,
-                    color = buttonColor,
+                    color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
         }
-        
         Spacer(modifier = Modifier.height(10.dp))
         Card(modifier = Modifier
             .fillMaxWidth()
@@ -311,8 +441,9 @@ fun SelectRepeatDate(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center
+                    .fillMaxHeight()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.Start
             ) {
                 Text(
                     text = "From:  ",
@@ -320,14 +451,13 @@ fun SelectRepeatDate(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = startTime.value,
+                    text = startTime.value.ifEmpty { "eg 11:00 AM" },
                     fontSize = 20.sp,
-                    color = buttonColor,
+                    color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(10.dp))
         Card(modifier = Modifier
             .fillMaxWidth()
@@ -339,8 +469,9 @@ fun SelectRepeatDate(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center
+                    .fillMaxHeight()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.Start
             ) {
                 Text(
                     text = "To:  ",
@@ -348,14 +479,13 @@ fun SelectRepeatDate(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = endTime.value,
+                    text = endTime.value.ifEmpty { "eg 01:30 PM" },
                     fontSize = 20.sp,
-                    color = buttonColor,
+                    color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
         }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -383,6 +513,532 @@ fun SelectRepeatDate(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SpecificPeriod(pageState: MutableState<Int>,
+                   startDate:MutableState<String>,
+                   endDate:MutableState<String>,
+                   startTime:MutableState<String>,
+                   endTime:MutableState<String>)
+{val startCalendarState = rememberSheetState()
+    val endCalendarState = rememberSheetState()
+    val startClockState = rememberSheetState()
+    val endClockState = rememberSheetState()
+    val openDialog = remember { mutableStateOf(false) }
+    DateDialog(openDialog)
+    CalendarDialog(
+        state = startCalendarState,
+        selection = CalendarSelection.Date {
+            startDate.value = it.toString()
+        },
+        config = CalendarConfig(
+            monthSelection = true,
+            yearSelection = true,
+        )
+    )
+    CalendarDialog(
+        state = endCalendarState,
+        selection = CalendarSelection.Date {
+            endDate.value = it.toString()
+        },
+        config = CalendarConfig(
+            monthSelection = true,
+            yearSelection = true,
+        )
+    )
+    ClockDialog(
+        state = startClockState,
+        selection = ClockSelection.HoursMinutes{
+                hours, minutes ->  startTime.value = "$hours:$minutes"
+        }
+    )
+    ClockDialog(
+        state = endClockState,
+        selection = ClockSelection.HoursMinutes{
+                hours, minutes ->  endTime.value = "$hours:$minutes"
+        }
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(){
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable { pageState.value = 8 }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Decide on When",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
+        //Title
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "Date",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "Select the start date and end date for your specific period task",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Gray
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "From: ",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(55.dp)
+            .padding(horizontal = 16.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(50.dp)
+                    .clickable { startCalendarState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = startDate.value.ifEmpty { "startDate: eg     05/08/2023" },
+                        color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(50.dp)
+                    .clickable { startClockState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = startTime.value.ifEmpty { "startTime: eg     11:00 AM" },
+                        color = if (startTime.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "To: ",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(55.dp)
+            .padding(horizontal = 16.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(50.dp)
+                    .clickable { endCalendarState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = endDate.value.ifEmpty { "endDate: eg    05/10/2023" },
+                        color = if (endDate.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(50.dp)
+                    .clickable { endClockState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = endTime.value.ifEmpty { "endTime: eg    01:30 PM" },
+                        color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(background),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(buttonColor),
+                onClick = {
+                    if(startDate.value==""||endDate.value==""){
+                        openDialog.value = true
+                    }
+                    else{
+                        pageState.value = 3
+                    }
+                }
+            ) {
+                Text("Continue", fontSize = 20.sp)
+            }
+        }
+    }
+}
+enum class RepeatFrequency {
+    DAILY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY,
+    CUSTOM
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RecurringTask(pageState: MutableState<Int>,
+                   startDate:MutableState<String>,
+                   endDate:MutableState<String>,
+                   startTime:MutableState<String>,
+                   endTime:MutableState<String>)
+{val startCalendarState = rememberSheetState()
+    val endCalendarState = rememberSheetState()
+    val startClockState = rememberSheetState()
+    val endClockState = rememberSheetState()
+    val openDialog = remember { mutableStateOf(false) }
+    DateDialog(openDialog)
+    CalendarDialog(
+        state = startCalendarState,
+        selection = CalendarSelection.Date {
+            startDate.value = it.toString()
+        },
+        config = CalendarConfig(
+            monthSelection = true,
+            yearSelection = true,
+        )
+    )
+    CalendarDialog(
+        state = endCalendarState,
+        selection = CalendarSelection.Date {
+            endDate.value = it.toString()
+        },
+        config = CalendarConfig(
+            monthSelection = true,
+            yearSelection = true,
+        )
+    )
+    ClockDialog(
+        state = startClockState,
+        selection = ClockSelection.HoursMinutes{
+                hours, minutes ->  startTime.value = "$hours:$minutes"
+        }
+    )
+    ClockDialog(
+        state = endClockState,
+        selection = ClockSelection.HoursMinutes{
+                hours, minutes ->  endTime.value = "$hours:$minutes"
+        }
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(){
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable { pageState.value = 8 }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Decide on When",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
+        //Title
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "Date",
+            style = MaterialTheme.typography.headlineLarge,
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            //text = "Tell the job seeker your preferred time",
+            text = "Select the start date and end date for your specific period task",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Gray
+            //lineHeight = 40.sp,
+            //fontSize = 40.sp
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "From: ",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(55.dp)
+            .padding(horizontal = 16.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(50.dp)
+                    .clickable { startCalendarState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = startDate.value.ifEmpty { "startDate: eg     05/08/2023" },
+                        color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(50.dp)
+                    .clickable { startClockState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = startTime.value.ifEmpty { "startTime: eg     11:00 AM" },
+                        color = if (startTime.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "To: ",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(55.dp)
+            .padding(horizontal = 16.dp)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(50.dp)
+                    .clickable { endCalendarState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = endDate.value.ifEmpty { "endDate: eg     05/10/2023" },
+                        color = if (endDate.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .height(50.dp)
+                    .clickable { endClockState.show() },
+                colors = CardDefaults.cardColors(textFieldColor)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = endTime.value.ifEmpty { "endTime: eg     01:30 PM" },
+                        color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxSize()
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "Repeat: ",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(16.dp)
+        )
+        val radioOptions = listOf("Daily", "Weekly", "Monthly","Yearly","Custom")
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+        var customFrequencyText by remember { mutableStateOf("") }
+        Column(Modifier.selectableGroup()) {
+            radioOptions.forEach { text ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = { onOptionSelected(text) },
+                            role = Role.RadioButton
+                        )
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (text == selectedOption),
+                        onClick = { }
+                    )
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                    if (text == "Custom" && selectedOption == "Custom") {
+                            TextField(
+                                value = customFrequencyText,
+                                onValueChange = { customFrequencyText = it },
+                                colors = TextFieldDefaults.textFieldColors(if (customFrequencyText.isNotEmpty()) buttonColor else Color.LightGray,containerColor = Color.Transparent),
+                                placeholder = { Text("Input your own words") },
+                                modifier = Modifier.padding(start = 5.dp)
+                            )
+                    }
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(background),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(buttonColor),
+                onClick = {
+                    if(startDate.value==""||endDate.value==""){
+                        openDialog.value = true
+                    }
+                    else{
+                        pageState.value = 3
+                    }
+                }
+            ) {
+                Text("Continue", fontSize = 20.sp)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
