@@ -41,12 +41,12 @@ fun GetItDone(navController: NavController) {
             text = "Let's get your things done!",
             fontSize = 30.sp,
             fontWeight = FontWeight.W500,
-            lineHeight = 40.sp,
+            lineHeight = 30.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Post a task. Receive offers. Get it done.",
+            text = "As a task poster, you can create tasks in this page. If you are a job seeker, please go to Browse page.",
             fontSize = 20.sp,
             fontWeight = FontWeight.W500,
             lineHeight = 40.sp,

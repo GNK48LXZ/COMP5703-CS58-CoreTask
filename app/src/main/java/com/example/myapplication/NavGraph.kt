@@ -77,13 +77,6 @@ fun SetupNavGraph(navController:NavHostController){
             editDate(taskId,navController)
         }
         composable(
-            "SubmitInf/{taskId}",
-            arguments = listOf(navArgument("taskId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val taskId = backStackEntry.arguments?.getString("taskId")?:""
-            SubmitInf(taskId,navController)
-        }
-        composable(
             "image"
         ){
             RequestContentPermission()

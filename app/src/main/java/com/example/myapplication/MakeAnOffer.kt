@@ -142,7 +142,7 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubmitInf(taskId: String,navController: NavController) {
+fun SubmitInf(navController: NavController) {
     MaterialTheme(colorScheme = LightColorScheme) {
         Column(
             modifier = Modifier
@@ -152,15 +152,6 @@ fun SubmitInf(taskId: String,navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             Row() {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    "Icon",
-                    modifier = Modifier
-                        .clickable {navController.popBackStack() }
-                        .padding(horizontal = 16.dp)
-                        .size(30.dp),
-                    tint = Color(0xff333333)
-                )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = "Post your information",
@@ -184,7 +175,7 @@ fun SubmitInf(taskId: String,navController: NavController) {
                         .width(100.dp)
                 )
                 Text(
-                    text = "Submitted successfully!",
+                    text = "Task created successfully!",
                     fontSize = 25.sp,
                     fontWeight = FontWeight.W400,
                     lineHeight = 25.sp,
@@ -202,17 +193,18 @@ fun SubmitInf(taskId: String,navController: NavController) {
                 Button(
                     onClick = {
                         //navController.navigate("monitoringDetails/${taskId}")
-                        navController.navigate(route = "monitoringDetails/${taskId}") {
-                            popUpTo(Screen.GetItDone.route) {
-                                inclusive = true
-                            }
-                        }
+                        //navController.navigate(route = "monitoringDetails/${taskId}") {
+                        //    popUpTo(Screen.GetItDone.route) {
+                        //        inclusive = true
+                        //    }
+                        //}
+                        navController.popBackStack()
                               },
                     modifier = Modifier.padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)
                 ) {
-                    Text(text = "Continue",fontSize = 20.sp)
+                    Text(text = "Back to home page",fontSize = 20.sp)
                 }
             }
         }

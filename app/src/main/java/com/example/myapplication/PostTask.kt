@@ -96,6 +96,8 @@ fun PostTaskPage(navController: NavController) {
             endDate,startTime,endTime,repeat,
             navController
         )
+    }else if (pageState.value == 11){
+        SubmitInf(navController)
     }
 }
 
@@ -262,7 +264,7 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 .clickable {
                     pageState.value = 2
                     dateType = "oneday"
-                           },
+                },
             colors = CardDefaults.cardColors(textFieldColor)
         ) {
             Row(
@@ -287,7 +289,7 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 .clickable {
                     pageState.value = 9
                     dateType = "period"
-                           },
+                },
             colors = CardDefaults.cardColors(textFieldColor)
         ) {
             Row(
@@ -312,7 +314,7 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 .clickable {
                     pageState.value = 10
                     dateType = "recurring"
-                           },
+                },
             colors = CardDefaults.cardColors(textFieldColor)
         ) {
             Row(
@@ -1787,6 +1789,16 @@ fun TaskDetail(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+                text = "Please confirm your task details",
+                style = MaterialTheme.typography.headlineSmall,
+                //lineHeight = 40.sp,
+                //fontSize = 30.sp,
+                //fontWeight = FontWeight.Bold
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 text = taskTopic.value,
                 style = MaterialTheme.typography.bodyLarge,
                 lineHeight = 40.sp,
@@ -1924,7 +1936,7 @@ fun TaskDetail(
                         onClick = { },
                         colors = ButtonDefaults.buttonColors(buttonColor)
                     ) {
-                        Text("Change", fontSize = 20.sp)
+                        Text("Per Hour", fontSize = 20.sp)
                     }
                 }
             }
@@ -1982,11 +1994,12 @@ fun TaskDetail(
                     //val currentDate = sdf.format(Date())
                     val db = Firebase.firestore
                     db.collection("Task").document().set(task)
-                    navController.popBackStack()
+                    //navController.popBackStack()
+                    pageState.value = 11
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
-                Text("Post this Task!", fontSize = 20.sp)
+                Text("Confirm and Create this task", fontSize = 20.sp)
             }
         }
     }
