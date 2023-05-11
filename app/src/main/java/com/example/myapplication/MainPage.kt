@@ -72,86 +72,130 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                 onClick = {
                     pageState.value = 1
                     page.value = 1
-                          },
-                //selected = true,
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
             ) {
-                Icon(
-                    Icons.Filled.Check,
-                    contentDescription = "Check",
-
-                    tint = buttonColor
-                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Filled.Home,
+                        contentDescription = "Check",
+                        tint = buttonColor
+                    )
+                    Text(
+                        "Home",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.Black
+                    )
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
                 onClick = {
                     pageState.value = 2
                     page.value = 2
-                          },
-                //selected = false,
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
             ) {
-                Icon(
-                    Icons.Filled.Search,
-                    contentDescription = "Search",
-                    tint = buttonColor
-                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Filled.Search,
+                        contentDescription = "Search",
+                        tint = buttonColor
+                    )
+                    Text(
+                        "Search",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.Black
+                    )
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
                 onClick = {
                     pageState.value = 3
                     page.value = 3
-                          },
-                //selected = false,
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
             ) {
-                Icon(
-                    Icons.Filled.Menu,
-                    contentDescription = "Settings",
-                    tint = buttonColor
-                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        contentDescription = "Settings",
+                        tint = buttonColor
+                    )
+                    Text(
+                        "Settings",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.Black
+                    )
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
                 onClick = {
                     pageState.value = 4
                     page.value = 4
-                          },
-                //selected = true,
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
             ) {
-                Icon(
-                    Icons.Filled.Email,
-                    contentDescription = "Home",
-                    tint = buttonColor
-                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Filled.Email,
+                        contentDescription = "Home",
+                        tint = buttonColor
+                    )
+                    Text(
+                        "Chat",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.Black
+                    )
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             IconButton(
                 onClick = {
                     pageState.value = 5
                     page.value = 5
-                          },
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(48.dp)
             ) {
-                Icon(
-                    Icons.Filled.Face,
-                    contentDescription = "Home",
-
-                    tint = buttonColor
-                )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Filled.Person,
+                        contentDescription = "Home",
+                        tint = buttonColor
+                    )
+                    Text(
+                        "Account",
+                        style = MaterialTheme.typography.caption,
+                        color = Color.Black
+                    )
+                }
             }
         }
     }
