@@ -1,12 +1,14 @@
 package com.example.myapplication
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -28,89 +30,37 @@ import com.google.firebase.ktx.Firebase
 @Preview
 @Composable
 fun FilteredUsersScreen() {
-    val options1 = listOf("All Task", "Cleaning", "Removals", "Repairs", "Painting")
-    var selectedOption1 by remember { mutableStateOf(options1[0]) }
-    val options2 = listOf("Bill", "0-50", "51-100", "100-200", "200~")
-    var selectedOption2 by remember { mutableStateOf(options2[0]) }
-    val options3 = listOf("Status", "Open", "Assigned")
-    var selectedOption3 by remember { mutableStateOf(options3[0]) }
 
-    var filterText by remember { mutableStateOf("") }
-    val pageState = remember { mutableStateOf(1) }
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(background)
-            .height(720.dp)
+            .padding(horizontal = 12.dp)
+            .height(38.dp)
+            .background(Color.White, RoundedCornerShape(25.dp)).border(0.dp,Color.Transparent)
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Spacer(modifier = Modifier.width(20.dp))
-            androidx.compose.material3.Text(
-                text = "Browse Tasks",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = Poppins
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row {
-            TextField(
-                value = filterText,
-                onValueChange = { filterText = it },
+        Row(modifier = Modifier.fillMaxSize()) {
+            Box(
                 modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth()
-                    .background(Color.White),
-                textStyle = MaterialTheme.typography.body2,
-                placeholder = { Text("Filter by task name") },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search icon",
-                        tint = Color.Gray,
-                        modifier = Modifier.clickable(onClick = { /* Do something on click */ })
-                    )
-                }
-            )
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color.Blue, RoundedCornerShape(25.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                androidx.compose.material3.Text(
+                    "12%",
+                    fontSize = 12.sp,
+                    color = Color.White
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .weight(7f)
+                    .height(38.dp),
+                contentAlignment = Alignment.Center
+            ) {
+
+            }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            FilterDropdown(
-                pageState,
-                options = options1,
-                selectedOption = selectedOption1,
-                onOptionSelected = { option ->
-                    selectedOption1 = option
-                },
-                modifier = Modifier.weight(1f)
-            )
-            FilterDropdown(
-                pageState,
-                options = options2,
-                selectedOption = selectedOption2,
-                onOptionSelected = { option ->
-                    selectedOption2 = option
-                },
-                modifier = Modifier.weight(1f)
-            )
-            FilterDropdown(
-                pageState,
-                options = options3,
-                selectedOption = selectedOption3,
-                onOptionSelected = { option ->
-                    selectedOption3 = option
-                },
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Text(text = "."+filterText)
     }
 }
 

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.myapplication
 
 import android.os.Build
@@ -20,17 +22,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Text
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
@@ -41,7 +42,6 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -50,8 +50,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.*
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
-import java.text.SimpleDateFormat
 import java.util.*
+
 
 var dateType = ""
 
@@ -72,40 +72,145 @@ fun PostTaskPage(navController: NavController) {
     val repeat = remember { mutableStateOf("") }
 
     if (pageState.value == 1) {
-        SimplyDescribeTask(pageState,taskTopic)
-    } else if(pageState.value == 8){
+        SimplyDescribeTask(pageState, taskTopic)
+    } else if (pageState.value == 8) {
         SelectTaskType(pageState)
-    }else if(pageState.value == 2){
-        SelectRepeatDate(pageState,startDate,startTime,endTime)
-    } else if(pageState.value == 9){
-        SpecificPeriod(pageState,startDate,endDate,startTime,endTime)
-    }else if(pageState.value == 10){
-        RecurringTask(pageState,startDate,endDate,startTime,endTime,repeat)
-    }else if (pageState.value == 3) {
-        DescribeTask(pageState,taskDescription)
+    } else if (pageState.value == 2) {
+        SelectRepeatDate(pageState, startDate, startTime, endTime)
+    } else if (pageState.value == 9) {
+        SpecificPeriod(pageState, startDate, endDate, startTime, endTime)
+    } else if (pageState.value == 10) {
+        RecurringTask(pageState, startDate, endDate, startTime, endTime, repeat)
+    } else if (pageState.value == 3) {
+        DescribeTask(pageState, taskDescription)
     } else if (pageState.value == 4) {
-        SelectAddress(pageState,address)
+        SelectAddress(pageState, address)
     } else if (pageState.value == 5) {
-        JobRequires(pageState,require)
+        JobRequires(pageState, require)
     } else if (pageState.value == 6) {
-        SuggestBudget(pageState,money)
+        SuggestBudget(pageState, money)
     } else if (pageState.value == 7) {
         TaskDetail(
-            pageState,taskTopic,startDate,
-            taskDescription,address,require,money,
-            endDate,startTime,endTime,repeat,
+            pageState, taskTopic, startDate,
+            taskDescription, address, require, money,
+            endDate, startTime, endTime, repeat,
             navController
         )
-    }else if (pageState.value == 11){
+    } else if (pageState.value == 11) {
         SubmitInf(navController)
     }
 }
 
+@Composable
+fun progressBar(checked: Float, waiting: Float, text: String) {
+    if (waiting!=0f){
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .height(38.dp)
+                .background(Color.LightGray, RoundedCornerShape(25.dp))
+                .border(0.dp, Color.Transparent)
+        ) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(checked)
+                        .fillMaxHeight()
+                        .background(Color.Blue, RoundedCornerShape(25.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    androidx.compose.material3.Text(
+                        text,
+                        fontSize = 12.sp,
+                        color = Color.White
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(waiting)
+                        .height(38.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                }
+            }
+        }
+    }else{
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .height(38.dp)
+                .background(Color.LightGray, RoundedCornerShape(25.dp))
+                .border(0.dp, Color.Transparent)
+        ) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .background(Color.Blue, RoundedCornerShape(25.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    androidx.compose.material3.Text(
+                        text,
+                        fontSize = 12.sp,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<String>) {
+fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic: MutableState<String>) {
     val openDialog = remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .height(38.dp)
+            .background(Color.LightGray, RoundedCornerShape(25.dp))
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(38.dp)
+                    .padding(horizontal = 8.dp)
+                    .padding(vertical = 4.dp)
+                    .clickable { pageState.value = 1 }
+                    .background(Color.Gray, RoundedCornerShape(25.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "My Posted Task",
+                    fontSize = 12.sp,
+                    color = Color.White
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(38.dp)
+                    .padding(horizontal = 8.dp)
+                    .padding(vertical = 4.dp)
+                    .clickable { pageState.value = 2 },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "My Assign Task",
+                    fontSize = 12.sp,
+                    color = androidx.compose.material.MaterialTheme.colors.onSurface
+                )
+            }
+        }
+    }
+
     MaterialTheme(colorScheme = LightColorScheme) {
         Dialog(openDialog)
         Column(
@@ -114,7 +219,7 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                 .background(background)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Row(){
+            Row() {
                 androidx.compose.material.Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
@@ -133,7 +238,8 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
             }
             Spacer(modifier = Modifier.height(20.dp))
             Divider()
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(2.dp))
+            progressBar(checked = 1f, waiting = 5f, text = "1")
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -153,20 +259,19 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
-
             Spacer(modifier = Modifier.height(20.dp))
             var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-                mutableStateOf(TextFieldValue(taskTopic.value, TextRange(0,0)))
+                mutableStateOf(TextFieldValue(taskTopic.value, TextRange(0, 0)))
             }
             Row(
                 modifier = Modifier.padding(16.dp)
-            ){
+            ) {
                 TextField(
                     value = text,
                     onValueChange = { text = it },
                     modifier = Modifier
                         .fillMaxWidth(),
-                        //.padding(horizontal = 16.dp),
+                    //.padding(horizontal = 16.dp),
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
                     placeholder = { Text("eg. Cleaning my living room") }
@@ -185,10 +290,9 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic:MutableState<Stri
                         .padding(16.dp),
                     colors = ButtonDefaults.buttonColors(buttonColor),
                     onClick = {
-                        if(text.text.length<8){
+                        if (text.text.length < 8) {
                             openDialog.value = true
-                        }
-                        else{
+                        } else {
                             openDialog.value = false
                             pageState.value = 8
                             taskTopic.value = text.text
@@ -230,6 +334,7 @@ fun SelectTaskType(pageState: MutableState<Int>) {
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
+        progressBar(checked = 2f, waiting = 4f, text = "2")
         Divider()
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -339,9 +444,9 @@ fun SelectTaskType(pageState: MutableState<Int>) {
 @Composable
 fun SelectRepeatDate(
     pageState: MutableState<Int>,
-    startDate:MutableState<String>,
-    startTime:MutableState<String>,
-    endTime:MutableState<String>
+    startDate: MutableState<String>,
+    startTime: MutableState<String>,
+    endTime: MutableState<String>
 ) {
     val startCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
@@ -360,14 +465,14 @@ fun SelectRepeatDate(
     )
     ClockDialog(
         state = startClockState,
-        selection = ClockSelection.HoursMinutes{
-            hours, minutes ->  startTime.value = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            startTime.value = "$hours:$minutes"
         }
     )
     ClockDialog(
         state = endClockState,
-        selection = ClockSelection.HoursMinutes{
-                hours, minutes ->  endTime.value = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            endTime.value = "$hours:$minutes"
         }
     )
     Column(
@@ -376,7 +481,7 @@ fun SelectRepeatDate(
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Row(){
+        Row() {
             androidx.compose.material.Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
@@ -396,6 +501,8 @@ fun SelectRepeatDate(
 
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
+        Spacer(modifier = Modifier.height(2.dp))
+        progressBar(checked = 2f, waiting = 4f, text = "2")
         Spacer(modifier = Modifier.height(40.dp))
 
         //Title
@@ -422,13 +529,14 @@ fun SelectRepeatDate(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 16.dp)
-            .clickable { startCalendarState.show() },
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { startCalendarState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -450,13 +558,14 @@ fun SelectRepeatDate(
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 16.dp)
-            .clickable { startClockState.show() },
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { startClockState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -478,13 +587,14 @@ fun SelectRepeatDate(
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 16.dp)
-            .clickable { endClockState.show() },
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { endClockState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -518,10 +628,9 @@ fun SelectRepeatDate(
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(buttonColor),
                 onClick = {
-                    if(startDate.value==""||startTime.value==""||endTime.value==""){
+                    if (startDate.value == "" || startTime.value == "" || endTime.value == "") {
                         openDialog.value = true
-                    }
-                    else{
+                    } else {
                         pageState.value = 3
                     }
                 }
@@ -534,12 +643,14 @@ fun SelectRepeatDate(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SpecificPeriod(pageState: MutableState<Int>,
-                   startDate:MutableState<String>,
-                   endDate:MutableState<String>,
-                   startTime:MutableState<String>,
-                   endTime:MutableState<String>)
-{val startCalendarState = rememberSheetState()
+fun SpecificPeriod(
+    pageState: MutableState<Int>,
+    startDate: MutableState<String>,
+    endDate: MutableState<String>,
+    startTime: MutableState<String>,
+    endTime: MutableState<String>
+) {
+    val startCalendarState = rememberSheetState()
     val endCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
     val endClockState = rememberSheetState()
@@ -567,14 +678,14 @@ fun SpecificPeriod(pageState: MutableState<Int>,
     )
     ClockDialog(
         state = startClockState,
-        selection = ClockSelection.HoursMinutes{
-                hours, minutes ->  startTime.value = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            startTime.value = "$hours:$minutes"
         }
     )
     ClockDialog(
         state = endClockState,
-        selection = ClockSelection.HoursMinutes{
-                hours, minutes ->  endTime.value = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            endTime.value = "$hours:$minutes"
         }
     )
     Column(
@@ -583,7 +694,7 @@ fun SpecificPeriod(pageState: MutableState<Int>,
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Row(){
+        Row() {
             androidx.compose.material.Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
@@ -602,6 +713,7 @@ fun SpecificPeriod(pageState: MutableState<Int>,
         }
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
+        progressBar(checked = 2f, waiting = 4f, text = "4")
         Spacer(modifier = Modifier.height(40.dp))
         //Title
         Text(
@@ -632,10 +744,12 @@ fun SpecificPeriod(pageState: MutableState<Int>,
             modifier = Modifier.padding(16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp)
-            .padding(horizontal = 16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .padding(horizontal = 16.dp)
+        ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
@@ -691,10 +805,12 @@ fun SpecificPeriod(pageState: MutableState<Int>,
             modifier = Modifier.padding(16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp)
-            .padding(horizontal = 16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .padding(horizontal = 16.dp)
+        ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
@@ -756,10 +872,9 @@ fun SpecificPeriod(pageState: MutableState<Int>,
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(buttonColor),
                 onClick = {
-                    if(startDate.value==""||endDate.value==""){
+                    if (startDate.value == "" || endDate.value == "") {
                         openDialog.value = true
-                    }
-                    else{
+                    } else {
                         pageState.value = 3
                     }
                 }
@@ -769,6 +884,7 @@ fun SpecificPeriod(pageState: MutableState<Int>,
         }
     }
 }
+
 enum class RepeatFrequency {
     DAILY,
     WEEKLY,
@@ -776,17 +892,17 @@ enum class RepeatFrequency {
     YEARLY,
     CUSTOM
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecurringTask(
     pageState: MutableState<Int>,
-    startDate:MutableState<String>,
-    endDate:MutableState<String>,
-    startTime:MutableState<String>,
-    endTime:MutableState<String>,
-    repeat:MutableState<String>
-)
-{
+    startDate: MutableState<String>,
+    endDate: MutableState<String>,
+    startTime: MutableState<String>,
+    endTime: MutableState<String>,
+    repeat: MutableState<String>
+) {
     val startCalendarState = rememberSheetState()
     val endCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
@@ -815,14 +931,14 @@ fun RecurringTask(
     )
     ClockDialog(
         state = startClockState,
-        selection = ClockSelection.HoursMinutes{
-                hours, minutes ->  startTime.value = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            startTime.value = "$hours:$minutes"
         }
     )
     ClockDialog(
         state = endClockState,
-        selection = ClockSelection.HoursMinutes{
-                hours, minutes ->  endTime.value = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            endTime.value = "$hours:$minutes"
         }
     )
     Column(
@@ -832,7 +948,7 @@ fun RecurringTask(
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Row(){
+        Row() {
             androidx.compose.material.Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
@@ -851,6 +967,7 @@ fun RecurringTask(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
+        progressBar(checked = 5f, waiting = 3f, text = "5")
         Spacer(modifier = Modifier.height(40.dp))
         //Title
         Text(
@@ -881,10 +998,12 @@ fun RecurringTask(
             modifier = Modifier.padding(16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp)
-            .padding(horizontal = 16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .padding(horizontal = 16.dp)
+        ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
@@ -940,10 +1059,12 @@ fun RecurringTask(
             modifier = Modifier.padding(16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp)
-            .padding(horizontal = 16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .padding(horizontal = 16.dp)
+        ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
@@ -998,7 +1119,7 @@ fun RecurringTask(
             fontSize = 20.sp,
             modifier = Modifier.padding(16.dp)
         )
-        val radioOptions = listOf("Daily", "Weekly", "Monthly","Yearly","Custom")
+        val radioOptions = listOf("Daily", "Weekly", "Monthly", "Yearly", "Custom")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
         var customFrequencyText by remember { mutableStateOf("") }
         Column(Modifier.selectableGroup()) {
@@ -1012,7 +1133,7 @@ fun RecurringTask(
                             onClick = {
                                 onOptionSelected(text)
                                 repeat.value = selectedOption
-                                      },
+                            },
                             role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp),
@@ -1031,13 +1152,16 @@ fun RecurringTask(
                         modifier = Modifier.padding(start = 16.dp)
                     )
                     if (text == "Custom" && selectedOption == "Custom") {
-                            TextField(
-                                value = customFrequencyText,
-                                onValueChange = { customFrequencyText = it },
-                                colors = TextFieldDefaults.textFieldColors(if (customFrequencyText.isNotEmpty()) buttonColor else Color.LightGray,containerColor = Color.Transparent),
-                                placeholder = { Text("Input your own words") },
-                                modifier = Modifier.padding(start = 5.dp)
-                            )
+                        TextField(
+                            value = customFrequencyText,
+                            onValueChange = { customFrequencyText = it },
+                            colors = TextFieldDefaults.textFieldColors(
+                                if (customFrequencyText.isNotEmpty()) buttonColor else Color.LightGray,
+                                containerColor = Color.Transparent
+                            ),
+                            placeholder = { Text("Input your own words") },
+                            modifier = Modifier.padding(start = 5.dp)
+                        )
                     }
                 }
             }
@@ -1055,10 +1179,9 @@ fun RecurringTask(
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(buttonColor),
                 onClick = {
-                    if(startDate.value==""||endDate.value==""){
+                    if (startDate.value == "" || endDate.value == "") {
                         openDialog.value = true
-                    }
-                    else{
+                    } else {
                         pageState.value = 3
                     }
                 }
@@ -1073,7 +1196,7 @@ fun RecurringTask(
 @Composable
 fun DescribeTask(
     pageState: MutableState<Int>,
-    taskDescription:MutableState<String>
+    taskDescription: MutableState<String>
 ) {
     val openDialog = remember { mutableStateOf(false) }
     Dialog(openDialog)
@@ -1088,9 +1211,9 @@ fun DescribeTask(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(background)
-        ){
+        ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Row(){
+            Row() {
                 androidx.compose.material.Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
@@ -1112,6 +1235,8 @@ fun DescribeTask(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
+        Spacer(modifier = Modifier.height(2.dp))
+        progressBar(checked = 3f, waiting = 3f, text = "3")
         Spacer(modifier = Modifier.height(40.dp))
         //Content
         Column(
@@ -1194,10 +1319,9 @@ fun DescribeTask(
                         .fillMaxWidth()
                         .padding(16.dp),
                     onClick = {
-                        if(text.text.length<8){
+                        if (text.text.length < 8) {
                             openDialog.value = true
-                        }
-                        else{
+                        } else {
                             pageState.value = 4
                             taskDescription.value = text.text
                         }
@@ -1213,7 +1337,7 @@ fun DescribeTask(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
+fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
     val openDialog = remember { mutableStateOf(false) }
     Dialog(openDialog)
     Column(
@@ -1222,7 +1346,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Row(){
+        Row() {
             androidx.compose.material.Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
@@ -1242,6 +1366,8 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
 
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
+        Spacer(modifier = Modifier.height(2.dp))
+        progressBar(checked = 4f, waiting = 2f, text = "4")
         Spacer(modifier = Modifier.height(10.dp))
 
         //Title
@@ -1277,7 +1403,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
         var s by remember {
             mutableStateOf(false)
         }
-        if(!s){
+        if (!s) {
             var current = getCurrentLocation(la.value, lo.value)
             TextField(
                 value = text,
@@ -1298,8 +1424,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                     )
                 }
             )
-        }
-        else{
+        } else {
             var current = getCurrentLocation(la.value, lo.value)
             TextField(
                 value = text,
@@ -1321,7 +1446,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                 }
             )
         }
-        MapContent(la,lo)
+        MapContent(la, lo)
 
         Column(
             modifier = Modifier
@@ -1335,10 +1460,9 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    if(text.length<8){
+                    if (text.length < 8) {
                         openDialog.value = true
-                    }
-                    else{
+                    } else {
                         pageState.value = 5
                         address.value = text
                     }
@@ -1353,7 +1477,7 @@ fun SelectAddress(pageState: MutableState<Int>,address:MutableState<String>) {
 }
 
 @Composable
-fun MapContent(la:MutableState<Double>,lo:MutableState<Double>)  {
+fun MapContent(la: MutableState<Double>, lo: MutableState<Double>) {
     val pos = LatLng(-33.91409339, 151.2058800)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(pos, 12f)
@@ -1386,7 +1510,7 @@ fun MapContent(la:MutableState<Double>,lo:MutableState<Double>)  {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
+fun JobRequires(pageState: MutableState<Int>, requires: MutableState<String>) {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val openDialog = remember { mutableStateOf(false) }
     ClipDialog(openDialog)
@@ -1396,7 +1520,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Row(){
+        Row() {
             androidx.compose.material.Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
@@ -1416,6 +1540,8 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
 
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
+        Spacer(modifier = Modifier.height(2.dp))
+        progressBar(checked = 5f, waiting = 1f, text = "5")
         Spacer(modifier = Modifier.height(40.dp))
 
         //Title
@@ -1439,7 +1565,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
 
         Spacer(modifier = Modifier.height(20.dp))
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(requires.value, TextRange(0,0)))
+            mutableStateOf(TextFieldValue(requires.value, TextRange(0, 0)))
         }
         TextField(
             value = text,
@@ -1455,20 +1581,21 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(5.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(30.dp)
-            .padding(horizontal = 16.dp)
-            .clickable {
-                clipboardManager.setText(
-                    AnnotatedString(
-                        text = "Certificate II in Cleaning Operations"
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .padding(horizontal = 16.dp)
+                .clickable {
+                    clipboardManager.setText(
+                        AnnotatedString(
+                            text = "Certificate II in Cleaning Operations"
+                        )
                     )
-                )
-                openDialog.value = true
-            },
+                    openDialog.value = true
+                },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1485,20 +1612,21 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
             }
         }
         Spacer(modifier = Modifier.height(5.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(30.dp)
-            .padding(horizontal = 16.dp)
-            .clickable {
-                clipboardManager.setText(
-                    AnnotatedString(
-                        text = "Occupational Health and Safety Certification"
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .padding(horizontal = 16.dp)
+                .clickable {
+                    clipboardManager.setText(
+                        AnnotatedString(
+                            text = "Occupational Health and Safety Certification"
+                        )
                     )
-                )
-                openDialog.value = true
-            },
+                    openDialog.value = true
+                },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1512,20 +1640,21 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
             }
         }
         Spacer(modifier = Modifier.height(5.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(30.dp)
-            .padding(horizontal = 16.dp)
-            .clickable {
-                clipboardManager.setText(
-                    AnnotatedString(
-                        text = "Carpet Cleaning Technician Certification"
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .padding(horizontal = 16.dp)
+                .clickable {
+                    clipboardManager.setText(
+                        AnnotatedString(
+                            text = "Carpet Cleaning Technician Certification"
+                        )
                     )
-                )
-                openDialog.value = true
-            },
+                    openDialog.value = true
+                },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1565,7 +1694,7 @@ fun JobRequires(pageState: MutableState<Int>,requires:MutableState<String>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
+fun SuggestBudget(pageState: MutableState<Int>, money: MutableState<String>) {
     val openDialog = remember { mutableStateOf(false) }
     BudgetDialog(openDialog)
     Column(
@@ -1575,7 +1704,7 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Row(){
+        Row() {
             androidx.compose.material.Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
@@ -1595,7 +1724,8 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
 
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(2.dp))
+        progressBar(checked = 6f, waiting = 0f, text = "6")
 
         //Title
         Text(
@@ -1623,7 +1753,7 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
         }
         Row(
             modifier = Modifier.padding(16.dp)
-        ){
+        ) {
             TextField(
                 value = text,
                 onValueChange = { text = it },
@@ -1666,10 +1796,9 @@ fun SuggestBudget(pageState: MutableState<Int>,money:MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    if(text.text.length<1){
+                    if (text.text.length < 1) {
                         openDialog.value = true
-                    }
-                    else{
+                    } else {
                         pageState.value = 7
                         money.value = text.text
                     }
@@ -1695,26 +1824,27 @@ data class Task(
     val status: String = "open",
     val AssignID: String? = null,
     val UserID: String = user,
-    val offerList : List<String>,
-    val starRate : Double = 0.0,
-    val classification : String = "Cleaning"
+    val offerList: List<String>,
+    val starRate: Double = 0.0,
+    val classification: String = "Cleaning"
 )
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetail(
-    pageState:MutableState<Int>,
-    taskTopic:MutableState<String>,
-    startDate:MutableState<String>,
-    taskDescription:MutableState<String>,
-    address:MutableState<String>,
-    require:MutableState<String>,
-    money:MutableState<String>,
+    pageState: MutableState<Int>,
+    taskTopic: MutableState<String>,
+    startDate: MutableState<String>,
+    taskDescription: MutableState<String>,
+    address: MutableState<String>,
+    require: MutableState<String>,
+    money: MutableState<String>,
     endDate: MutableState<String>,
-    startTime:MutableState<String>,
-    endTime:MutableState<String>,
+    startTime: MutableState<String>,
+    endTime: MutableState<String>,
     repeat: MutableState<String>,
     navController: NavController
-){
+) {
     val list = ArrayList<String>()
     var task = Task(
         taskTopic.value,
@@ -1730,24 +1860,27 @@ fun TaskDetail(
         user,
         list
     )
-    if(dateType=="oneday"){
-        task = Task(taskTopic.value, startDate.value,
+    if (dateType == "oneday") {
+        task = Task(
+            taskTopic.value, startDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value,
             "open", "", user, list
         )
     }
-    if(dateType=="period"){
-        task = Task(taskTopic.value, startDate.value+" to " + endDate.value,
+    if (dateType == "period") {
+        task = Task(
+            taskTopic.value, startDate.value + " to " + endDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value,
             "open", "", user, list
         )
     }
-    if(dateType=="recurring"){
-        task = Task(taskTopic.value, startDate.value+" to " + endDate.value,
+    if (dateType == "recurring") {
+        task = Task(
+            taskTopic.value, startDate.value + " to " + endDate.value,
             taskDescription.value, address.value, require.value,
-            money.value, startTime.value, endTime.value+", "+repeat.value,
+            money.value, startTime.value, endTime.value + ", " + repeat.value,
             "open", "", user, list
         )
     }
@@ -1758,7 +1891,7 @@ fun TaskDetail(
     ) {
         Column() {
             Spacer(modifier = Modifier.height(20.dp))
-            Row(){
+            Row() {
                 androidx.compose.material.Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
@@ -1812,7 +1945,7 @@ fun TaskDetail(
                     .padding(horizontal = 20.dp)
                     .height(70.dp)
                     .fillMaxWidth()
-            ){
+            ) {
                 Icon(
                     Icons.Outlined.Person,
                     modifier = Modifier.size(70.dp),
@@ -1820,9 +1953,10 @@ fun TaskDetail(
                 )
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "POSTED BY",fontSize = 13.sp)
+                    Text(text = "POSTED BY", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
-                    Text(text = user,
+                    Text(
+                        text = user,
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
                     )
@@ -1835,11 +1969,12 @@ fun TaskDetail(
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-            Row(modifier = Modifier
-                .padding(horizontal = 30.dp)
-                .height(100.dp)
-                .fillMaxWidth()
-            ){
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 30.dp)
+                    .height(100.dp)
+                    .fillMaxWidth()
+            ) {
                 Column() {
                     Spacer(modifier = Modifier.height(15.dp))
                     Icon(
@@ -1851,7 +1986,7 @@ fun TaskDetail(
                 Spacer(modifier = Modifier.width(28.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "LOCATION",fontSize = 13.sp)
+                    Text(text = "LOCATION", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(//text = "Darlington NSW 2008 Australia",
                         text = address.value,
@@ -1866,11 +2001,12 @@ fun TaskDetail(
                 color = textFieldColor,
             )
 
-            Row(modifier = Modifier
-                .padding(horizontal = 30.dp)
-                .height(90.dp)
-                .fillMaxWidth()
-            ){
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 30.dp)
+                    .height(90.dp)
+                    .fillMaxWidth()
+            ) {
                 Column() {
                     Spacer(modifier = Modifier.height(15.dp))
                     Icon(
@@ -1882,23 +2018,23 @@ fun TaskDetail(
                 Spacer(modifier = Modifier.width(28.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "TO BE DONE ON",fontSize = 13.sp)
+                    Text(text = "TO BE DONE ON", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
-                    if(dateType=="oneday") {
+                    if (dateType == "oneday") {
                         Text(//text = "Monday April 10",
                             text = startDate.value + " " + startTime.value + "-" + endTime.value,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
                         )
                     }
-                    if(dateType=="period"){
+                    if (dateType == "period") {
                         Text(//text = "Monday April 10",
                             text = startDate.value + " to " + endDate.value + " " + startTime.value + "-" + endTime.value,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
                         )
                     }
-                    if(dateType=="recurring"){
+                    if (dateType == "recurring") {
                         Text(//text = "Monday April 10",
                             text = startDate.value + " to " + endDate.value + " " + startTime.value + "-" + endTime.value + ", " + repeat.value,
                             fontWeight = FontWeight.Bold,
@@ -1919,7 +2055,8 @@ fun TaskDetail(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text("TASK BUDGET",
+                    Text(
+                        "TASK BUDGET",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontWeight = FontWeight.Bold
                     )
@@ -2005,5 +2142,13 @@ fun TaskDetail(
     }
 }
 
+@Composable
+fun ProgressIndicator(currentPage: Int, totalPages: Int) {
+    LinearProgressIndicator(
+        progress = currentPage.toFloat() / totalPages.toFloat(),
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.primary
+    )
+}
 
 
