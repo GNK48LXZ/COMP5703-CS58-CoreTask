@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -30,52 +31,64 @@ fun GetItDone(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(720.dp)
+            .height(700.dp)
             .background(background)
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(
-            modifier = Modifier.height(30.dp)
+            modifier = Modifier.height(20.dp)
         )
         Text(
             text = "Let's get your things done!",
-            fontSize = 30.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.W500,
             lineHeight = 30.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+        ) {
+            androidx.compose.material.Button(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 2.dp),
+                onClick = { navController.navigate(Screen.PostTask.route) },
+                shape = RoundedCornerShape(25.dp),
+                colors = ButtonDefaults.buttonColors(buttonColor)
+            ) {
+                androidx.compose.material.Text(
+                    text = "I am a Task Poster",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            androidx.compose.material.Button(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 2.dp),
+                onClick = { page.value=2 },
+                shape = RoundedCornerShape(25.dp),
+                colors = ButtonDefaults.buttonColors(buttonColor)
+            ) {
+                androidx.compose.material.Text(
+                    text = "I'll take on Tasks",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "As a task poster, you can create tasks in this page. If you are a job seeker, please go to Browse page.",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W500,
-            lineHeight = 40.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(30.dp))
-        Text(text = "Let's choose your task category to create your task.",
+            text = "OR choose your task category to create your task.",
             fontSize = 22.sp,
             modifier = Modifier.padding(horizontal = 16.dp),
             color = buttonColor,
             fontWeight = FontWeight.W500,
         )
-        /*Card(
-            colors = CardDefaults.cardColors(cardColor),
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            Column (
-                modifier = Modifier.padding(16.dp)
-            ){
-                Text(text = "Let's choose your task category to create your task.",
-                    fontSize = 28.sp,
-                    modifier = Modifier.padding(end = 10.dp)
-                )
-
-            }
-        }*/
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Top trending categories",
             fontSize = 20.sp,
@@ -83,17 +96,20 @@ fun GetItDone(navController: NavController) {
             lineHeight = 40.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.height(50.dp))
-        Row{
+        Spacer(modifier = Modifier.height(10.dp))
+        Row {
             Card(
-            modifier = Modifier.size(width = 200.dp, height = 150.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .clickable {navController.navigate(route = Screen.PostTask.route)},
-            colors = CardDefaults.cardColors(cardColor)
+                modifier = Modifier
+                    .size(width = 200.dp, height = 150.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                .clickable { navController.navigate(route = Screen.PostTask.route) },
+                colors = CardDefaults.cardColors(cardColor)
             ) {
-                Column(Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.cleaning),
                         tint = whiteColor,
@@ -103,21 +119,24 @@ fun GetItDone(navController: NavController) {
                     Text(
                         fontSize = 28.sp,
                         fontWeight = FontWeight.W500,
-                        color= textColor,
+                        color = textColor,
                         text = "Cleaning",
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }
             }
             Card(
-                modifier = Modifier.size(width = 200.dp, height = 150.dp)
+                modifier = Modifier
+                    .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */},
+                    .clickable {/* 点击事件 */ },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
-                Column(Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.removals),
                         tint = whiteColor,
@@ -127,7 +146,7 @@ fun GetItDone(navController: NavController) {
                     Text(
                         fontSize = 28.sp,
                         fontWeight = FontWeight.W500,
-                        color= textColor,
+                        color = textColor,
                         text = "Removals",
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
@@ -135,16 +154,19 @@ fun GetItDone(navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.height(22.dp))
-        Row{
+        Row {
             Card(
-                modifier = Modifier.size(width = 200.dp, height = 150.dp)
+                modifier = Modifier
+                    .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */},
+                    .clickable {/* 点击事件 */ },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
-                Column(Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.build),
                         contentDescription = "the repairs",
@@ -154,21 +176,24 @@ fun GetItDone(navController: NavController) {
                     Text(
                         fontSize = 28.sp,
                         fontWeight = FontWeight.W500,
-                        color= textColor,
+                        color = textColor,
                         text = "Repairs",
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }
             }
             Card(
-                modifier = Modifier.size(width = 200.dp, height = 150.dp)
+                modifier = Modifier
+                    .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */},
+                    .clickable {/* 点击事件 */ },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
-                Column(Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.painting),
                         tint = whiteColor,
@@ -178,7 +203,7 @@ fun GetItDone(navController: NavController) {
                     Text(
                         fontSize = 28.sp,
                         fontWeight = FontWeight.W500,
-                        color= textColor,
+                        color = textColor,
                         text = "Painting",
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
@@ -186,16 +211,19 @@ fun GetItDone(navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.height(22.dp))
-        Row{
-            Card(
-                modifier = Modifier.size(width = 200.dp, height = 150.dp)
+        Row {
+            androidx.compose.material3.Card(
+                modifier = Modifier
+                    .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */},
+                    .clickable {/* 点击事件 */ },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
-                Column(Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.others),
                         contentDescription = "the repairs",
@@ -205,7 +233,7 @@ fun GetItDone(navController: NavController) {
                     Text(
                         fontSize = 28.sp,
                         fontWeight = FontWeight.W500,
-                        color= textColor,
+                        color = textColor,
                         text = "Others",
                         modifier = Modifier.padding(bottom = 10.dp)
                     )

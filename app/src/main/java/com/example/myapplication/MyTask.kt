@@ -59,7 +59,7 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .background(background)
-            .height(720.dp)
+            .height(700.dp)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         Row {

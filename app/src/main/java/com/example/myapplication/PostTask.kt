@@ -72,7 +72,7 @@ fun PostTaskPage(navController: NavController) {
     val repeat = remember { mutableStateOf("") }
 
     if (pageState.value == 1) {
-        SimplyDescribeTask(pageState, taskTopic)
+        SimplyDescribeTask(navController, pageState, taskTopic)
     } else if (pageState.value == 8) {
         SelectTaskType(pageState)
     } else if (pageState.value == 2) {
@@ -103,11 +103,12 @@ fun PostTaskPage(navController: NavController) {
 
 @Composable
 fun progressBar(checked: Float, waiting: Float, text: String) {
-    if (waiting!=0f){
+    if (waiting != 0f) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
+                .padding(top = 8.dp)
                 .height(38.dp)
                 .background(Color.LightGray, RoundedCornerShape(25.dp))
                 .border(0.dp, Color.Transparent)
@@ -136,11 +137,12 @@ fun progressBar(checked: Float, waiting: Float, text: String) {
                 }
             }
         }
-    }else{
+    } else {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
+                .padding(top = 8.dp)
                 .height(38.dp)
                 .background(Color.LightGray, RoundedCornerShape(25.dp))
                 .border(0.dp, Color.Transparent)
@@ -166,7 +168,11 @@ fun progressBar(checked: Float, waiting: Float, text: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic: MutableState<String>) {
+fun SimplyDescribeTask(
+    navController: NavController,
+    pageState: MutableState<Int>,
+    taskTopic: MutableState<String>
+) {
     val openDialog = remember { mutableStateOf(false) }
 
     Box(
@@ -224,7 +230,7 @@ fun SimplyDescribeTask(pageState: MutableState<Int>, taskTopic: MutableState<Str
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable {/* */ }
+                        .clickable { navController.popBackStack() }
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)
@@ -713,7 +719,7 @@ fun SpecificPeriod(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
-        progressBar(checked = 2f, waiting = 4f, text = "4")
+        progressBar(checked = 2f, waiting = 4f, text = "2")
         Spacer(modifier = Modifier.height(40.dp))
         //Title
         Text(
@@ -967,7 +973,7 @@ fun RecurringTask(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
-        progressBar(checked = 5f, waiting = 3f, text = "5")
+        progressBar(checked = 2f, waiting = 4f, text = "2")
         Spacer(modifier = Modifier.height(40.dp))
         //Title
         Text(
@@ -1344,6 +1350,7 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
         modifier = Modifier
             .fillMaxWidth()
             .background(background)
+            .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         Row() {

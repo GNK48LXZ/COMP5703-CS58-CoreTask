@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -135,14 +136,14 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Filled.Settings,
-                        contentDescription = "Settings",
+                        Icons.Filled.List,
+                        contentDescription = "My Tasks",
                         tint = buttonColor
                     )
                     Text(
-                        "Settings",
+                        "Tasks",
                         style = MaterialTheme.typography.caption,
-                        color = Color.Black
+                        color = Color.Black,
                     )
                 }
             }
@@ -161,9 +162,11 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Filled.Email,
+                        painter = painterResource(R.drawable.chat),
                         contentDescription = "Home",
-                        tint = buttonColor
+                        tint = buttonColor,
+                        modifier = Modifier
+                            .size(22.dp)
                     )
                     Text(
                         "Chat",
