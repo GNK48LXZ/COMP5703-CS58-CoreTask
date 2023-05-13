@@ -24,10 +24,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
+import com.example.myapplication.R
+import com.example.myapplication.Screen
+import com.example.myapplication.background
+import com.example.myapplication.buttonColor
+import com.example.myapplication.cardColor
+import com.example.myapplication.page
 
 @Composable
-fun GetItDone(navController: NavController) {
+fun ClassificationPage(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,75 +40,34 @@ fun GetItDone(navController: NavController) {
             .background(background)
             .verticalScroll(rememberScrollState())
     ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row() {
+            androidx.compose.material.Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                "Icon",
+                modifier = Modifier
+                    .clickable { navController.popBackStack() }
+                    .padding(horizontal = 16.dp)
+                    .size(30.dp),
+                tint = Color(0xff333333)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Chose a category",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600
+            )
+        }
         Spacer(
             modifier = Modifier.height(20.dp)
         )
-        Text(
-            text = "Let's get your things done!",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.W500,
-            lineHeight = 30.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)
-        ) {
-            androidx.compose.material.Button(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 2.dp),
-                onClick = { navController.navigate(Screen.ClassificationPage.route) },
-                shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.buttonColors(buttonColor)
-            ) {
-                androidx.compose.material.Text(
-                    text = "I am a Task Poster",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            androidx.compose.material.Button(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 2.dp),
-                onClick = { page.value=2 },
-                shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.buttonColors(buttonColor)
-            ) {
-                androidx.compose.material.Text(
-                    text = "I'll take on Tasks",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = "OR choose your task category to create your task.",
-            fontSize = 22.sp,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            color = buttonColor,
-            fontWeight = FontWeight.W500,
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = "Top trending categories",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W500,
-            lineHeight = 40.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
         Row {
             Card(
                 modifier = Modifier
                     .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                .clickable { navController.navigate(route = Screen.PostTask.route) },
+                    .clickable { navController.navigate(route = Screen.PostTask.route) },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
                 Column(
