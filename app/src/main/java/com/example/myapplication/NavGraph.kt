@@ -40,6 +40,11 @@ fun SetupNavGraph(navController: NavHostController) {
             PostTaskPage(navController)
         }
         composable(
+            route = Screen.ClassificationPage.route
+        ) {
+            ClassificationPage(navController)
+        }
+        composable(
             "chat/{chatName}",
             arguments = listOf(navArgument("chatName") { type = NavType.StringType }),
         ) { backStackEntry ->
