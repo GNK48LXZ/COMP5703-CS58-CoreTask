@@ -127,7 +127,7 @@ fun FindTask(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(background)
-                    .height(700.dp)
+                    .height(720.dp)
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {

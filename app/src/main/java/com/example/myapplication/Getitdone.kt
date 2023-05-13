@@ -31,7 +31,7 @@ fun GetItDone(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(700.dp)
+            .height(720.dp)
             .background(background)
             .verticalScroll(rememberScrollState())
     ) {

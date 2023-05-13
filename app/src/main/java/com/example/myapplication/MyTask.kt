@@ -292,7 +292,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(162.dp)
+                    .height(175.dp)
                     .padding(16.dp)
                     .clickable { navController.navigate("monitoringDetails/${taskItem.taskId}") }
             ) {

@@ -129,11 +129,20 @@ fun AccountMain(pageState: MutableState<Int>){
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = user,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp
-                )
+                if(user.length<14){
+                    Text(
+                        text = user,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp
+                    )
+                }
+                else{
+                    Text(
+                        text = user,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 25.sp
+                    )
+                }
                 Spacer(modifier = Modifier.width(50.dp))
                 Spacer(modifier = Modifier.height(10.dp))
                 StarRate()
@@ -285,6 +294,7 @@ fun Settings(pageState: MutableState<Int>,navController: NavController){
                             inclusive = true
                         }
                     }
+                    page.value = 1
                 }
             )
         }
