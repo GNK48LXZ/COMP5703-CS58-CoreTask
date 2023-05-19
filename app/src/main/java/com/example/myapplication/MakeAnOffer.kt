@@ -89,7 +89,7 @@ fun MakeAnOffer(taskId: String,UserID:String,navController: NavController) {
                     modifier = Modifier.padding(start = 16.dp)
                 )
                 Text(
-                    text = " (Required)",
+                    text = " (Optional)",
                     fontSize = 12.sp,
                     color = Color.Gray,
                     modifier = Modifier.padding(bottom = 5.dp)
@@ -114,14 +114,14 @@ fun MakeAnOffer(taskId: String,UserID:String,navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
-                    text = "Self recommendation",
+                    text = "Cover Letter",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.W500,
                     lineHeight = 30.sp,
                     modifier = Modifier.padding(start = 16.dp)
                 )
                 Text(
-                    text = " (Optional)",
+                    text = " (Required)",
                     fontSize = 12.sp,
                     color = Color.Gray,
                     modifier = Modifier.padding(bottom = 5.dp)

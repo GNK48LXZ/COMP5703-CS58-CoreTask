@@ -164,7 +164,7 @@ fun OfferListLazyColumn(
             DeleteOfferDialog(offerID = offerItem.offerID, openDialog = openDialog)
             Card(
                 modifier = Modifier
-                    .height(150.dp)
+                    .height(230.dp)
                     .padding(horizontal = 16.dp)
                     .clickable(userId == user) { navController.navigate("OfferDetails/${offerItem.recommendation}/${offerItem.userID}") },
                 colors = CardDefaults.cardColors(textFieldColor),
@@ -725,7 +725,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                 Spacer(modifier = Modifier.width(28.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "TO BE DONE ON", fontSize = 13.sp)
+                    Text(text = "Date", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(//text = "Monday April 10",
                         text = date + "  " + startTime + " - " + endTime,
@@ -912,7 +912,7 @@ fun EditTask(taskId: String, navController: NavController) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         androidx.compose.material3.Icon(
                             Icons.Filled.ArrowBack,
-                            contentDescription = "返回"
+                            contentDescription = "Back"
                         )
                     }
                 },

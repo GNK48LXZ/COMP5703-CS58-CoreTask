@@ -96,12 +96,13 @@ fun SetupNavGraph(navController: NavHostController) {
             "Feedback/{taskId}/{assignId}",
             arguments = listOf(
                 navArgument("taskId") { type = NavType.StringType },
-                navArgument("assignId") { type = NavType.StringType }
+                navArgument("assignId") { type = NavType.StringType },
             )
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId") ?: ""
             val assignId = backStackEntry.arguments?.getString("assignId") ?: ""
-            FeedBack(taskId, assignId, navController)
+
+            FeedBack(taskId,assignId,navController)
         }
         composable(
             "OfferDetails/{offerItem.recommendation}/{offerItem.userID}",

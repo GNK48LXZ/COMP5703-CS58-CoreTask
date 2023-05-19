@@ -1,8 +1,12 @@
 package com.example.myapplication
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -13,7 +17,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -23,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 
 data class Feedback(
@@ -75,14 +84,24 @@ fun FeedBack(
                     }
                 }
         }
-
+        val storage = Firebase.storage
+        var storageRef = storage.reference
+        val avatarImagesRef = storageRef.child("avatar/" + assignID + ".jpg")
+        val avatar = remember {
+            mutableStateOf<Bitmap?>(null)
+        }
+        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+            avatar.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+        }.addOnFailureListener {
+            // Handle any errors
+        }
         Spacer(modifier = Modifier.height(20.dp))
         Row(){
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable {/* */ }
+                    .clickable {navController.popBackStack() }
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
@@ -100,12 +119,27 @@ fun FeedBack(
         Row(modifier = Modifier
             .padding(horizontal = 16.dp)
         ){
-            Icon(
-                imageVector = Icons.Filled.Person,
-                "Icon",
-                modifier = Modifier
-                    .size(40.dp),
-            )
+            avatar.value.let {
+                if (it != null) {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(50.dp)
+                    )
+                } else {
+                    androidx.compose.material3.Icon(
+                        painter = painterResource(R.drawable.person),
+                        tint = Color.Black,
+                        contentDescription = "the person1",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clickable { }
+                    )
+                }
+            }
             Text(
                 text = assignID,
                 modifier = Modifier

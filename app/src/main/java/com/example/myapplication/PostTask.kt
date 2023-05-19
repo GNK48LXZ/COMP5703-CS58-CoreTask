@@ -588,7 +588,7 @@ fun SelectRepeatDate(
                 Text(
                     text = startTime.value.ifEmpty { "11:00 AM" },
                     fontSize = 20.sp,
-                    color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
+                    color = if (startTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
