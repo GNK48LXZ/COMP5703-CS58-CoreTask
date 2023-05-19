@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import No
 import android.widget.ToggleButton
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -37,12 +38,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 //navController: NavController
 
 @Composable
 fun MyTask(navController: NavController) {
+
+    val db = Firebase.firestore
+    var notice by remember {
+        mutableStateOf(false)
+    }
+    notice = Listen()
+    if(notice==true){
+        No()
+        db.collection("User").document(user).update("notice",false)
+    }
+
     val pageState = remember { mutableStateOf(1) }
 
     if (pageState.value == 1) {

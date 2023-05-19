@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import No
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.ImageView
@@ -38,6 +39,17 @@ import java.io.ByteArrayOutputStream
 fun AccountManagement(
     navController: NavController
 ) {
+
+    val db = Firebase.firestore
+    var notice by remember {
+        mutableStateOf(false)
+    }
+    notice = Listen()
+    if(notice==true){
+        No()
+        db.collection("User").document(user).update("notice",false)
+    }
+
     val pageState = remember {
         mutableStateOf(1)
     }

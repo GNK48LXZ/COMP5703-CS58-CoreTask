@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import NotificationTest
 import WeChatChatScreen
 import WeChatMainScreen
 import android.os.Build
@@ -69,11 +70,15 @@ fun SetupNavGraph(navController: NavHostController) {
         }
 
         composable(
-            "MakeAnOffer/{taskId}",
-            arguments = listOf(navArgument("taskId") { type = NavType.StringType })
+            "MakeAnOffer/{taskId}/{UserID}",
+            arguments = listOf(
+                navArgument("taskId") { type = NavType.StringType },
+                navArgument("UserID") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId") ?: ""
-            MakeAnOffer(taskId, navController)
+            val UserID = backStackEntry.arguments?.getString("UserID") ?: ""
+            MakeAnOffer(taskId,UserID, navController)
         }
         composable(
             "editDate/{taskId}",
@@ -116,7 +121,9 @@ fun SetupNavGraph(navController: NavHostController) {
             "test"
         )
         {
-            //Map(fusedLocationProviderClient)
+            NotificationTest()
         }
     }
+
+
 }

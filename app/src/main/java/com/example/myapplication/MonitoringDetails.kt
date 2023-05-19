@@ -738,7 +738,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(21.dp),
-                            onClick = { navController.navigate("MakeAnOffer/${taskId}") },
+                            onClick = { navController.navigate("MakeAnOffer/${taskId}/${UserID}") },
                             colors = ButtonDefaults.buttonColors(buttonColor),
                             enabled = when(status){
                                 "Assigned", "Completed" -> false

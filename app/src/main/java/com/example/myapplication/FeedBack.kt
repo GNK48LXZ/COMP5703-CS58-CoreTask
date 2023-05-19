@@ -172,7 +172,7 @@ fun FeedBack(
                     .padding(16.dp),
                 onClick = {
                     feedbackCount += 1
-                    starRate = (starRate + newRate)/feedbackCount
+                    starRate = (starRate*(feedbackCount-1) + newRate)/feedbackCount
                     var feedback = Feedback(
                         feedback = text.text,
                         posterID = user,
