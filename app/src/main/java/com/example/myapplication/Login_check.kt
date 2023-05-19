@@ -227,6 +227,10 @@ data class UserProfile(
     val skill: String? = null,
     val certificate: String? = null,
     val starRate: String? = null,
+    val poster: Boolean = true,
+    val seeker: Boolean = true,
+    val notice: Boolean = false,
+    val feedbackCount: Int = 0
 )
 
 @Composable

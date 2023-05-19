@@ -7,16 +7,17 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
 
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
             ){
                 navController = rememberNavController()
                 SetupNavGraph(navController = navController)
-                //MonitoringDetails("E6mUK9QHjJs2leJt0acA",navController)
+
             }
         }
     }
@@ -50,3 +51,5 @@ val Poppins = FontFamily(
 val switchButtonColor = Color.DarkGray
 val lightColor = Color.Yellow
 val darkColor = Color.Gray
+
+

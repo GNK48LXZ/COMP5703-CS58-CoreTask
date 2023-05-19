@@ -40,7 +40,8 @@ data class Offer(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MakeAnOffer(taskId: String, navController: NavController) {
+
+fun MakeAnOffer(taskId: String,UserID:String,navController: NavController) {
     val recommendation = remember { mutableStateOf("") }
     val userID = remember { mutableStateOf("") }
     val db = FirebaseFirestore.getInstance()
@@ -145,6 +146,7 @@ fun MakeAnOffer(taskId: String, navController: NavController) {
                     onClick = {
                         val db = Firebase.firestore
                         db.collection("Offer").document().set(offer)
+                        db.collection("User").document(UserID).update("notice",true)
                         //navController.navigate("SubmitInf/${taskId}")
                         navController.popBackStack()
                     },
@@ -171,14 +173,6 @@ fun SubmitInf(navController: NavController) {
                 .background(background)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Row() {
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    text = "Post your information",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W600
-                )
-            }
             Spacer(modifier = Modifier.height(150.dp))
             Column(
                 modifier = Modifier

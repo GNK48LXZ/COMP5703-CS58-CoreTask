@@ -1,17 +1,9 @@
 package com.example.myapplication
 
+
+import No
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.widget.ToggleButton
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.input.pointer.pointerInput
-import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,14 +35,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+
 import kotlinx.coroutines.tasks.await
 
 //navController: NavController
 
 @Composable
 fun MyTask(navController: NavController) {
+
+    val db = Firebase.firestore
+    var notice by remember {
+        mutableStateOf(false)
+    }
+    notice = Listen()
+    if(notice==true){
+        No()
+        db.collection("User").document(user).update("notice",false)
+    }
+
     val pageState = remember { mutableStateOf(1) }
 
     if (pageState.value == 1) {
@@ -328,7 +333,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(162.dp)
+                    .height(175.dp)
                     .padding(16.dp)
                     .clickable { navController.navigate("monitoringDetails/${taskItem.taskId}") }
             ) {
@@ -406,7 +411,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .clip(CircleShape)
-                                        .size(80.dp)
+                                        .size(50.dp)
                                 )
                             }
                             else{
@@ -415,7 +420,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                                     tint = Color.Black,
                                     contentDescription = "the person1",
                                     modifier = Modifier
-                                        .size(80.dp)
+                                        .size(50.dp)
                                         .clickable { }
                                 )
                             }

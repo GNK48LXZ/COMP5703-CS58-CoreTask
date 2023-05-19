@@ -1,9 +1,6 @@
 package com.example.myapplication
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Composable
+import No
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.DividerDefaults.color
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,14 +22,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 @Composable
 fun GetItDone(navController: NavController) {
+    //监听
+    val db = Firebase.firestore
+    var notice by remember {
+        mutableStateOf(false)
+    }
+    notice = Listen()
+    if(notice==true){
+        No()
+        db.collection("User").document(user).update("notice",false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(700.dp)
+            .height(720.dp)
             .background(background)
             .verticalScroll(rememberScrollState())
     ) {
@@ -102,7 +113,7 @@ fun GetItDone(navController: NavController) {
                     .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                .clickable { navController.navigate(route = Screen.PostTask.route) },
+                    .clickable { navController.navigate(route = Screen.PostTask.route) },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
                 Column(
@@ -233,7 +244,8 @@ fun GetItDone(navController: NavController) {
                         fontSize = 28.sp,
                         fontWeight = FontWeight.W500,
                         color = textColor,
-                        text = "Others",
+                        //text = "Others",
+                        text = "Other",
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }

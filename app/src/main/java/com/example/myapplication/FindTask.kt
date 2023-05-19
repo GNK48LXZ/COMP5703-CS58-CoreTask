@@ -1,5 +1,7 @@
 package com.example.myapplication
 
+
+import No
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
@@ -40,6 +43,17 @@ import kotlinx.coroutines.tasks.await
 @ExperimentalMaterial3Api
 @Composable
 fun FindTask(navController: NavController) {
+
+    val db = Firebase.firestore
+    var notice by remember {
+        mutableStateOf(false)
+    }
+    notice = Listen()
+    if(notice==true){
+        No()
+        db.collection("User").document(user).update("notice",false)
+    }
+
     val options1 = listOf("All Task", "Cleaning", "Removals", "Repairs", "Painting")
     var selectedOption1 by remember { mutableStateOf(options1[0]) }
     val options2 = listOf("Bill", "0-50", "51-100", "100-200", "200~")
@@ -156,7 +170,7 @@ fun FindTask(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(background)
-                    .height(700.dp)
+                    .height(720.dp)
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Row {

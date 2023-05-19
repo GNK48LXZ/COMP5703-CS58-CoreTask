@@ -153,7 +153,7 @@ fun OfferListLazyColumn(
         modifier = Modifier
             .background(background)
             .fillMaxWidth()
-            .height(500.dp),
+            .height(250.dp),
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -164,7 +164,7 @@ fun OfferListLazyColumn(
             DeleteOfferDialog(offerID = offerItem.offerID, openDialog = openDialog)
             Card(
                 modifier = Modifier
-                    .height(200.dp)
+                    .height(150.dp)
                     .padding(horizontal = 16.dp)
                     .clickable(userId == user) { navController.navigate("OfferDetails/${offerItem.recommendation}/${offerItem.userID}") },
                 colors = CardDefaults.cardColors(textFieldColor),
@@ -511,7 +511,11 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                     imageVector = Icons.Filled.ArrowBack,
                     "Icon",
                     modifier = Modifier
-                        .clickable { navController.popBackStack() }
+                        .clickable {
+                            //navController.popBackStack()
+                            navController.navigate(Screen.GetItDone.route)
+                            page.value = 3
+                        }
                         .padding(horizontal = 16.dp)
                         .size(30.dp),
                     tint = Color(0xff333333)
@@ -749,7 +753,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = money + "$",
+                        text = money + " AU$/hour",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold
@@ -774,7 +778,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(21.dp),
-                            onClick = { navController.navigate("MakeAnOffer/${taskId}") },
+                            onClick = { navController.navigate("MakeAnOffer/${taskId}/${UserID}") },
                             colors = ButtonDefaults.buttonColors(buttonColor),
                             enabled = when (status) {
                                 "Assigned", "Completed" -> false

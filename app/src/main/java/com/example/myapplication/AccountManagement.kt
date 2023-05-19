@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import No
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.ImageView
@@ -38,6 +39,17 @@ import java.io.ByteArrayOutputStream
 fun AccountManagement(
     navController: NavController
 ) {
+
+    val db = Firebase.firestore
+    var notice by remember {
+        mutableStateOf(false)
+    }
+    notice = Listen()
+    if(notice==true){
+        No()
+        db.collection("User").document(user).update("notice",false)
+    }
+
     val pageState = remember {
         mutableStateOf(1)
     }
@@ -128,11 +140,20 @@ fun AccountMain(pageState: MutableState<Int>){
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = user,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp
-                )
+                if(user.length<14){
+                    Text(
+                        text = user,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp
+                    )
+                }
+                else{
+                    Text(
+                        text = user,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 25.sp
+                    )
+                }
                 Spacer(modifier = Modifier.width(50.dp))
                 Spacer(modifier = Modifier.height(10.dp))
                 StarRate()
@@ -284,6 +305,7 @@ fun Settings(pageState: MutableState<Int>,navController: NavController){
                             inclusive = true
                         }
                     }
+                    page.value = 1
                 }
             )
         }
