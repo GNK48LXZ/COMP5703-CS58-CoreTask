@@ -38,10 +38,10 @@ fun MainPage(
         Column(
         ) {
             if(pageState.value==1){
-                GetItDone(navController)
+                FindTask(navController)
             }
             if(pageState.value==2){
-                FindTask(navController)
+                GetItDone(navController)
             }
             if(pageState.value==3){
                 MyTask(navController)
@@ -61,8 +61,12 @@ fun MainPage(
 
 }
 
+
 @Composable
 fun BottomToolbar(pageState: MutableState<Int>) {
+    val selectedPage = pageState.value
+    val buttonColor =  Color(0xFF0A65FC)
+
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxSize()
@@ -73,33 +77,6 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             IconButton(
                 onClick = {
                     pageState.value = 1
-                    page.value = 1
-                },
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(48.dp)
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        Icons.Filled.Home,
-                        contentDescription = "Check",
-                        tint = buttonColor
-                    )
-                    Text(
-                        "Home",
-                        style = MaterialTheme.typography.caption,
-                        color = Color.Black
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(
-                onClick = {
-                    pageState.value = 2
-                    page.value = 2
                 },
                 modifier = Modifier
                     .padding(8.dp)
@@ -112,12 +89,37 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     Icon(
                         Icons.Filled.Search,
                         contentDescription = "Search",
-                        tint = buttonColor
+                        tint = if (selectedPage == 1) buttonColor else Color.Gray
                     )
                     Text(
                         "Search",
                         style = MaterialTheme.typography.caption,
-                        color = Color.Black
+                        color = if (selectedPage == 1) buttonColor else Color.Gray
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                onClick = {
+                    pageState.value = 2
+                },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(48.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Filled.Home,
+                        contentDescription = "Check",
+                        tint = if (selectedPage == 2) buttonColor else Color.Gray
+                    )
+                    Text(
+                        "Post",
+                        style = MaterialTheme.typography.caption,
+                        color = if (selectedPage == 2) buttonColor else Color.Gray
                     )
                 }
             }
@@ -125,7 +127,6 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             IconButton(
                 onClick = {
                     pageState.value = 3
-                    page.value = 3
                 },
                 modifier = Modifier
                     .padding(8.dp)
@@ -138,12 +139,12 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     Icon(
                         Icons.Filled.List,
                         contentDescription = "My Tasks",
-                        tint = buttonColor
+                        tint = if (selectedPage == 3) buttonColor else Color.Gray
                     )
                     Text(
                         "Tasks",
                         style = MaterialTheme.typography.caption,
-                        color = Color.Black,
+                        color = if (selectedPage == 3) buttonColor else Color.Gray,
                     )
                 }
             }
@@ -151,7 +152,6 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             IconButton(
                 onClick = {
                     pageState.value = 4
-                    page.value = 4
                 },
                 modifier = Modifier
                     .padding(8.dp)
@@ -164,14 +164,14 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     Icon(
                         painter = painterResource(R.drawable.chat),
                         contentDescription = "Home",
-                        tint = buttonColor,
+                        tint = if (selectedPage == 4) buttonColor else Color.Gray,
                         modifier = Modifier
                             .size(22.dp)
                     )
                     Text(
                         "Chat",
                         style = MaterialTheme.typography.caption,
-                        color = Color.Black
+                        color = if (selectedPage == 4) buttonColor else Color.Gray
                     )
                 }
             }
@@ -179,7 +179,6 @@ fun BottomToolbar(pageState: MutableState<Int>) {
             IconButton(
                 onClick = {
                     pageState.value = 5
-                    page.value = 5
                 },
                 modifier = Modifier
                     .padding(8.dp)
@@ -192,7 +191,7 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     Icon(
                         Icons.Filled.Person,
                         contentDescription = "Home",
-                        tint = buttonColor
+                        tint = if (selectedPage == 5) buttonColor else Color.Gray,
                     )
                     Text(
                         "Account",
@@ -204,3 +203,4 @@ fun BottomToolbar(pageState: MutableState<Int>) {
         }
     }
 }
+

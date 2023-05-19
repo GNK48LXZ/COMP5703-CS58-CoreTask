@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.*
@@ -280,7 +281,7 @@ fun SimplyDescribeTask(
                     //.padding(horizontal = 16.dp),
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
-                    placeholder = { Text("eg. Cleaning my living room") }
+                    placeholder = { Text("Cleaning my living room") }
                 )
             }
             Spacer(modifier = Modifier.height(70.dp))
@@ -435,7 +436,7 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "A Recurring task",
+                    text = "A recurring task",
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -556,7 +557,7 @@ fun SelectRepeatDate(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = startDate.value.ifEmpty { "eg 05/08/2023" },
+                    text = startDate.value.ifEmpty { "05/08/2023" },
                     fontSize = 20.sp,
                     color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -585,7 +586,7 @@ fun SelectRepeatDate(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = startTime.value.ifEmpty { "eg 11:00 AM" },
+                    text = startTime.value.ifEmpty { "11:00 AM" },
                     fontSize = 20.sp,
                     color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -614,7 +615,7 @@ fun SelectRepeatDate(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    text = endTime.value.ifEmpty { "eg 01:30 PM" },
+                    text = endTime.value.ifEmpty { "01:30 PM" },
                     fontSize = 20.sp,
                     color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -763,6 +764,7 @@ fun SpecificPeriod(
                     .clickable { startCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  startDate:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -771,7 +773,7 @@ fun SpecificPeriod(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = startDate.value.ifEmpty { "startDate: eg     05/08/2023" },
+                        text = startDate.value.ifEmpty { "05/08/2023" },
                         color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -779,7 +781,7 @@ fun SpecificPeriod(
                     )
                 }
             }
-            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Spacer(modifier = Modifier.fillMaxWidth(0.02f))
             Card(
                 modifier = Modifier
                     .fillMaxWidth(1f)
@@ -787,6 +789,7 @@ fun SpecificPeriod(
                     .clickable { startClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  startTime:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -795,7 +798,7 @@ fun SpecificPeriod(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = startTime.value.ifEmpty { "startTime: eg     11:00 AM" },
+                        text = startTime.value.ifEmpty { "11:00 AM" },
                         color = if (startTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -824,6 +827,7 @@ fun SpecificPeriod(
                     .clickable { endCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  endDate:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -832,7 +836,7 @@ fun SpecificPeriod(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = endDate.value.ifEmpty { "endDate: eg    05/10/2023" },
+                        text = endDate.value.ifEmpty { "05/10/2023" },
                         color = if (endDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -840,7 +844,7 @@ fun SpecificPeriod(
                     )
                 }
             }
-            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Spacer(modifier = Modifier.fillMaxWidth(0.02f))
             Card(
                 modifier = Modifier
                     .fillMaxWidth(1f)
@@ -848,6 +852,7 @@ fun SpecificPeriod(
                     .clickable { endClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  endTime:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -856,7 +861,7 @@ fun SpecificPeriod(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = endTime.value.ifEmpty { "endTime: eg    01:30 PM" },
+                        text = endTime.value.ifEmpty { "01:30 PM" },
                         color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -1017,6 +1022,7 @@ fun RecurringTask(
                     .clickable { startCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  startDate:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1025,7 +1031,7 @@ fun RecurringTask(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = startDate.value.ifEmpty { "startDate: eg     05/08/2023" },
+                        text = startDate.value.ifEmpty { "05/08/2023" },
                         color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -1033,7 +1039,7 @@ fun RecurringTask(
                     )
                 }
             }
-            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Spacer(modifier = Modifier.fillMaxWidth(0.02f))
             Card(
                 modifier = Modifier
                     .fillMaxWidth(1f)
@@ -1041,6 +1047,7 @@ fun RecurringTask(
                     .clickable { startClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  startTime:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1049,7 +1056,7 @@ fun RecurringTask(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = startTime.value.ifEmpty { "startTime: eg     11:00 AM" },
+                        text = startTime.value.ifEmpty { "11:00 AM" },
                         color = if (startTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -1078,6 +1085,7 @@ fun RecurringTask(
                     .clickable { endCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  endDate:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1086,7 +1094,7 @@ fun RecurringTask(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = endDate.value.ifEmpty { "endDate: eg     05/10/2023" },
+                        text = endDate.value.ifEmpty { "05/10/2023" },
                         color = if (endDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -1094,7 +1102,7 @@ fun RecurringTask(
                     )
                 }
             }
-            Spacer(modifier = Modifier.fillMaxWidth(0.03f))
+            Spacer(modifier = Modifier.fillMaxWidth(0.02f))
             Card(
                 modifier = Modifier
                     .fillMaxWidth(1f)
@@ -1102,6 +1110,7 @@ fun RecurringTask(
                     .clickable { endClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
+                Text(text = "  endTime:")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1110,7 +1119,7 @@ fun RecurringTask(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = endTime.value.ifEmpty { "endTime: eg     01:30 PM" },
+                        text = endTime.value.ifEmpty { "01:30 PM" },
                         color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
@@ -1142,15 +1151,20 @@ fun RecurringTask(
                             },
                             role = Role.RadioButton
                         )
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val radioColors = RadioButtonDefaults.colors(
+                        selectedColor = buttonColor, // 设置选中状态的颜色为红色
+                        unselectedColor = Color.Gray // 设置未选中状态的颜色为灰色
+                    )
                     RadioButton(
                         selected = (text == selectedOption),
                         onClick = {
                             onOptionSelected(text)
                             //repeat.value = selectedOption
-                        }
+                        },
+                        colors = radioColors
                     )
                     Text(
                         text = text,
@@ -1256,7 +1270,7 @@ fun DescribeTask(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 //text = "Summarize the detail of the task",
-                text = "Detail",
+                text = "Details",
                 style = MaterialTheme.typography.headlineLarge,
                 //lineHeight = 40.sp,
                 //fontSize = 40.sp
@@ -1267,7 +1281,7 @@ fun DescribeTask(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                text = "Help the tasker understand what you need to do",
+                text = "Help the tasker understand what you want to do",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
                 //lineHeight = 40.sp,
@@ -1769,13 +1783,14 @@ fun SuggestBudget(pageState: MutableState<Int>, money: MutableState<String>) {
                 //.padding(horizontal = 16.dp),
                 singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
-                placeholder = { Text("eg. 50") }
+                placeholder = { Text(" 50") }
             )
             Column() {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(15.dp))
                 Text(
-                    text = "$/Hour",
-                    style = MaterialTheme.typography.headlineSmall
+                    text = "AU$/hour",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontSize = 18.sp
                 )
             }
         }
@@ -1828,7 +1843,7 @@ data class Task(
     val money: String? = null,
     val startTime: String? = null,
     val endTime: String? = null,
-    val status: String = "open",
+    val status: String = "Open",
     val AssignID: String? = null,
     val UserID: String = user,
     val offerList: List<String>,
@@ -1862,7 +1877,7 @@ fun TaskDetail(
         money.value,
         startTime.value,
         endTime.value + " " + repeat,
-        "open",
+        "Open",
         "",
         user,
         list
@@ -1872,7 +1887,7 @@ fun TaskDetail(
             taskTopic.value, startDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value,
-            "open", "", user, list
+            "Open", "", user, list
         )
     }
     if (dateType == "period") {
@@ -1880,7 +1895,7 @@ fun TaskDetail(
             taskTopic.value, startDate.value + " to " + endDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value,
-            "open", "", user, list
+            "Open", "", user, list
         )
     }
     if (dateType == "recurring") {
@@ -1888,7 +1903,7 @@ fun TaskDetail(
             taskTopic.value, startDate.value + " to " + endDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value + ", " + repeat.value,
-            "open", "", user, list
+            "Open", "", user, list
         )
     }
     Column(
@@ -1933,7 +1948,7 @@ fun TaskDetail(
                 style = MaterialTheme.typography.headlineSmall,
                 //lineHeight = 40.sp,
                 //fontSize = 30.sp,
-                //fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold
             )
             Text(
                 modifier = Modifier
@@ -1962,8 +1977,23 @@ fun TaskDetail(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
+
+                    var Username by remember { mutableStateOf("") }
+                    LaunchedEffect("User") {
+                        FireStore.collection("User")
+                            .document(user)
+                            .addSnapshotListener { snapshot, error ->
+                                if (error != null) {
+                                    //
+                                } else {
+                                    if (snapshot != null && snapshot.exists()) {
+                                        Username = snapshot.getString("name") ?: ""
+                                    }
+                                }
+                            }
+                    }
                     Text(
-                        text = user,
+                        text = Username,
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
                     )
@@ -2025,7 +2055,7 @@ fun TaskDetail(
                 Spacer(modifier = Modifier.width(28.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "TO BE DONE ON", fontSize = 13.sp)
+                    Text(text = "Date", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     if (dateType == "oneday") {
                         Text(//text = "Monday April 10",
@@ -2068,20 +2098,13 @@ fun TaskDetail(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = money.value + "$",
+                        text = money.value + "AU$/hour",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                        fontSize = 40.sp,
+                        fontSize = 35.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    FilledTonalButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(21.dp),
-                        onClick = { },
-                        colors = ButtonDefaults.buttonColors(buttonColor)
-                    ) {
-                        Text("Per Hour", fontSize = 20.sp)
-                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))

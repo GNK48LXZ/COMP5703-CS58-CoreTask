@@ -22,8 +22,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 fun SetupNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
+        //startDestination = "Login"
         startDestination = "Login"
-        //startDestination = Screen.GetItDone.route
     ) {
         composable(
             route = "Login"

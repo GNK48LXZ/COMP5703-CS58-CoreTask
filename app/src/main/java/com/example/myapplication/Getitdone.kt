@@ -56,13 +56,12 @@ fun GetItDone(navController: NavController) {
             lineHeight = 30.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.height(20.dp))
         Row(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
         ) {
-            androidx.compose.material.Button(
+            /*androidx.compose.material.Button(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 2.dp),
@@ -75,7 +74,7 @@ fun GetItDone(navController: NavController) {
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
-            }
+            }*/
             androidx.compose.material.Button(
                 modifier = Modifier
                     .weight(1f)
@@ -92,14 +91,14 @@ fun GetItDone(navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Text(
+        /*Text(
             text = "OR choose your task category to create your task.",
             fontSize = 22.sp,
             modifier = Modifier.padding(horizontal = 16.dp),
             color = buttonColor,
             fontWeight = FontWeight.W500,
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))*/
         Text(
             text = "Top trending categories",
             fontSize = 20.sp,
@@ -246,7 +245,7 @@ fun GetItDone(navController: NavController) {
                         fontWeight = FontWeight.W500,
                         color = textColor,
                         //text = "Others",
-                        text = notice.toString(),
+                        text = "Other",
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }
