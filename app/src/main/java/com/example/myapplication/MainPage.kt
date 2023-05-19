@@ -38,10 +38,10 @@ fun MainPage(
         Column(
         ) {
             if(pageState.value==1){
-                GetItDone(navController)
+                FindTask(navController)
             }
             if(pageState.value==2){
-                FindTask(navController)
+                GetItDone(navController)
             }
             if(pageState.value==3){
                 MyTask(navController)
@@ -87,12 +87,12 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Filled.Home,
-                        contentDescription = "Check",
+                        Icons.Filled.Search,
+                        contentDescription = "Search",
                         tint = if (selectedPage == 1) buttonColor else Color.Gray
                     )
                     Text(
-                        "Home",
+                        "Search",
                         style = MaterialTheme.typography.caption,
                         color = if (selectedPage == 1) buttonColor else Color.Gray
                     )
@@ -112,12 +112,12 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Filled.Search,
-                        contentDescription = "Search",
+                        Icons.Filled.Home,
+                        contentDescription = "Check",
                         tint = if (selectedPage == 2) buttonColor else Color.Gray
                     )
                     Text(
-                        "Search",
+                        "Home",
                         style = MaterialTheme.typography.caption,
                         color = if (selectedPage == 2) buttonColor else Color.Gray
                     )
