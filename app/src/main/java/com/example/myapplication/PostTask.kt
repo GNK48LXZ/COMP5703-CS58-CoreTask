@@ -1142,7 +1142,7 @@ fun RecurringTask(
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
+                        .height(40.dp)
                         .selectable(
                             selected = (text == selectedOption),
                             onClick = {
@@ -1281,7 +1281,7 @@ fun DescribeTask(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                text = "Help the tasker understand what you want to do",
+                text = "Help the tasker understand what you need to do",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
                 //lineHeight = 40.sp,
@@ -1945,6 +1945,7 @@ fun TaskDetail(
                     .fillMaxWidth()
                     .padding(16.dp),
                 text = "Please confirm your task details",
+                color= buttonColor,
                 style = MaterialTheme.typography.headlineSmall,
                 //lineHeight = 40.sp,
                 //fontSize = 30.sp,
