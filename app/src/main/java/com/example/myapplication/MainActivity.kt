@@ -44,6 +44,7 @@ val textColor = Color(0xFFFFFFFF)
 val cardColor = Color(0xFF0A65FC)
 val whiteColor = Color(0xFFFFFFFF)
 val blackColor = Color(0x00000000)
+val lightGreen = Color(0xFF9BEDAD)
 val LightColorScheme = lightColorScheme ()
 val Poppins = FontFamily(
     Font(R.font.poppins)

@@ -51,9 +51,9 @@ fun MyTask(navController: NavController) {
         mutableStateOf(false)
     }
     notice = Listen()
-    if(notice==true){
+    if (notice == true) {
         No()
-        db.collection("User").document(user).update("notice",false)
+        db.collection("User").document(user).update("notice", false)
     }
 
     val pageState = remember { mutableStateOf(1) }
@@ -100,7 +100,10 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
                         .padding(horizontal = 8.dp)
                         .padding(vertical = 4.dp)
                         .clickable { pageState.value = 1 }
-                        .background(if (pageState.value == 1) buttonColor else Color.Transparent, RoundedCornerShape(25.dp)),
+                        .background(
+                            if (pageState.value == 1) buttonColor else Color.Transparent,
+                            RoundedCornerShape(25.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -116,7 +119,10 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
                         .padding(horizontal = 8.dp)
                         .padding(vertical = 4.dp)
                         .clickable { pageState.value = 2 }
-                        .background(if (pageState.value == 2) buttonColor else Color.Transparent, RoundedCornerShape(25.dp)),
+                        .background(
+                            if (pageState.value == 2) buttonColor else Color.Transparent,
+                            RoundedCornerShape(25.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -166,7 +172,10 @@ fun ShowGetTask(pageState: MutableState<Int>, navController: NavController) {
                         .padding(horizontal = 8.dp)
                         .padding(vertical = 4.dp)
                         .clickable { pageState.value = 1 }
-                        .background(if (pageState.value == 1) buttonColor else Color.Transparent, RoundedCornerShape(25.dp)),
+                        .background(
+                            if (pageState.value == 1) buttonColor else Color.Transparent,
+                            RoundedCornerShape(25.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -182,7 +191,10 @@ fun ShowGetTask(pageState: MutableState<Int>, navController: NavController) {
                         .padding(horizontal = 8.dp)
                         .padding(vertical = 4.dp)
                         .clickable { pageState.value = 2 }
-                        .background(if (pageState.value == 2) buttonColor else Color.Transparent, RoundedCornerShape(25.dp)),
+                        .background(
+                            if (pageState.value == 2) buttonColor else Color.Transparent,
+                            RoundedCornerShape(25.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -239,14 +251,14 @@ suspend fun loadMyPostDataFromFirestore(
         val userID = document.getString("userID") ?: ""
         var starRate = 0.0
         val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
-        val b : Bitmap? = null
+        val b: Bitmap? = null
         val a = mutableStateOf(b)
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = Firebase.storage.reference.child("avatar/"+userID+".jpg")
-        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it,0,it.size)
+        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
         }.addOnFailureListener {
 
         }
@@ -286,14 +298,14 @@ suspend fun loadMyGetDataFromFirestore(
         val userID = document.getString("userID") ?: ""
         var starRate = 0.0
         val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
-        val b : Bitmap? = null
+        val b: Bitmap? = null
         val a = mutableStateOf(b)
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = Firebase.storage.reference.child("avatar/"+userID+".jpg")
-        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it,0,it.size)
+        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
         }.addOnFailureListener {
 
         }
@@ -317,7 +329,6 @@ suspend fun loadMyGetDataFromFirestore(
 
 @Composable
 fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
-
     LazyColumn(
         modifier = Modifier
             .background(color = Color(0XFFF5F5F5))
@@ -333,103 +344,143 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(175.dp)
                     .padding(16.dp)
+                    .height(200.dp)
                     .clickable { navController.navigate("monitoringDetails/${taskItem.taskId}") }
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.background(color = background)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .background(color = background)
+                        .padding(8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .background(color = background)
-                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.background(color = background)
                     ) {
-                        Text(
-                            taskItem.taskName,
-                            style = MaterialTheme.typography.h2.copy(
-                                fontSize = 16.sp,
-                                fontFamily = Poppins
-                            ),
-                            color = MaterialTheme.colors.onSurface
-                        )
-                        Text(
-                            taskItem.location,
-                            style = MaterialTheme.typography.body1.copy(
-                                fontSize = 10.sp,
-                                fontFamily = Poppins
-                            ),
-                            color = MaterialTheme.colors.onSurface
-                        )
-                        Text(
-                            taskItem.date,
-                            style = MaterialTheme.typography.body1.copy(
-                                fontSize = 10.sp,
-                                fontFamily = Poppins
-                            ),
-                            color = MaterialTheme.colors.onSurface
-                        )
-                        Text(
-                            taskItem.time,
-                            style = MaterialTheme.typography.body1.copy(
-                                fontSize = 10.sp,
-                                fontFamily = Poppins
-                            ),
-                            color = MaterialTheme.colors.onSurface
-                        )
-                        Text(
-                            taskItem.status,
-                            style = MaterialTheme.typography.body1.copy(
-                                fontSize = 10.sp,
-                                fontFamily = Poppins
-                            ),
-                            color = Color.Blue,
+                        Column(
                             modifier = Modifier
-                                .padding(top = 5.dp)
-                        )
-                    }
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .background(color = background)
-                    ) {
-                        Text(
-                            "AU " + taskItem.bill + " $",
-                            style = MaterialTheme.typography.body1.copy(
-                                fontSize = 18.sp,
-                                textAlign = TextAlign.Center
-                            ),
-                            color = MaterialTheme.colors.onSurface
-                        )
-                        taskItem.imageUrl.value.let {
-                            if (it != null) {
-                                Image(
-                                    bitmap = it.asImageBitmap(),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(50.dp)
-                                )
+                                .weight(1f)
+                                .background(color = background)
+                                .padding(horizontal = 20.dp, vertical = 10.dp)
+                        ) {
+                            Text(
+                                taskItem.taskName,
+                                style = MaterialTheme.typography.h2.copy(
+                                    fontSize = 16.sp,
+                                    fontFamily = Poppins
+                                ),
+                                color = MaterialTheme.colors.onSurface
+                            )
+                            Text(
+                                taskItem.location,
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontSize = 12.sp,
+                                    fontFamily = Poppins
+                                ),
+                                color = MaterialTheme.colors.onSurface
+                            )
+                            Text(
+                                taskItem.date,
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontSize = 12.sp,
+                                    fontFamily = Poppins
+                                ),
+                                color = MaterialTheme.colors.onSurface
+                            )
+                            Text(
+                                taskItem.time,
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontSize = 12.sp,
+                                    fontFamily = Poppins
+                                ),
+                                color = MaterialTheme.colors.onSurface
+                            )
+                            taskItem.status.let {
+                                if (it == "Completed") {
+                                    Text(
+                                        taskItem.status,
+                                        style = MaterialTheme.typography.body1.copy(
+                                            fontSize = 15.sp,
+                                            fontFamily = Poppins
+                                        ),
+                                        color = Color.Red,
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                    )
+                                } else if (it == "Assigned") {
+                                    Text(
+                                        taskItem.status,
+                                        style = MaterialTheme.typography.body1.copy(
+                                            fontSize = 15.sp,
+                                            fontFamily = Poppins
+                                        ),
+                                        color = Color.Green,
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                    )
+                                } else {
+                                    Text(
+                                        taskItem.status,
+                                        style = MaterialTheme.typography.body1.copy(
+                                            fontSize = 15.sp,
+                                            fontFamily = Poppins
+                                        ),
+                                        color = Color.Blue,
+                                        modifier = Modifier
+                                            .padding(top = 5.dp)
+                                    )
+                                }
                             }
-                            else{
-                                androidx.compose.material3.Icon(
-                                    painter = painterResource(R.drawable.person),
-                                    tint = Color.Black,
-                                    contentDescription = "the person1",
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clickable { }
-                                )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .background(color = background),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "AU " + taskItem.bill + " $",
+                                style = MaterialTheme.typography.body1.copy(
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Center
+                                ),
+                                color = MaterialTheme.colors.onSurface,
+                                modifier = Modifier.padding(bottom = 100.dp)
+                            )
+                            taskItem.imageUrl.value.let {
+                                if (it != null) {
+                                    Image(
+                                        bitmap = it.asImageBitmap(),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .size(50.dp)
+                                    )
+                                } else {
+                                    androidx.compose.material3.Icon(
+                                        painter = painterResource(R.drawable.person),
+                                        tint = Color.Black,
+                                        contentDescription = "the person1",
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(CircleShape)
+                                    )
+                                }
                             }
                         }
                     }
-                    Row(
+                    Divider()
+                    Box(
                         modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
                             .padding(horizontal = 10.dp)
-                            .background(Color.Transparent)
+                            .padding(top = 5.dp)
+                            .background(Color.Transparent),
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
@@ -438,7 +489,8 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                                 .size(24.dp)
                                 .clickable {
                                     openDialog.value = true
-                                }
+                                },
+                            Color.Red
                         )
                     }
                 }
