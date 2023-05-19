@@ -206,13 +206,6 @@ fun SubmitInf(navController: NavController) {
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = {
-                        //navController.navigate("monitoringDetails/${taskId}")
-                        //navController.navigate(route = "monitoringDetails/${taskId}") {
-                        //    popUpTo(Screen.GetItDone.route) {
-                        //        inclusive = true
-                        //    }
-                        //}
-
                         val db = Firebase.firestore
                         val collectionRef = db.collection("Task")
                         val query = collectionRef.whereEqualTo("userID", user)

@@ -101,6 +101,15 @@ fun AccountMain(pageState: MutableState<Int>){
                 }
             }
     }
+
+    var userName by remember { mutableStateOf("") }
+    Firebase.firestore.collection("User").whereEqualTo("id", user).get()
+        .addOnSuccessListener { querySnapshot ->
+            for (documentSnapshot in querySnapshot.documents) {
+                userName = documentSnapshot.getString("name") ?: ""
+            }
+        }
+
     Box(
         modifier = Modifier
             .padding(top = 16.dp, start = 350.dp)
@@ -140,7 +149,12 @@ fun AccountMain(pageState: MutableState<Int>){
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Spacer(modifier = Modifier.height(10.dp))
-                if(user.length<14){
+                Text(
+                    text = userName,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp
+                )
+                /*if(user.length<14){
                     Text(
                         text = user,
                         fontWeight = FontWeight.Bold,
@@ -153,7 +167,7 @@ fun AccountMain(pageState: MutableState<Int>){
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
                     )
-                }
+                }*/
                 Spacer(modifier = Modifier.width(50.dp))
                 Spacer(modifier = Modifier.height(10.dp))
                 StarRate()
@@ -161,7 +175,7 @@ fun AccountMain(pageState: MutableState<Int>){
 
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        /*Spacer(modifier = Modifier.height(30.dp))
         Row() {
             Spacer(modifier = Modifier.weight(1f))
             FilledTonalButton(
@@ -182,7 +196,7 @@ fun AccountMain(pageState: MutableState<Int>){
                 Text("Poster", fontSize = 20.sp)
             }
             Spacer(modifier = Modifier.weight(1f))
-        }
+        }*/
 
         Spacer(modifier = Modifier.height(20.dp))
         Text(
