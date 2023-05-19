@@ -1,5 +1,7 @@
 package com.example.myapplication
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,7 +9,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -16,7 +20,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -25,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
-
-
 
 
 @ExperimentalMaterial3Api
@@ -59,8 +66,30 @@ fun FindTask(navController: NavController) {
                         text = "Browse Tasks",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.W600,
-                        fontFamily = Poppins
+                        fontFamily = Poppins,
+                        modifier = Modifier.weight(1f)
                     )
+                    /*androidx.compose.material.Button(
+                        modifier = Modifier
+                            .weight(1.5f),
+                        onClick = { navController.navigate(Screen.ClassificationPage.route) },
+                        shape = RoundedCornerShape(25.dp),
+                        colors = ButtonDefaults.buttonColors(buttonColor)
+                    ) {
+                        androidx.compose.material.Text(
+                            text = "I am a Task Poster",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(20.dp))*/
+                    /*Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp)
+                    ) {
+
+                    }*/
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
@@ -518,7 +547,7 @@ data class TaskItem(
     val time: String,
     val status: String,
     val bill: String,
-    val imageUrl: Int
+    val imageUrl: MutableState<Bitmap?>
 )
 
 @Composable
@@ -650,7 +679,20 @@ public suspend fun loadDataFromFirestore(
         val endTime = document.getString("endTime") ?: ""
         val status = document.getString("status") ?: ""
         val money = document.getString("money") ?: ""
-        val imageUrl = R.drawable.ic_launcher_foreground
+        val userID = document.getString("userID") ?: ""
+        var starRate = 0.0
+        val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
+        val b: Bitmap? = null
+        val a = mutableStateOf(b)
+        querySnapshotUser.documents.forEach { document ->
+            starRate = document.getDouble("starRate") ?: 0.0
+        }
+        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+        }.addOnFailureListener {
+
+        }
         taskList.add(
             TaskItem(
                 taskId = taskId,
@@ -660,7 +702,7 @@ public suspend fun loadDataFromFirestore(
                 time = "$startTime - $endTime",
                 status = status,
                 bill = money,
-                imageUrl = imageUrl
+                imageUrl = a
             )
         )
     }
@@ -686,7 +728,20 @@ public suspend fun loadClassificationDataFromFirestore(
         val endTime = document.getString("endTime") ?: ""
         val status = document.getString("status") ?: ""
         val money = document.getString("money") ?: ""
-        val imageUrl = R.drawable.ic_launcher_foreground
+        val userID = document.getString("userID") ?: ""
+        var starRate = 0.0
+        val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
+        val b: Bitmap? = null
+        val a = mutableStateOf(b)
+        querySnapshotUser.documents.forEach { document ->
+            starRate = document.getDouble("starRate") ?: 0.0
+        }
+        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+        }.addOnFailureListener {
+
+        }
         val classification = document.getString("classification")
 
 
@@ -700,7 +755,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = imageUrl
+                    imageUrl = a
                 )
             )
         }
@@ -714,7 +769,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = imageUrl
+                    imageUrl = a
                 )
             )
         }
@@ -728,7 +783,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = imageUrl
+                    imageUrl = a
                 )
             )
         }
@@ -742,7 +797,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = imageUrl
+                    imageUrl = a
                 )
             )
         }
@@ -778,7 +833,20 @@ public suspend fun loadSearchDataFromFirestore(
         val endTime = document.getString("endTime") ?: ""
         val status = document.getString("status") ?: ""
         val money = document.getString("money") ?: ""
-        val imageUrl = R.drawable.ic_launcher_foreground
+        val userID = document.getString("userID") ?: ""
+        var starRate = 0.0
+        val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
+        val b: Bitmap? = null
+        val a = mutableStateOf(b)
+        querySnapshotUser.documents.forEach { document ->
+            starRate = document.getDouble("starRate") ?: 0.0
+        }
+        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+        }.addOnFailureListener {
+
+        }
 
         if (taskTopic.contains(filterText, ignoreCase = true)) {
             taskList.add(
@@ -790,7 +858,7 @@ public suspend fun loadSearchDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = imageUrl
+                    imageUrl = a
                 )
             )
         }
@@ -840,7 +908,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                         Text(
                             taskItem.location,
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 fontFamily = Poppins
                             ),
                             color = MaterialTheme.colors.onSurface
@@ -848,7 +916,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                         Text(
                             taskItem.date,
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 fontFamily = Poppins
                             ),
                             color = MaterialTheme.colors.onSurface
@@ -856,40 +924,74 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                         Text(
                             taskItem.time,
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 fontFamily = Poppins
                             ),
                             color = MaterialTheme.colors.onSurface
                         )
-                        Text(
-                            taskItem.status,
-                            style = MaterialTheme.typography.body1.copy(
-                                fontSize = 12.sp,
-                                fontFamily = Poppins
-                            ),
-                            color = Color.Blue,
-                            modifier = Modifier
-                                .padding(top = 5.dp)
-                        )
+                        taskItem.status.let {
+                            if (it != "Completed") {
+                                Text(
+                                    taskItem.status,
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontSize = 15.sp,
+                                        fontFamily = Poppins
+                                    ),
+                                    color = Color.Blue,
+                                    modifier = Modifier
+                                        .padding(top = 5.dp)
+                                )
+                            } else {
+                                Text(
+                                    taskItem.status,
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontSize = 15.sp,
+                                        fontFamily = Poppins
+                                    ),
+                                    color = Color.Red,
+                                    modifier = Modifier
+                                        .padding(top = 5.dp)
+                                )
+                            }
+                        }
                     }
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 20.dp)
-                            .background(color = background)
+                            .background(color = background),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             "AU " + taskItem.bill + " $",
                             style = MaterialTheme.typography.body1.copy(
-                                fontSize = 12.sp,
+                                fontSize = 18.sp,
                                 textAlign = TextAlign.Center
                             ),
-                            color = MaterialTheme.colors.onSurface
+                            color = MaterialTheme.colors.onSurface,
+                            modifier = Modifier.padding(10.dp)
                         )
-                        Image(
-                            painter = painterResource(taskItem.imageUrl),
-                            contentDescription = "Image",
-                            modifier = Modifier.size(80.dp)
-                        )
+
+                        taskItem.imageUrl.value.let {
+                            if (it != null) {
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .size(50.dp)
+                                )
+                            } else {
+                                androidx.compose.material3.Icon(
+                                    painter = painterResource(R.drawable.person),
+                                    tint = Color.Black,
+                                    contentDescription = "the person1",
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(CircleShape)
+                                )
+                            }
+                        }
                     }
                 }
             }

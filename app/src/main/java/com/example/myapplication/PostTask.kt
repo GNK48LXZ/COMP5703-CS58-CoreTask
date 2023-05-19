@@ -1843,7 +1843,7 @@ data class Task(
     val money: String? = null,
     val startTime: String? = null,
     val endTime: String? = null,
-    val status: String = "open",
+    val status: String = "Open",
     val AssignID: String? = null,
     val UserID: String = user,
     val offerList: List<String>,
@@ -1877,7 +1877,7 @@ fun TaskDetail(
         money.value,
         startTime.value,
         endTime.value + " " + repeat,
-        "open",
+        "Open",
         "",
         user,
         list
@@ -1887,7 +1887,7 @@ fun TaskDetail(
             taskTopic.value, startDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value,
-            "open", "", user, list
+            "Open", "", user, list
         )
     }
     if (dateType == "period") {
@@ -1895,7 +1895,7 @@ fun TaskDetail(
             taskTopic.value, startDate.value + " to " + endDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value,
-            "open", "", user, list
+            "Open", "", user, list
         )
     }
     if (dateType == "recurring") {
@@ -1903,7 +1903,7 @@ fun TaskDetail(
             taskTopic.value, startDate.value + " to " + endDate.value,
             taskDescription.value, address.value, require.value,
             money.value, startTime.value, endTime.value + ", " + repeat.value,
-            "open", "", user, list
+            "Open", "", user, list
         )
     }
     Column(

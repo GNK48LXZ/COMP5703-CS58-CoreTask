@@ -50,7 +50,6 @@ fun AccountManagement(
     } else if (pageState.value == 4){
         EditUserProfile(pageState)
     }
-
 }
 @Composable
 fun AccountMain(pageState: MutableState<Int>){

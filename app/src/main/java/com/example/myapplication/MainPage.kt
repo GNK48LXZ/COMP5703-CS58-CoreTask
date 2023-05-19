@@ -117,7 +117,7 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                         tint = if (selectedPage == 2) buttonColor else Color.Gray
                     )
                     Text(
-                        "Home",
+                        "Post",
                         style = MaterialTheme.typography.caption,
                         color = if (selectedPage == 2) buttonColor else Color.Gray
                     )

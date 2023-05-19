@@ -1,6 +1,8 @@
 package com.example.myapplication
 
+import android.content.ContentValues.TAG
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -37,12 +40,13 @@ data class Offer(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MakeAnOffer(taskId: String,navController: NavController) {
+fun MakeAnOffer(taskId: String, navController: NavController) {
     val recommendation = remember { mutableStateOf("") }
     val userID = remember { mutableStateOf("") }
     val db = FirebaseFirestore.getInstance()
 
-    val offer = Offer(recommendation.value,
+    val offer = Offer(
+        recommendation.value,
         userID.value,
         taskId
     )
@@ -74,21 +78,28 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
                     fontWeight = FontWeight.W600
                 )
             }
-            Spacer(modifier = Modifier.height(60.dp))
-            Text(
-                text = "Certificate",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.W500,
-                lineHeight = 30.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
             Spacer(modifier = Modifier.height(20.dp))
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    text = "Certificate",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.W500,
+                    lineHeight = 30.sp,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                Text(
+                    text = " (Required)",
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 5.dp)
+                )
+            }
             Button(
-                onClick = {  },
+                onClick = { },
                 colors = ButtonDefaults.buttonColors(textFieldColor),
                 modifier = Modifier
-                    .padding(start = 16.dp)
-                    .size(width = 170.dp, height = 120.dp)
+                    .padding(16.dp)
+                    .size(width = 100.dp, height = 100.dp)
             ) {
                 androidx.compose.material3.Icon(
                     painter = painterResource(R.drawable.photo),
@@ -97,24 +108,31 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
                     modifier = Modifier
                         .height(100.dp)
                         .width(100.dp)
-              )
-           }
-            Spacer(modifier = Modifier.height(100.dp))
-            Text(
-                text = "Self recommendation",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.W500,
-                lineHeight = 30.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    text = "Self recommendation",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.W500,
+                    lineHeight = 30.sp,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                Text(
+                    text = " (Optional)",
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 5.dp)
+                )
+            }
             TextField(
                 value = recommendation.value,
-                onValueChange = {recommendation.value = it},
+                onValueChange = { recommendation.value = it },
                 modifier = Modifier
-                    .padding(16.dp)
-                    .width(350.dp)
-                    .height(200.dp) ,
+                    .padding(24.dp)
+                    .width(340.dp)
+                    .height(180.dp),
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
             Column(
@@ -124,16 +142,18 @@ fun MakeAnOffer(taskId: String,navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = { val db = Firebase.firestore
+                    onClick = {
+                        val db = Firebase.firestore
                         db.collection("Offer").document().set(offer)
                         //navController.navigate("SubmitInf/${taskId}")
                         navController.popBackStack()
-                              },
-                    modifier = Modifier.padding(16.dp)
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)
                 ) {
-                    Text(text = "Apply",fontSize = 20.sp)
+                    Text(text = "Apply", fontSize = 20.sp)
                 }
             }
         }
@@ -198,13 +218,23 @@ fun SubmitInf(navController: NavController) {
                         //        inclusive = true
                         //    }
                         //}
-                        navController.popBackStack()
-                              },
-                    modifier = Modifier.padding(16.dp)
+                        val db = Firebase.firestore
+                        val collectionRef = db.collection("Task")
+
+                        collectionRef.whereEqualTo("user ID", user).get()
+                            .addOnSuccessListener { querySnapshot ->
+                                for (documentSnapshot in querySnapshot.documents) {
+                                    val documentId = documentSnapshot.id
+                                    navController.navigate("monitoringDetails/${documentId}")
+                                }
+                            }
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)
                 ) {
-                    Text(text = "Back to home page",fontSize = 20.sp)
+                    Text(text = "Back to home page", fontSize = 20.sp)
                 }
             }
         }
