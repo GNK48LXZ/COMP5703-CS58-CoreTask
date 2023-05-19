@@ -319,6 +319,13 @@ fun OfferDetails(recommendation: String, userID: String, navController: NavContr
                 }
             }
     }
+    var userName by remember { mutableStateOf("") }
+    Firebase.firestore.collection("User").whereEqualTo("id", userID).get()
+        .addOnSuccessListener { querySnapshot ->
+            for (documentSnapshot in querySnapshot.documents) {
+                userName = documentSnapshot.getString("name") ?: ""
+            }
+        }
     val storage = Firebase.storage
     var storageRef = storage.reference
     val avatarImagesRef = storageRef.child("avatar/" + userID + ".jpg")
@@ -385,9 +392,8 @@ fun OfferDetails(recommendation: String, userID: String, navController: NavContr
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = userID,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
+                    text = userName,
+                    modifier = Modifier,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                 )
@@ -483,6 +489,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                 }
             }
     }
+
     Firebase.firestore.collection("User").whereEqualTo("id", UserID).get()
         .addOnSuccessListener { querySnapshot ->
             for (documentSnapshot in querySnapshot.documents) {

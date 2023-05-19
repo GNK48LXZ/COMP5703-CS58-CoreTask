@@ -218,16 +218,21 @@ fun SubmitInf(navController: NavController) {
                         //        inclusive = true
                         //    }
                         //}
+
                         val db = Firebase.firestore
                         val collectionRef = db.collection("Task")
-
-                        collectionRef.whereEqualTo("user ID", user).get()
-                            .addOnSuccessListener { querySnapshot ->
-                                for (documentSnapshot in querySnapshot.documents) {
-                                    val documentId = documentSnapshot.id
-                                    navController.navigate("monitoringDetails/${documentId}")
-                                }
+                        val query = collectionRef.whereEqualTo("userID", user)
+                        query.addSnapshotListener { snapshot, e ->
+                            if (e != null) {
+                                return@addSnapshotListener
                             }
+
+                            if (snapshot != null && snapshot.documents.isNotEmpty()) {
+                                val documentId = snapshot.documents[0].id
+                                navController.navigate("monitoringDetails/${documentId}")
+                            } else {
+                            }
+                        }
                     },
                     modifier = Modifier
                         .padding(16.dp)

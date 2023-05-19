@@ -89,7 +89,7 @@ fun GetItDone(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(10.dp))*/
         Text(
-            text = "Top trending categories",
+            text = "Choose one category and post your Task!",
             fontSize = 20.sp,
             fontWeight = FontWeight.W500,
             lineHeight = 40.sp,
