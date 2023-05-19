@@ -206,20 +206,9 @@ fun SubmitInf(navController: NavController) {
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = {
-                        val db = Firebase.firestore
-                        val collectionRef = db.collection("Task")
-                        val query = collectionRef.whereEqualTo("userID", user)
-                        query.addSnapshotListener { snapshot, e ->
-                            if (e != null) {
-                                return@addSnapshotListener
-                            }
 
-                            if (snapshot != null && snapshot.documents.isNotEmpty()) {
-                                val documentId = snapshot.documents[0].id
-                                navController.navigate("monitoringDetails/${documentId}")
-                            } else {
-                            }
-                        }
+                        navController.navigate(Screen.GetItDone.route)
+                        page.value = 3
                     },
                     modifier = Modifier
                         .padding(16.dp)

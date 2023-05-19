@@ -512,9 +512,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                     "Icon",
                     modifier = Modifier
                         .clickable {
-                            //navController.popBackStack()
-                            navController.navigate(Screen.GetItDone.route)
-                            page.value = 3
+                            navController.popBackStack()
                         }
                         .padding(horizontal = 16.dp)
                         .size(30.dp),

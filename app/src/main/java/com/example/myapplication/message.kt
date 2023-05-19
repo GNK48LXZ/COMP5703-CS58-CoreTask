@@ -1,5 +1,7 @@
 package com.example.myapplication
-import android.content.ContentValues.TAG
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.service.controls.ControlsProviderService.TAG
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,28 +33,68 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Settings
 import androidx.navigation.NavController
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.database.*
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
-data class Message(val sender: String, val content: String, val isMe: Boolean)
-
-
-
+val db = Firebase.firestore
+data class Message(
+    val sender: String?= null,
+    val inputText: String? = null,
+    val isMe: Boolean,
+    val reciever: String?= null,
+    val time: String? = null)
 @Composable
 fun MessageListAndInput() {
     var inputText by remember { mutableStateOf("") }
+    // When the user sends a new message
+    var sender by remember { mutableStateOf("") }
+    var reciever by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf("") }
+
+    val storage = Firebase.storage
+    var storageRef = storage.reference
+
+
+// 获取用户头像
+    val avatarImagesRef = storageRef.child("avatar/"+user+".jpg")
+    val avatar =  remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
+        avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+    }.addOnFailureListener {
+        // 处理任何错误
+    }
+    sender = auth.currentUser?.email.toString()
+
+
+
+// 监听指定Document ID的数据
+    LaunchedEffect(Unit) {
+        FireStore.collection("Message")
+            .document(sender.toString())
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    // 处理错误
+                } else {
+                    if (snapshot != null && snapshot.exists()) {
+                        sender = (snapshot.getString("sender")?:"")
+                        inputText = snapshot.getString("Inputext")?:""
+                        reciever = snapshot.getString("reciever")?:""
+                        time = snapshot.getString("time")?:""
+
+                    }
+                }
+            }
+    }
+
     val messages = remember {
         mutableListOf(
-            Message("Lucas", "Hello!", true),
-            Message("Sophie", "Hi!", false),
-            Message("Lucas", "How are you?", true),
-            Message("Sophie", "I'm fine, thank you.", false),
-            Message("Lucas", "What are you doing?", true),
-            Message("Sophie", "Nothing much, just watching TV.", false),
-            Message("Lucas", "OK.", true),
+            Message("Lucas", "Hello!", true, "Sophie","12:00"),
+            Message("Sophie", "Hi!", false, "Lucas", "12:00"),
         )
     }
     Column(
@@ -75,6 +117,7 @@ fun MessageListAndInput() {
                     inputText = it
                 },
                 modifier = Modifier.weight(1f),
+
                 singleLine = true,
                 placeholder = {
                     androidx.compose.material.Text(
@@ -83,14 +126,12 @@ fun MessageListAndInput() {
                         color = Color.Gray,
                     )
                 },
+
                 textStyle = MaterialTheme.typography.body1,
                 trailingIcon = {
                     IconButton(onClick = {
                         if (inputText.isNotEmpty()) {
-                            val message= Message("Lucas", inputText, true)
-                            messages.add(message)
-                            uploadMessage(message)
-                            saveMessage(message)
+                            messages.add(Message("Lucas", inputText, true, "Sophie","12:00"))
                             inputText = ""
                         }
                     }) {
@@ -105,15 +146,26 @@ fun MessageListAndInput() {
                 keyboardActions = KeyboardActions(
                     onSend = {
                         if (inputText.isNotEmpty()) {
-                            messages.add(Message("Lucas", inputText, true))
+                            messages.add(Message("Lucas", inputText, true, "Sophie","12:00"))
                             inputText = ""
                         }
                     }
-                ),
+                )
             )
+//            androidx.compose.material3.IconButton(
+//                onClick = {
+//
+//                },
+//                modifier = Modifier.fillMaxSize()
+//            ) {
+//                Row {
+//                    Icon(Icons.Filled.Settings, contentDescription = "设置")
+//                }
+            }
         }
+     //   db.collection("Message").document("document.id").set(Message)
     }
-}
+
 
 @Composable
 fun MessageItem(message: Message) {
@@ -133,21 +185,26 @@ fun MessageItem(message: Message) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = if (message.isMe) 0.dp else 16.dp, end = if (message.isMe) 16.dp else 0.dp),
+                .padding(
+                    start = if (message.isMe) 0.dp else 16.dp,
+                    end = if (message.isMe) 16.dp else 0.dp
+                ),
             verticalArrangement = Arrangement.Center,
         ) {
-            androidx.compose.material.Text(
-                text = message.content,
-                style = MaterialTheme.typography.body1,
-                color = if (message.isMe) Color.White else Color.Black,
-                modifier = Modifier
-                    .background(
-                        if (message.isMe) Color.Blue else Color.Gray,
-                        MaterialTheme.shapes.medium
-                    )
-                    .padding(16.dp)
-                    .align(if (message.isMe) Alignment.End else Alignment.Start),
-            )
+            message.inputText?.let {
+                androidx.compose.material.Text(
+                    text = it,
+                    style = MaterialTheme.typography.body1,
+                    color = if (message.isMe) Color.White else Color.Black,
+                    modifier = Modifier
+                        .background(
+                            if (message.isMe) Color.Blue else Color.Gray,
+                            MaterialTheme.shapes.medium
+                        )
+                        .padding(16.dp)
+                        .align(if (message.isMe) Alignment.End else Alignment.Start),
+                )
+            }
         }
         if (message.isMe) {
             Image(
@@ -162,7 +219,6 @@ fun MessageItem(message: Message) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviewConversation() {
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,7 +230,7 @@ fun PreviewConversation() {
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable {/* */ }
+                    .clickable {}
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
@@ -207,18 +263,4 @@ fun PreviewConversation() {
     }
 }
 
-private fun uploadMessage(message: Message) {
-    val collection = FirebaseFirestore.getInstance().collection("messages")
-    collection.add(message)
-        .addOnSuccessListener { documentReference ->
-            Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-        }
-        .addOnFailureListener { e ->
-            Log.w(TAG, "Error adding document", e)
-        }
-}
 
-private fun saveMessage(message: Message) {
-    val database = FirebaseDatabase.getInstance().reference
-    database.child("messages").push().setValue(message)
-}

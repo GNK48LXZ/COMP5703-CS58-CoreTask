@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.navigation.*
 import androidx.navigation.compose.*
+import com.example.myapplication.MessageListAndInput
 import com.example.myapplication.PreviewConversation
 import com.example.myapplication.R
 
@@ -33,6 +34,7 @@ data class Chat(
 @ExperimentalAnimationApi
 @Composable
 fun WeChatMainScreen(navController: NavController) {
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,9 +51,11 @@ fun WeChatMainScreen(navController: NavController) {
             )
         },
     ) {
+        var inputText by remember{ mutableStateOf("")}
         val chats = remember {
+
             mutableListOf(
-                Chat("John", "Hi! How are you?", "10:23"),
+                Chat("John", inputText, "10:23"),
             )
         }
 
