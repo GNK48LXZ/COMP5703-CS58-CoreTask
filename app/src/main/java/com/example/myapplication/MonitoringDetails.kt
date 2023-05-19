@@ -55,7 +55,7 @@ data class Information(
     val money: String? = null,
     val startTime: String? = null,
     val endTime: String? = null,
-    val status: String = "open",
+    val status: String = "Open",
     //val UserID: String? = null
 )
 
@@ -67,6 +67,7 @@ data class OfferItem(
     val recommendation: String? = null,
     val userID: String? = null,
     val taskID: String? = null,
+    val userName: String? = null,
     var status: String,
     val offerID: String,
     val starRate: Double = 0.0,
@@ -89,37 +90,50 @@ public suspend fun loadOfferDataFromFirestore(
         val recommendation = document.getString("recommendation") ?: ""
         val taskID = document.getString("taskID") ?: ""
         val userID = document.getString("userID") ?: ""
+        var userName = ""
+        val querySnapshotUserName = db.collection("User").whereEqualTo("id", userID).get().await()
         var status = document.getString("status") ?: ""
         val offerID = document.id
         var starRate = 0.0
         val querySnapshotUser = db.collection("User").whereEqualTo("id", userID).get().await()
-        val b : Bitmap? = null
+        val b: Bitmap? = null
         val a = mutableStateOf(b)
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = storageRef.child("avatar/"+userID+".jpg")
-        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it,0,it.size)
+        val avatarImagesRef = storageRef.child("avatar/" + userID + ".jpg")
+        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
         }.addOnFailureListener {
 
         }
-        offerList.add(OfferItem(
-            recommendation = recommendation,
-            userID = userID,
-            taskID = taskID,
-            status = status,
-            offerID = offerID,
-            starRate = starRate,
-            avatar = a
-        ))
+        querySnapshotUserName.documents.forEach { document ->
+            userName = document.getString("name") ?: ""
+        }
+        offerList.add(
+            OfferItem(
+                recommendation = recommendation,
+                userID = userID,
+                taskID = taskID,
+                userName = userName,
+                status = status,
+                offerID = offerID,
+                starRate = starRate,
+                avatar = a
+            )
+        )
     }
     return offerList
 }
 
 
 @Composable
-fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: String,navController: NavController) {
+fun OfferListLazyColumn(
+    offerItem: List<OfferItem>,
+    userId: String?,
+    taskId: String,
+    navController: NavController
+) {
     var taskstatus by remember { mutableStateOf("") }
     LaunchedEffect("Task") {
         FireStore.collection("Task")
@@ -129,7 +143,7 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                     //
                 } else {
                     if (snapshot != null && snapshot.exists()) {
-                        taskstatus= snapshot.getString("status") ?: ""
+                        taskstatus = snapshot.getString("status") ?: ""
                     }
                 }
             }
@@ -177,8 +191,7 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                                         .clip(CircleShape)
                                         .size(50.dp)
                                 )
-                            }
-                            else{
+                            } else {
                                 androidx.compose.material3.Icon(
                                     painter = painterResource(R.drawable.person),
                                     tint = Color.Black,
@@ -191,7 +204,7 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                         }
                         Spacer(modifier = Modifier.width(5.dp))
                         Column {
-                            offerItem.userID?.let {
+                            offerItem.userName?.let {
                                 Text(
                                     it,
                                     fontSize = 15.sp,
@@ -202,7 +215,7 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                             StarRate(offerItem.starRate)
                         }
                         Spacer(modifier = Modifier.width(35.dp))
-                        if(offerItem.userID == user){
+                        if (offerItem.userID == user) {
                             androidx.compose.material3.Icon(
                                 imageVector = Icons.Filled.Delete,
                                 "Icon",
@@ -218,7 +231,7 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                     }
                     offerItem.recommendation?.let {
                         Text(
-                            "\"$it\"",
+                            "$it",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.W500,
                             maxLines = 2,
@@ -244,15 +257,15 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                             if (userId == user) {
                                 Button(
                                     onClick = {
-                                            db.collection("Offer").document(offerItem.offerID)
-                                                .update("status", "Assigned")
-                                            db.collection("Task").document(taskId)
-                                                .update("status", "Assigned")
-                                            db.collection("Task").document(taskId)
-                                                .update("assignID", offerItem.userID)
-                                                .addOnSuccessListener {
+                                        db.collection("Offer").document(offerItem.offerID)
+                                            .update("status", "Assigned")
+                                        db.collection("Task").document(taskId)
+                                            .update("status", "Assigned")
+                                        db.collection("Task").document(taskId)
+                                            .update("assignID", offerItem.userID)
+                                            .addOnSuccessListener {
 
-                                        }
+                                            }
                                     },
                                     modifier = Modifier
                                         .height(40.dp)
@@ -260,23 +273,25 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
                                     colors = ButtonDefaults.buttonColors(buttonColor),
                                     enabled = when (taskstatus) {
                                         "Assigned", "Completed" -> false
-                                        "open" -> true
+                                        "Open" -> true
                                         else -> true // 默认情况下，按钮不可点击
                                     }
                                 ) {
-                                    if (offerItem.status=="Assigned") {
+                                    if (offerItem.status == "Assigned") {
                                         Text(
                                             text = "Accepted",
                                             lineHeight = 20.sp,
                                             fontSize = 15.sp,
                                             fontWeight = FontWeight.W500
                                         )
-                                    } else {Text(
-                                        text = "Accept",
-                                        lineHeight = 20.sp,
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.W500
-                                    ) }
+                                    } else {
+                                        Text(
+                                            text = "Accept",
+                                            lineHeight = 20.sp,
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.W500
+                                        )
+                                    }
                                 }
                             }
 
@@ -289,29 +304,29 @@ fun OfferListLazyColumn(offerItem: List<OfferItem>,userId: String?,taskId: Strin
 }
 
 @Composable
-fun OfferDetails(recommendation:String, userID:String, navController: NavController){
+fun OfferDetails(recommendation: String, userID: String, navController: NavController) {
     var starrate by remember { mutableStateOf(0.0) }
     LaunchedEffect(Unit) {
         FireStore.collection("User")
             .document(userID)
-            .addSnapshotListener{ snapshot, error ->
+            .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     // 处理错误
                 } else {
                     if (snapshot != null && snapshot.exists()) {
-                        starrate = snapshot.getDouble("starRate")?:0.0
+                        starrate = snapshot.getDouble("starRate") ?: 0.0
                     }
                 }
             }
     }
     val storage = Firebase.storage
     var storageRef = storage.reference
-    val avatarImagesRef = storageRef.child("avatar/"+userID+".jpg")
-    val avatar =  remember {
+    val avatarImagesRef = storageRef.child("avatar/" + userID + ".jpg")
+    val avatar = remember {
         mutableStateOf<Bitmap?>(null)
     }
-    avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-        avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+    avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+        avatar.value = BitmapFactory.decodeByteArray(it, 0, it.size)
     }.addOnFailureListener {
         // Handle any errors
     }
@@ -342,8 +357,9 @@ fun OfferDetails(recommendation:String, userID:String, navController: NavControl
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Row(modifier = Modifier
-            .padding(horizontal = 16.dp)
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
         ) {
             avatar.value.let {
                 if (it != null) {
@@ -355,8 +371,7 @@ fun OfferDetails(recommendation:String, userID:String, navController: NavControl
                             .clip(CircleShape)
                             .size(50.dp)
                     )
-                }
-                else{
+                } else {
                     androidx.compose.material3.Icon(
                         painter = painterResource(R.drawable.person),
                         tint = Color.Black,
@@ -368,7 +383,7 @@ fun OfferDetails(recommendation:String, userID:String, navController: NavControl
                 }
             }
             Spacer(modifier = Modifier.width(10.dp))
-            Column{
+            Column {
                 Text(
                     text = userID,
                     modifier = Modifier
@@ -418,7 +433,7 @@ fun OfferDetails(recommendation:String, userID:String, navController: NavControl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonitoringDetails(taskId: String,navController: NavController) {
+fun MonitoringDetails(taskId: String, navController: NavController) {
     var taskTopic by remember { mutableStateOf("") }
     var taskDescription by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -430,13 +445,14 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
     var status by remember { mutableStateOf("") }
     var assignID by remember { mutableStateOf("") }
     var UserID by remember { mutableStateOf("") }
-    var avatar : MutableState<Bitmap?> = remember {
+    var UserName by remember { mutableStateOf("") }
+    var avatar: MutableState<Bitmap?> = remember {
         mutableStateOf<Bitmap?>(null)
     }
     val storage = Firebase.storage
     var storageRef = storage.reference
     val openDialog = remember { mutableStateOf(false) }
-    CompletedDialog(taskId = taskId,assignId= assignID,openDialog = openDialog,navController)
+    CompletedDialog(taskId = taskId, assignId = assignID, openDialog = openDialog, navController)
 
     LaunchedEffect("Task") {
         FireStore.collection("Task")
@@ -456,10 +472,10 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                         require = snapshot.getString("require") ?: ""
                         assignID = snapshot.getString("assignID") ?: ""
                         UserID = snapshot.getString("userID") ?: ""
-                        status= snapshot.getString("status") ?: ""
-                        val avatarImagesRef = storageRef.child("avatar/"+UserID+".jpg")
-                        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-                            avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+                        status = snapshot.getString("status") ?: ""
+                        val avatarImagesRef = storageRef.child("avatar/" + UserID + ".jpg")
+                        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                            avatar.value = BitmapFactory.decodeByteArray(it, 0, it.size)
                         }.addOnFailureListener {
 
                         }
@@ -467,6 +483,14 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                 }
             }
     }
+    Firebase.firestore.collection("User").whereEqualTo("id", UserID).get()
+        .addOnSuccessListener { querySnapshot ->
+            for (documentSnapshot in querySnapshot.documents) {
+                UserName = documentSnapshot.getString("name") ?: ""
+            }
+        }
+
+
 
     Column(
         modifier = Modifier
@@ -497,7 +521,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Box(
@@ -505,8 +529,9 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     .padding(5.dp)
                     .background(
                         color = when (status) {
-                        "open" -> Color(0xFF9BEDAD)
-                        else -> Color.Transparent },
+                            "Open" -> Color(0xFF9BEDAD)
+                            else -> Color.Transparent
+                        },
                         shape = RoundedCornerShape(20.dp)
                     )
 
@@ -517,8 +542,9 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     fontSize = 15.sp,
                     fontWeight = FontWeight.W500,
                     color = when (status) {
-                        "open" -> Color.Black
-                        else -> Color.Black}
+                        "Open" -> Color.Black
+                        else -> Color.Black
+                    }
                 )
             }
             Box(
@@ -527,7 +553,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     .background(
                         color = when (status) {
                             "Assigned" -> buttonColor
-                            else -> Color.Transparent },
+                            else -> Color.Transparent
+                        },
                         shape = RoundedCornerShape(20.dp)
                     )
             ) {
@@ -537,7 +564,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     fontWeight = FontWeight.W500,
                     color = when (status) {
                         "Assigned" -> Color.White
-                        else -> Color.Black},
+                        else -> Color.Black
+                    },
                     modifier = Modifier.padding(5.dp)
                 )
             }
@@ -547,7 +575,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     .background(
                         color = when (status) {
                             "Completed" -> Color(0xFFFF0000)
-                            else -> Color.Transparent },
+                            else -> Color.Transparent
+                        },
                         shape = RoundedCornerShape(20.dp)
                     )
 
@@ -558,7 +587,8 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     fontWeight = FontWeight.W500,
                     color = when (status) {
                         "Completed" -> Color.White
-                        else -> Color.Black},
+                        else -> Color.Black
+                    },
                     modifier = Modifier
                         .padding(5.dp)
                 )
@@ -574,7 +604,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
         ) {
             Text(
                 text = taskTopic,
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp).padding(vertical = 8.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 33.sp,
                 lineHeight = 40.sp,
@@ -602,30 +632,31 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                         }
                     }
                 }
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Row() {
                         Text(
-                            text = UserID,
+                            text = UserName,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
                         )
-                        Spacer(modifier = Modifier.width(100.dp))
+                        Spacer(modifier = Modifier.width(130.dp))
                         Box(
                             Modifier
                                 .fillMaxSize()
                                 .padding(5.dp),
-                            contentAlignment = Alignment.BottomEnd) {
+                            contentAlignment = Alignment.Center
+                        ) {
                             androidx.compose.material3.Icon(
                                 painter = painterResource(R.drawable.chat),
                                 tint = Color.Black,
                                 contentDescription = "chat",
                                 modifier = Modifier
-                                    .size(30.dp)
-                                    .clickable { }
+                                    .size(35.dp)
+                                    .clickable { }.padding(end = 5.dp)
                             )
                         }
                     }
@@ -640,11 +671,11 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             Row(
                 modifier = Modifier
                     .padding(horizontal = 30.dp)
-                    .height(100.dp)
+                    .height(85.dp)
                     .fillMaxWidth()
             ) {
                 Column() {
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     androidx.compose.material3.Icon(
                         Icons.Outlined.LocationOn,
                         modifier = Modifier.size(35.dp),
@@ -659,19 +690,19 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     Text(
                         text = address,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = 18.sp
                     )
                 }
             }
             Divider(
-                modifier = Modifier.padding(horizontal = 25.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 thickness = 1.5.dp,
                 color = textFieldColor,
             )
             Row(
                 modifier = Modifier
                     .padding(horizontal = 30.dp)
-                    .height(90.dp)
+                    .height(85.dp)
                     .fillMaxWidth()
             ) {
                 Column() {
@@ -688,14 +719,13 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                     Text(text = "TO BE DONE ON", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(//text = "Monday April 10",
-                        text = date + "  " + startTime + "-" + endTime,
+                        text = date + "  " + startTime + " - " + endTime,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = 18.sp
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -724,25 +754,24 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                                 .padding(21.dp),
                             onClick = { navController.navigate("EditTask/${taskId}") },
                             colors = ButtonDefaults.buttonColors(buttonColor),
-                            enabled = when(status){
+                            enabled = when (status) {
                                 "Completed" -> false
-                                "Assigned", "open" -> true
+                                "Assigned", "Open" -> true
                                 else -> true
                             }
                         ) {
                             Text("Change", fontSize = 20.sp)
                         }
-                    }
-                    else {
+                    } else {
                         FilledTonalButton(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(21.dp),
                             onClick = { navController.navigate("MakeAnOffer/${taskId}") },
                             colors = ButtonDefaults.buttonColors(buttonColor),
-                            enabled = when(status){
+                            enabled = when (status) {
                                 "Assigned", "Completed" -> false
-                                "open" -> true
+                                "Open" -> true
                                 else -> true
                             }
                         ) {
@@ -806,10 +835,10 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
             val db = FirebaseFirestore.getInstance()
 
             LaunchedEffect("Offer") {
-                offerItems = loadOfferDataFromFirestore(db, "Offer",taskId)
+                offerItems = loadOfferDataFromFirestore(db, "Offer", taskId)
             }
-            OfferListLazyColumn(offerItems,userId= UserID, taskId =taskId,navController)
-            if(status=="Assigned" && UserID == user) {
+            OfferListLazyColumn(offerItems, userId = UserID, taskId = taskId, navController)
+            if (status == "Assigned" && UserID == user) {
                 Box(
                     Modifier
                         .fillMaxWidth()
@@ -823,7 +852,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
                             .fillMaxWidth()
                     ) {
                         Button(
-                            onClick = {openDialog.value = true },
+                            onClick = { openDialog.value = true },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
@@ -841,7 +870,7 @@ fun MonitoringDetails(taskId: String,navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditTask(taskId: String, navController: NavController){
+fun EditTask(taskId: String, navController: NavController) {
     var money by remember { mutableStateOf("") }
     var require by remember { mutableStateOf("") }
     var taskDescription by remember { mutableStateOf("") }
@@ -858,10 +887,10 @@ fun EditTask(taskId: String, navController: NavController){
                     // 处理错误
                 } else {
                     if (snapshot != null && snapshot.exists()) {
-                        money = snapshot.getString("money")?:""
-                        require = snapshot.getString("require")?:""
-                        taskDescription = snapshot.getString("taskDescription")?:""
-                        address = snapshot.getString("address")?:""
+                        money = snapshot.getString("money") ?: ""
+                        require = snapshot.getString("require") ?: ""
+                        taskDescription = snapshot.getString("taskDescription") ?: ""
+                        address = snapshot.getString("address") ?: ""
                     }
                 }
             }
@@ -871,7 +900,7 @@ fun EditTask(taskId: String, navController: NavController){
             TopAppBar(
                 title = { Text(text = "Edit Task details") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack()}) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         androidx.compose.material3.Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "返回"
@@ -880,7 +909,7 @@ fun EditTask(taskId: String, navController: NavController){
                 },
             )
         }
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -944,9 +973,10 @@ fun EditTask(taskId: String, navController: NavController){
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
         }
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom
         ) {
             FilledTonalButton(
@@ -956,10 +986,10 @@ fun EditTask(taskId: String, navController: NavController){
                 onClick = {
                     val db = Firebase.firestore
                     val edidTask = db.collection("Task").document(taskId)
-                    edidTask.update("address",address)
-                    edidTask.update("require",require)
-                    edidTask.update("taskDescription",taskDescription)
-                    edidTask.update("money",money)
+                    edidTask.update("address", address)
+                    edidTask.update("require", require)
+                    edidTask.update("taskDescription", taskDescription)
+                    edidTask.update("money", money)
                     //navController.navigate("editDate/${taskId}")
                     navController.popBackStack()
                 },
@@ -997,14 +1027,14 @@ fun editDate(
     )
     ClockDialog(
         state = startClockState,
-        selection = ClockSelection.HoursMinutes{
-                hours, minutes ->  startTime = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            startTime = "$hours:$minutes"
         }
     )
     ClockDialog(
         state = endClockState,
-        selection = ClockSelection.HoursMinutes{
-                hours, minutes ->  endTime = "$hours:$minutes"
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            endTime = "$hours:$minutes"
         }
     )
     Column(
@@ -1013,7 +1043,7 @@ fun editDate(
             .background(background)
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Row(){
+        Row() {
             androidx.compose.material.Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
@@ -1058,13 +1088,14 @@ fun editDate(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 16.dp)
-            .clickable { startCalendarState.show() },
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { startCalendarState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1086,13 +1117,14 @@ fun editDate(
         }
 
         Spacer(modifier = Modifier.height(10.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 16.dp)
-            .clickable { startClockState.show() },
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { startClockState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1114,13 +1146,14 @@ fun editDate(
         }
 
         Spacer(modifier = Modifier.height(10.dp))
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 16.dp)
-            .clickable { endClockState.show() },
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp)
+                .clickable { endClockState.show() },
             colors = CardDefaults.cardColors(textFieldColor)
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1156,9 +1189,9 @@ fun editDate(
                 onClick = {
                     val db = Firebase.firestore
                     val edidDate = db.collection("Task").document(taskId)
-                    edidDate.update("startTime",startTime)
-                    edidDate.update("endTime",endTime)
-                    edidDate.update("date",startDate)
+                    edidDate.update("startTime", startTime)
+                    edidDate.update("endTime", endTime)
+                    edidDate.update("date", startDate)
                     navController.navigate("monitoringDetails/${taskId}")
                 }
             ) {
