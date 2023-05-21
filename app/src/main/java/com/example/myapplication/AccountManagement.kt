@@ -110,19 +110,29 @@ fun AccountMain(pageState: MutableState<Int>){
             }
         }
 
-    Box(
-        modifier = Modifier
-            .padding(top = 16.dp, start = 350.dp)
-            .size(24.dp)
-    ) {
-        IconButton(
-            onClick = { pageState.value = 2 },
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Icon(Icons.Filled.Settings, contentDescription = "设置")
-        }
+    Row(modifier = Modifier
+        .padding(top =20.dp)
+        .height(40.dp)
+        .fillMaxWidth())
+        {
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(
+                text = "Account Details",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600,
+                fontFamily = Poppins,
+            )
+            Spacer(modifier = Modifier.width(110.dp))
+            IconButton(
+                onClick = { pageState.value = 2 },
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Icon(Icons.Filled.Settings, contentDescription = "Settings")
+            }
     }
-
+    Spacer(modifier = Modifier.height(10.dp))
+    Divider()
+    Spacer(modifier = Modifier.height(5.dp))
     Column {
         Row(
             modifier = Modifier
@@ -198,7 +208,11 @@ fun AccountMain(pageState: MutableState<Int>){
             Spacer(modifier = Modifier.weight(1f))
         }*/
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Divider(
+            modifier = Modifier.padding(horizontal = 25.dp),
+            thickness = 1.5.dp,
+            color = textFieldColor,
+        )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -213,7 +227,11 @@ fun AccountMain(pageState: MutableState<Int>){
                 .padding(horizontal = 25.dp),
             style = MaterialTheme.typography.bodyLarge
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Divider(
+            modifier = Modifier.padding(horizontal = 25.dp),
+            thickness = 1.5.dp,
+            color = textFieldColor,
+        )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -228,7 +246,11 @@ fun AccountMain(pageState: MutableState<Int>){
                 .padding(horizontal = 25.dp),
             style = MaterialTheme.typography.bodyLarge
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Divider(
+            modifier = Modifier.padding(horizontal = 25.dp),
+            thickness = 1.5.dp,
+            color = textFieldColor,
+        )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -243,7 +265,11 @@ fun AccountMain(pageState: MutableState<Int>){
                 .padding(horizontal = 25.dp),
             style = MaterialTheme.typography.bodyLarge
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Divider(
+            modifier = Modifier.padding(horizontal = 25.dp),
+            thickness = 1.5.dp,
+            color = textFieldColor,
+        )
         Text(
             modifier = Modifier
                 .fillMaxWidth()

@@ -1931,6 +1931,18 @@ fun TaskDetail(
             "Open", "", user, list
         )
     }
+    val openDialog3 = remember { mutableStateOf(false) }
+    val flag2 = remember { mutableStateOf(false) }
+    ConfirmationDialog(openDialog = openDialog3, flag2 = flag2)
+    LaunchedEffect(flag2.value) {
+        if(flag2.value){
+            val db = Firebase.firestore
+            db.collection("Task").document().set(task)
+            //navController.popBackStack()
+            pageState.value = 11
+        }
+        flag2.value = false
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -2194,12 +2206,13 @@ fun TaskDetail(
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
+                    openDialog3.value = true
                     //val sdf = SimpleDateFormat("dd-MM-yyyy-hh:mm:ss")
                     //val currentDate = sdf.format(Date())
-                    val db = Firebase.firestore
-                    db.collection("Task").document().set(task)
+                    //val db = Firebase.firestore
+                    //db.collection("Task").document().set(task)
                     //navController.popBackStack()
-                    pageState.value = 11
+                    //pageState.value = 11
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {

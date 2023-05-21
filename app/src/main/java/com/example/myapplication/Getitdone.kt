@@ -113,7 +113,7 @@ fun GetItDone(navController: NavController) {
         )*/
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Choose one category and post your Task!",
+            text = "Choose one category and post your Task",
             fontSize = 18.sp,
             fontWeight = FontWeight.W500,
             lineHeight = 40.sp,

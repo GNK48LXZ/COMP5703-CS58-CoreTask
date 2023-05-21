@@ -408,3 +408,40 @@ fun AcceptOfferDialog(openDialog: MutableState<Boolean>,flag:MutableState<Boolea
         )
     }
 }
+@Composable
+fun ConfirmationDialog(openDialog: MutableState<Boolean>,flag2:MutableState<Boolean>){
+    if(openDialog.value){
+        AlertDialog(
+            containerColor = Color.White,
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = {
+                Text(text = "Reminder")
+            },
+            text = {
+                Text(text = "You will post this task")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        flag2.value = true
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("Confirm",color= buttonColor)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        flag2.value = false
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("No",color= buttonColor)
+                }
+            }
+        )
+    }
+}

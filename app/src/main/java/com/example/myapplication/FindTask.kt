@@ -81,7 +81,7 @@ fun FindTask(navController: NavController) {
                         fontSize = 20.sp,
                         fontWeight = FontWeight.W600,
                         fontFamily = Poppins,
-                        modifier = Modifier.weight(1f)
+                        //modifier = Modifier.weight(1f)
                     )
                     /*androidx.compose.material.Button(
                         modifier = Modifier

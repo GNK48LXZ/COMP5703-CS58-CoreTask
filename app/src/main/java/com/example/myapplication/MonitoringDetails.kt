@@ -440,6 +440,7 @@ fun OfferDetails(recommendation: String, userID: String, taskId:String, navContr
                 StarRate(starrate)
             }
         }
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Certificate",
             fontSize = 25.sp,
@@ -464,16 +465,17 @@ fun OfferDetails(recommendation: String, userID: String, taskId:String, navContr
                         .padding(horizontal = 16.dp)
                 )
             } else {
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "This job seeker haven't upload certificate",
-                    fontSize = 25.sp,
-                    lineHeight = 30.sp,
+                    color = buttonColor,
+                    fontSize = 16.sp,
+                    lineHeight = 23.sp,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
         }
-
-
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Recommendation",
             fontSize = 25.sp,
