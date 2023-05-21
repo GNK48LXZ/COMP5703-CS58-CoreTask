@@ -310,6 +310,7 @@ suspend fun loadMyGetDataFromFirestore(
         //    a.value = BitmapFactory.decodeByteArray(it,0,it.size)
         //}.addOnFailureListener {
         //}
+
         if (user == document.getString("assignID")) {
             getTaskList.add(
                 TaskItem(
