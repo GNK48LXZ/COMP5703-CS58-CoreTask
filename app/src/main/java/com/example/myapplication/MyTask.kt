@@ -273,7 +273,7 @@ suspend fun loadMyPostDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    //imageUrl = a
+                    imageUrl = a
                 )
             )
         }
@@ -309,8 +309,6 @@ suspend fun loadMyGetDataFromFirestore(
         //avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
         //    a.value = BitmapFactory.decodeByteArray(it,0,it.size)
         //}.addOnFailureListener {
-
-
         //}
         if (user == document.getString("assignID")) {
             getTaskList.add(
@@ -322,7 +320,7 @@ suspend fun loadMyGetDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    //imageUrl = a
+                    imageUrl = a
                 )
             )
         }

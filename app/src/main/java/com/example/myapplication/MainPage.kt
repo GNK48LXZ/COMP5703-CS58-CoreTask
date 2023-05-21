@@ -112,9 +112,11 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Filled.Home,
+                        painter = painterResource(R.drawable.post_task),
                         contentDescription = "Check",
-                        tint = if (selectedPage == 2) buttonColor else Color.Gray
+                        tint = if (selectedPage == 2) buttonColor else Color.Gray,
+                        modifier = Modifier
+                                .size(24.dp)
                     )
                     Text(
                         "Post",
@@ -139,7 +141,8 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     Icon(
                         Icons.Filled.List,
                         contentDescription = "My Tasks",
-                        tint = if (selectedPage == 3) buttonColor else Color.Gray
+                        tint = if (selectedPage == 3) buttonColor else Color.Gray,
+                        modifier = Modifier.size(24.dp)
                     )
                     Text(
                         "Tasks",
@@ -196,7 +199,7 @@ fun BottomToolbar(pageState: MutableState<Int>) {
                     Text(
                         "Account",
                         style = MaterialTheme.typography.caption,
-                        color = Color.Black
+                        color = if (selectedPage == 5) buttonColor else Color.Gray
                     )
                 }
             }

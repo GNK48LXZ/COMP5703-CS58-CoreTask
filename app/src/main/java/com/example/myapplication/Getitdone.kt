@@ -75,11 +75,11 @@ fun GetItDone(navController: NavController) {
                     fontWeight = FontWeight.Bold
                 )
             }*/
-            androidx.compose.material.Button(
+            /*androidx.compose.material.Button(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 2.dp),
-                onClick = { page.value=2 },
+                onClick = { page.value = 1 },
                 shape = RoundedCornerShape(25.dp),
                 colors = ButtonDefaults.buttonColors(buttonColor)
             ) {
@@ -88,9 +88,9 @@ fun GetItDone(navController: NavController) {
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
-            }
+            }*/
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         /*Text(
             text = "OR choose your task category to create your task.",
             fontSize = 22.sp,
@@ -101,12 +101,12 @@ fun GetItDone(navController: NavController) {
         Spacer(modifier = Modifier.height(10.dp))*/
         Text(
             text = "Choose one category and post your Task!",
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.W500,
             lineHeight = 40.sp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Row {
             Card(
                 modifier = Modifier

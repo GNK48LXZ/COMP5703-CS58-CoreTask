@@ -42,7 +42,9 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.*
 
 
@@ -161,7 +163,24 @@ fun OfferListLazyColumn(
             // 对于每个 Offer 进行 UI 的渲染
             // ...
             val openDialog = remember { mutableStateOf(false) }
+            val openDialog2 = remember { mutableStateOf(false) }
+            val flag = remember { mutableStateOf(false) }
             DeleteOfferDialog(offerID = offerItem.offerID, openDialog = openDialog)
+            AcceptOfferDialog(openDialog = openDialog2, flag = flag)
+            LaunchedEffect(flag.value) {
+                if(flag.value){
+                    db.collection("Offer").document(offerItem.offerID)
+                        .update("status", "Assigned")
+                    db.collection("Task").document(taskId)
+                        .update("status", "Assigned")
+                    db.collection("Task").document(taskId)
+                        .update("assignID", offerItem.userID)
+                        .addOnSuccessListener {
+
+                        }
+                }
+                flag.value = false
+            }
             Card(
                 modifier = Modifier
                     .height(230.dp)
@@ -260,15 +279,20 @@ fun OfferListLazyColumn(
                             if (userId == user) {
                                 Button(
                                     onClick = {
-                                        db.collection("Offer").document(offerItem.offerID)
-                                            .update("status", "Assigned")
-                                        db.collection("Task").document(taskId)
-                                            .update("status", "Assigned")
-                                        db.collection("Task").document(taskId)
-                                            .update("assignID", offerItem.userID)
-                                            .addOnSuccessListener {
+                                        openDialog2.value = true
 
-                                            }
+                                        /*if(flag.value){
+                                            db.collection("Offer").document(offerItem.offerID)
+                                                .update("status", "Assigned")
+                                            db.collection("Task").document(taskId)
+                                                .update("status", "Assigned")
+                                            db.collection("Task").document(taskId)
+                                                .update("assignID", offerItem.userID)
+                                                .addOnSuccessListener {
+
+                                                }
+                                        }*/
+
                                     },
                                     modifier = Modifier
                                         .height(40.dp)
@@ -435,7 +459,9 @@ fun OfferDetails(recommendation: String, userID: String, taskId:String, navContr
                     bitmap = it.asImageBitmap(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(200.dp).padding(horizontal = 16.dp)
+                    modifier = Modifier
+                        .size(200.dp)
+                        .padding(horizontal = 16.dp)
                 )
             } else {
                 Text(
@@ -648,7 +674,9 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
         ) {
             Text(
                 text = taskTopic,
-                modifier = Modifier.padding(horizontal = 16.dp).padding(vertical = 8.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 8.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 33.sp,
                 lineHeight = 40.sp,
@@ -676,7 +704,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                         }
                     }
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(25.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "POSTED BY", fontSize = 13.sp)
@@ -700,7 +728,8 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                                 contentDescription = "chat",
                                 modifier = Modifier
                                     .size(35.dp)
-                                    .clickable { }.padding(end = 5.dp)
+                                    .clickable { }
+                                    .padding(end = 5.dp)
                             )
                         }
                     }
@@ -760,7 +789,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                 Spacer(modifier = Modifier.width(28.dp))
                 Column() {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "Date", fontSize = 13.sp)
+                    Text(text = "DATE", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(//text = "Monday April 10",
                         text = date + "  " + startTime + " - " + endTime,

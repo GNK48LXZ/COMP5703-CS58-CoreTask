@@ -190,7 +190,7 @@ fun SubmitInf(navController: NavController) {
                 .background(background)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(230.dp))
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -205,6 +205,7 @@ fun SubmitInf(navController: NavController) {
                         .height(100.dp)
                         .width(100.dp)
                 )
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Task created successfully!",
                     fontSize = 25.sp,
@@ -213,17 +214,16 @@ fun SubmitInf(navController: NavController) {
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(30.dp))
-                Text(
+                /*Text(
                     text = "Please be patient and wait for the reply",
                     fontSize = 25.sp,
                     fontWeight = FontWeight.W400,
                     lineHeight = 25.sp,
                     modifier = Modifier.padding(horizontal = 16.dp)
-                )
+                )*/
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = {
-
                         navController.navigate(Screen.GetItDone.route)
                         page.value = 3
                     },
@@ -232,7 +232,7 @@ fun SubmitInf(navController: NavController) {
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(buttonColor)
                 ) {
-                    Text(text = "Back to home page", fontSize = 20.sp)
+                    Text(text = "Back to task list", fontSize = 20.sp)
                 }
             }
         }

@@ -313,13 +313,13 @@ fun Settings(pageState: MutableState<Int>,navController: NavController){
                 title = "Logout", 
                 icon = Icons.Outlined.Info, 
                 onClick = {
-                    user = ""
+                    page.value = 1
+                    //user = ""
                     navController.navigate(route = "Login"){
                         popUpTo(Screen.GetItDone.route){
                             inclusive = true
                         }
                     }
-                    page.value = 1
                 }
             )
         }

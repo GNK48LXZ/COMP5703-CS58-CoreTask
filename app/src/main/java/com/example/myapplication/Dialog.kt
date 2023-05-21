@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.compose.foundation.background
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -7,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -15,6 +19,7 @@ import com.google.firebase.ktx.Firebase
 fun Dialog(openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -30,7 +35,7 @@ fun Dialog(openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -41,6 +46,7 @@ fun Dialog(openDialog: MutableState<Boolean>){
 fun DateDialog(openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -56,7 +62,7 @@ fun DateDialog(openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -67,6 +73,7 @@ fun DateDialog(openDialog: MutableState<Boolean>){
 fun ClipDialog(openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -82,7 +89,7 @@ fun ClipDialog(openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -93,6 +100,7 @@ fun ClipDialog(openDialog: MutableState<Boolean>){
 fun BudgetDialog(openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -108,7 +116,7 @@ fun BudgetDialog(openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -118,6 +126,7 @@ fun BudgetDialog(openDialog: MutableState<Boolean>){
 fun ExceptionDialog(openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -133,7 +142,7 @@ fun ExceptionDialog(openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -144,6 +153,7 @@ fun ExceptionDialog(openDialog: MutableState<Boolean>){
 fun SignUpDialog(pageState: MutableState<Int>,openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -160,7 +170,7 @@ fun SignUpDialog(pageState: MutableState<Int>,openDialog: MutableState<Boolean>)
                         pageState.value = 1
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -170,6 +180,7 @@ fun SignUpDialog(pageState: MutableState<Int>,openDialog: MutableState<Boolean>)
 fun EmptyDialog(openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -185,7 +196,7 @@ fun EmptyDialog(openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -195,6 +206,7 @@ fun EmptyDialog(openDialog: MutableState<Boolean>){
 fun PasswordConfirmDialog(openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -210,7 +222,7 @@ fun PasswordConfirmDialog(openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -220,6 +232,7 @@ fun PasswordConfirmDialog(openDialog: MutableState<Boolean>){
 fun ForgetPasswordDialog(pageState: MutableState<Int>,openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -236,7 +249,7 @@ fun ForgetPasswordDialog(pageState: MutableState<Int>,openDialog: MutableState<B
                         pageState.value = 1
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm",color= buttonColor)
                 }
             }
         )
@@ -247,6 +260,7 @@ fun ForgetPasswordDialog(pageState: MutableState<Int>,openDialog: MutableState<B
 fun DeleteOfferDialog(offerID:String,openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -264,7 +278,7 @@ fun DeleteOfferDialog(offerID:String,openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Yes")
+                    Text("Yes",color= buttonColor)
                 }
             },
             dismissButton = {
@@ -273,7 +287,7 @@ fun DeleteOfferDialog(offerID:String,openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("No")
+                    Text("No",color= buttonColor)
                 }
             }
         )
@@ -283,6 +297,7 @@ fun DeleteOfferDialog(offerID:String,openDialog: MutableState<Boolean>){
 fun DeleteTaskDialog(taskID:String,openDialog: MutableState<Boolean>){
     if(openDialog.value){
         AlertDialog(
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -300,7 +315,7 @@ fun DeleteTaskDialog(taskID:String,openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("Yes")
+                    Text("Yes",color= buttonColor)
                 }
             },
             dismissButton = {
@@ -309,7 +324,7 @@ fun DeleteTaskDialog(taskID:String,openDialog: MutableState<Boolean>){
                         openDialog.value = false
                     }
                 ) {
-                    Text("No")
+                    Text("No",color= buttonColor)
                 }
             }
         )
@@ -319,6 +334,8 @@ fun DeleteTaskDialog(taskID:String,openDialog: MutableState<Boolean>){
 fun CompletedDialog(taskId:String,assignId:String,openDialog: MutableState<Boolean>,navController: NavController){
     if(openDialog.value){
         AlertDialog(
+
+            containerColor = Color.White,
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -326,7 +343,7 @@ fun CompletedDialog(taskId:String,assignId:String,openDialog: MutableState<Boole
                 Text(text = "Reminder")
             },
             text = {
-                Text(text = "Are you sure you want to change the status of the task to completed? (This action cannot be undone)")
+                Text(text = "Are you sure this task has been completed?")
             },
             confirmButton = {
                 TextButton(
@@ -338,7 +355,7 @@ fun CompletedDialog(taskId:String,assignId:String,openDialog: MutableState<Boole
                         openDialog.value = false
                     }
                 ) {
-                    Text("Yes")
+                    Text("Yes", color= buttonColor)
                 }
             },
             dismissButton = {
@@ -347,7 +364,45 @@ fun CompletedDialog(taskId:String,assignId:String,openDialog: MutableState<Boole
                         openDialog.value = false
                     }
                 ) {
-                    Text("No")
+                    Text("No",color= buttonColor,)
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun AcceptOfferDialog(openDialog: MutableState<Boolean>,flag:MutableState<Boolean>){
+    if(openDialog.value){
+        AlertDialog(
+            containerColor = Color.White,
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = {
+                Text(text = "Reminder")
+            },
+            text = {
+                Text(text = "Do you want to accept this offer?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        flag.value = true
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("Yes",color= buttonColor)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        flag.value = false
+                        openDialog.value = false
+                    }
+                ) {
+                    Text("No",color= buttonColor)
                 }
             }
         )

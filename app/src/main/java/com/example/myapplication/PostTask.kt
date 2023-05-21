@@ -2,6 +2,9 @@
 
 package com.example.myapplication
 
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -32,7 +36,10 @@ import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.AnnotatedString
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -40,6 +47,7 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
@@ -48,6 +56,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.google.maps.android.compose.*
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
@@ -1302,7 +1311,7 @@ fun DescribeTask(
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor)
             )
 
-            Text(
+            /*Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -1326,7 +1335,7 @@ fun DescribeTask(
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text("Upload Photos")
-            }
+            }*/
             //continue button
             Column(
                 modifier = Modifier
@@ -1854,6 +1863,7 @@ data class Task(
     val classification: String = "Cleaning"
 )
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetail(
@@ -1870,6 +1880,18 @@ fun TaskDetail(
     repeat: MutableState<String>,
     navController: NavController
 ) {
+    val storage = Firebase.storage
+    var storageRef = storage.reference
+    val avatarImagesRef = storageRef.child("avatar/"+user+".jpg")
+    val avatar =  remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
+        avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+    }.addOnFailureListener {
+        // Handle any errors
+    }
+
     val list = ArrayList<String>()
     var task = Task(
         taskTopic.value,
@@ -1972,13 +1994,24 @@ fun TaskDetail(
                     .height(70.dp)
                     .fillMaxWidth()
             ) {
-                Icon(
+                /*Icon(
                     Icons.Outlined.Person,
                     modifier = Modifier.size(70.dp),
                     contentDescription = "User",
-                )
+                )*/
+                avatar.value?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(50.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(25.dp))
                 Column() {
-                    Spacer(modifier = Modifier.height(10.dp))
+                    //Spacer(modifier = Modifier.height(5.dp))
                     Text(text = "POSTED BY", fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(3.dp))
 
