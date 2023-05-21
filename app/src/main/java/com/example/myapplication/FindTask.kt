@@ -106,6 +106,8 @@ fun FindTask(navController: NavController) {
                     }*/
                 }
                 Spacer(modifier = Modifier.height(10.dp))
+                Divider()
+                Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     androidx.compose.material.TextField(
                         value = filterText,

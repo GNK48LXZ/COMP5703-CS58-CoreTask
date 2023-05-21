@@ -84,7 +84,9 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
                 fontFamily = Poppins
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()

@@ -34,9 +34,9 @@ fun GetItDone(navController: NavController) {
         mutableStateOf(false)
     }
     notice = Listen()
-    if(notice==true){
+    if (notice == true) {
         No()
-        db.collection("User").document(user).update("notice",false)
+        db.collection("User").document(user).update("notice", false)
     }
 
     Column(
@@ -46,8 +46,22 @@ fun GetItDone(navController: NavController) {
             .background(background)
             .verticalScroll(rememberScrollState())
     ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row {
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(
+                text = "Post tasks",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600,
+                fontFamily = Poppins
+            )
+        }
         Spacer(
-            modifier = Modifier.height(20.dp)
+            modifier = Modifier.height(10.dp)
+        )
+        Divider()
+        Spacer(
+            modifier = Modifier.height(10.dp)
         )
         Text(
             text = "Let's get your things done!",
@@ -90,15 +104,14 @@ fun GetItDone(navController: NavController) {
                 )
             }*/
         }
-        Spacer(modifier = Modifier.height(30.dp))
         /*Text(
             text = "OR choose your task category to create your task.",
             fontSize = 22.sp,
             modifier = Modifier.padding(horizontal = 16.dp),
             color = buttonColor,
             fontWeight = FontWeight.W500,
-        )
-        Spacer(modifier = Modifier.height(10.dp))*/
+        )*/
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Choose one category and post your Task!",
             fontSize = 18.sp,
