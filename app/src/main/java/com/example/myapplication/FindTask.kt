@@ -49,9 +49,9 @@ fun FindTask(navController: NavController) {
         mutableStateOf(false)
     }
     notice = Listen()
-    if(notice==true){
+    if (notice == true) {
         No()
-        db.collection("User").document(user).update("notice",false)
+        db.collection("User").document(user).update("notice", false)
     }
 
     val options1 = listOf("All Task", "Cleaning", "Removals", "Repairs", "Painting")
@@ -944,18 +944,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                             color = MaterialTheme.colors.onSurface
                         )
                         taskItem.status.let {
-                            if (it != "Completed") {
-                                Text(
-                                    taskItem.status,
-                                    style = MaterialTheme.typography.body1.copy(
-                                        fontSize = 15.sp,
-                                        fontFamily = Poppins
-                                    ),
-                                    color = Color.Blue,
-                                    modifier = Modifier
-                                        .padding(top = 5.dp)
-                                )
-                            } else {
+                            if (it == "Completed") {
                                 Text(
                                     taskItem.status,
                                     style = MaterialTheme.typography.body1.copy(
@@ -966,6 +955,28 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                                     modifier = Modifier
                                         .padding(top = 5.dp)
                                 )
+                            } else if (it == "Assigned") {
+                                Text(
+                                    taskItem.status,
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontSize = 15.sp,
+                                        fontFamily = Poppins
+                                    ),
+                                    color = lightGreen,
+                                    modifier = Modifier
+                                        .padding(top = 5.dp)
+                                )
+                            } else {
+                                Text(
+                                    taskItem.status,
+                                    style = MaterialTheme.typography.body1.copy(
+                                        fontSize = 15.sp,
+                                        fontFamily = Poppins
+                                    ),
+                                    color = Color.Blue,
+                                    modifier = Modifier
+                                        .padding(top = 5.dp)
+                                )
                             }
                         }
                     }
@@ -973,6 +984,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                         modifier = Modifier
                             .padding(horizontal = 20.dp)
                             .background(color = background),
+                        verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -982,7 +994,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                                 textAlign = TextAlign.Center
                             ),
                             color = MaterialTheme.colors.onSurface,
-                            modifier = Modifier.padding(10.dp)
+                            modifier = Modifier.padding(bottom = 30.dp)
                         )
 
                         /*taskItem.imageUrl.value.let {
