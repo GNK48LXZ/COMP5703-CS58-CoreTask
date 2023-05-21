@@ -561,7 +561,7 @@ data class TaskItem(
     val time: String,
     val status: String,
     val bill: String,
-    val imageUrl: MutableState<Bitmap?>
+    //val imageUrl: MutableState<Bitmap?>
 )
 
 @Composable
@@ -701,12 +701,12 @@ public suspend fun loadDataFromFirestore(
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
-        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
-        }.addOnFailureListener {
+        //val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        //avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+        //    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+        //}.addOnFailureListener {
 
-        }
+        //}
         taskList.add(
             TaskItem(
                 taskId = taskId,
@@ -716,7 +716,7 @@ public suspend fun loadDataFromFirestore(
                 time = "$startTime - $endTime",
                 status = status,
                 bill = money,
-                imageUrl = a
+                //imageUrl = a
             )
         )
     }
@@ -750,12 +750,12 @@ public suspend fun loadClassificationDataFromFirestore(
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
-        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
-        }.addOnFailureListener {
+        //val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        //avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+        //    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+        //}.addOnFailureListener {
 
-        }
+        //}
         val classification = document.getString("classification")
 
 
@@ -769,7 +769,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = a
+                    //imageUrl = a
                 )
             )
         }
@@ -783,7 +783,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = a
+                    ///imageUrl = a
                 )
             )
         }
@@ -797,7 +797,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = a
+                    //imageUrl = a
                 )
             )
         }
@@ -811,7 +811,7 @@ public suspend fun loadClassificationDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = a
+                    //imageUrl = a
                 )
             )
         }
@@ -855,12 +855,12 @@ public suspend fun loadSearchDataFromFirestore(
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
-        avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
-        }.addOnFailureListener {
+        //val avatarImagesRef = Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+        //avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+        //    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+        //}.addOnFailureListener {
 
-        }
+        //}
 
         if (taskTopic.contains(filterText, ignoreCase = true)) {
             taskList.add(
@@ -872,7 +872,7 @@ public suspend fun loadSearchDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = a
+                    //imageUrl = a
                 )
             )
         }
@@ -985,7 +985,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                             modifier = Modifier.padding(10.dp)
                         )
 
-                        taskItem.imageUrl.value.let {
+                        /*taskItem.imageUrl.value.let {
                             if (it != null) {
                                 Image(
                                     bitmap = it.asImageBitmap(),
@@ -1005,7 +1005,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                                         .clip(CircleShape)
                                 )
                             }
-                        }
+                        }*/
                     }
                 }
             }

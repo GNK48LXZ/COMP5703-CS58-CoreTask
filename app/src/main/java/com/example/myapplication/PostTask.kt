@@ -1364,7 +1364,7 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
         modifier = Modifier
             .fillMaxWidth()
             .background(background)
-            .verticalScroll(rememberScrollState())
+
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         Row() {
@@ -1410,11 +1410,12 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
         )
 
         Spacer(modifier = Modifier.height(20.dp))
+        MapTest(address)
 
         var text by remember {
             mutableStateOf(address.value)
         }
-        var la = remember {
+        /*var la = remember {
             mutableStateOf(-33.91409339)
         }
         var lo = remember {
@@ -1424,6 +1425,8 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
         var s by remember {
             mutableStateOf(false)
         }
+        var autoSuggestListState by remember { mutableStateOf(emptyList<String>()) }
+        val addressTextState = remember { mutableStateOf("") }
         if (!s) {
             var current = getCurrentLocation(la.value, lo.value)
             TextField(
@@ -1467,7 +1470,7 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
                 }
             )
         }
-        MapContent(la, lo)
+        MapContent(la, lo)*/
 
         Column(
             modifier = Modifier
@@ -1481,11 +1484,11 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
-                    if (text.length < 8) {
+                    if (address.value.length < 8) {
                         openDialog.value = true
                     } else {
                         pageState.value = 5
-                        address.value = text
+                        //address.value = text
                     }
                 },
                 colors = ButtonDefaults.buttonColors(buttonColor)

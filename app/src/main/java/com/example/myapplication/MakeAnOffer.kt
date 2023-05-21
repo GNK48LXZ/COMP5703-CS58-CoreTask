@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.content.ContentValues.TAG
+import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -29,7 +30,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 
 data class Offer(
     val recommendation: String? = null,
@@ -95,8 +98,11 @@ fun MakeAnOffer(taskId: String,UserID:String,navController: NavController) {
                     modifier = Modifier.padding(bottom = 5.dp)
                 )
             }
-            Button(
-                onClick = { },
+            Spacer(modifier = Modifier.height(20.dp))
+            /*Button(
+                onClick = {
+
+                },
                 colors = ButtonDefaults.buttonColors(textFieldColor),
                 modifier = Modifier
                     .padding(16.dp)
@@ -110,7 +116,13 @@ fun MakeAnOffer(taskId: String,UserID:String,navController: NavController) {
                         .height(100.dp)
                         .width(100.dp)
                 )
+            }*/
+            val bitmap = UploadCertificate()
+            val baos = ByteArrayOutputStream()
+            if (bitmap != null) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             }
+            val data = baos.toByteArray()
             Spacer(modifier = Modifier.height(20.dp))
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
@@ -145,8 +157,13 @@ fun MakeAnOffer(taskId: String,UserID:String,navController: NavController) {
                 Button(
                     onClick = {
                         val db = Firebase.firestore
+                        val storage = Firebase.storage
+                        var storageRef = storage.reference
+                        val avatarImagesRef = storageRef.child("certificate/"+user+"-"+taskId+".jpg")
                         db.collection("Offer").document().set(offer)
                         db.collection("User").document(UserID).update("notice",true)
+                        if(bitmap!=null)
+                            avatarImagesRef.putBytes(data)
                         //navController.navigate("SubmitInf/${taskId}")
                         navController.popBackStack()
                     },

@@ -166,7 +166,10 @@ fun OfferListLazyColumn(
                 modifier = Modifier
                     .height(150.dp)
                     .padding(horizontal = 16.dp)
-                    .clickable(userId == user) { navController.navigate("OfferDetails/${offerItem.recommendation}/${offerItem.userID}") },
+                    .clickable(userId == user)
+                    {
+                        navController.navigate("OfferDetails/${offerItem.recommendation}/${offerItem.userID}/${taskId}")
+                    },
                 colors = CardDefaults.cardColors(textFieldColor),
             ) {
                 Column(
@@ -304,7 +307,7 @@ fun OfferListLazyColumn(
 }
 
 @Composable
-fun OfferDetails(recommendation: String, userID: String, navController: NavController) {
+fun OfferDetails(recommendation: String, userID: String, taskId:String, navController: NavController) {
     var starrate by remember { mutableStateOf(0.0) }
     LaunchedEffect(Unit) {
         FireStore.collection("User")
@@ -326,14 +329,27 @@ fun OfferDetails(recommendation: String, userID: String, navController: NavContr
                 userName = documentSnapshot.getString("name") ?: ""
             }
         }
+    //read avatar
     val storage = Firebase.storage
     var storageRef = storage.reference
     val avatarImagesRef = storageRef.child("avatar/" + userID + ".jpg")
     val avatar = remember {
         mutableStateOf<Bitmap?>(null)
     }
-    avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+    avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
         avatar.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+    }.addOnFailureListener {
+        // Handle any errors
+    }
+    //read certificate
+    val storage2 = Firebase.storage
+    var storageRef2 = storage2.reference
+    val certificate = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    val certificateImagesRef = storageRef2.child("certificate/" + userID+"-"+ taskId + ".jpg")
+    certificateImagesRef.getBytes(4096*4096).addOnSuccessListener {
+        certificate.value = BitmapFactory.decodeByteArray(it, 0, it.size)
     }.addOnFailureListener {
         // Handle any errors
     }
@@ -412,7 +428,26 @@ fun OfferDetails(recommendation: String, userID: String, navController: NavContr
             thickness = 1.5.dp,
             color = textFieldColor,
         )
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+        certificate.value.let {
+            if (it != null) {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(200.dp).padding(horizontal = 16.dp)
+                )
+            } else {
+                Text(
+                    text = "This job seeker haven't upload certificate",
+                    fontSize = 25.sp,
+                    lineHeight = 30.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+        }
+
+
         Text(
             text = "Recommendation",
             fontSize = 25.sp,
@@ -428,8 +463,8 @@ fun OfferDetails(recommendation: String, userID: String, navController: NavContr
         Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = recommendation,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.W400,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.W500,
             lineHeight = 20.sp,
             modifier = Modifier.padding(16.dp)
         )

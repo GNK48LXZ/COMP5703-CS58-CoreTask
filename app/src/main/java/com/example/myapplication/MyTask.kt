@@ -244,12 +244,12 @@ suspend fun loadMyPostDataFromFirestore(
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = Firebase.storage.reference.child("avatar/"+userID+".jpg")
-        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it,0,it.size)
-        }.addOnFailureListener {
+        //val avatarImagesRef = Firebase.storage.reference.child("avatar/"+userID+".jpg")
+        //avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
+        //    a.value = BitmapFactory.decodeByteArray(it,0,it.size)
+        //}.addOnFailureListener {
 
-        }
+        //}
         if (user == document.getString("userID")) {
             postTaskList.add(
                 TaskItem(
@@ -260,7 +260,7 @@ suspend fun loadMyPostDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = a
+                    //imageUrl = a
                 )
             )
         }
@@ -291,12 +291,12 @@ suspend fun loadMyGetDataFromFirestore(
         querySnapshotUser.documents.forEach { document ->
             starRate = document.getDouble("starRate") ?: 0.0
         }
-        val avatarImagesRef = Firebase.storage.reference.child("avatar/"+userID+".jpg")
-        avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-            a.value = BitmapFactory.decodeByteArray(it,0,it.size)
-        }.addOnFailureListener {
+        //val avatarImagesRef = Firebase.storage.reference.child("avatar/"+userID+".jpg")
+        //avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
+        //    a.value = BitmapFactory.decodeByteArray(it,0,it.size)
+        //}.addOnFailureListener {
 
-        }
+        //}
         if (user == document.getString("assignID")) {
             getTaskList.add(
                 TaskItem(
@@ -307,7 +307,7 @@ suspend fun loadMyGetDataFromFirestore(
                     time = "$startTime - $endTime",
                     status = status,
                     bill = money,
-                    imageUrl = a
+                    //imageUrl = a
                 )
             )
         }
@@ -403,7 +403,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                             ),
                             color = MaterialTheme.colors.onSurface
                         )
-                        taskItem.imageUrl.value.let {
+                        /*taskItem.imageUrl.value.let {
                             if (it != null) {
                                 Image(
                                     bitmap = it.asImageBitmap(),
@@ -424,7 +424,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                                         .clickable { }
                                 )
                             }
-                        }
+                        }*/
                     }
                     Row(
                         modifier = Modifier

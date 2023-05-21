@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun RequestContentPermission() : Bitmap? {
@@ -87,6 +88,88 @@ fun RequestContentPermission() : Bitmap? {
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
+                        .clickable { launcher.launch("image/*") }
+                )
+            }
+        }
+    }
+    return bitmap.value
+}
+
+@Composable
+fun UploadCertificate() : Bitmap? {
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val context = LocalContext.current
+    val bitmap =  remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+
+    val launcher = rememberLauncherForActivityResult(contract =
+    ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .background(background)
+            .padding(horizontal = 16.dp),
+    ) {
+
+        if(bitmap.value==null){
+            Button(
+                onClick = {
+                    launcher.launch("image/*")
+                },
+                colors = ButtonDefaults.buttonColors(textFieldColor),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .size(width = 100.dp, height = 100.dp)
+            ) {
+                androidx.compose.material3.Icon(
+                    painter = painterResource(R.drawable.photo),
+                    tint = buttonColor,
+                    contentDescription = "add certificate",
+                    modifier = Modifier
+                        .height(100.dp)
+                        .width(100.dp)
+                )
+            }
+            //ElevatedButton(
+            //    onClick = { launcher.launch("image/*") },
+            //    modifier = Modifier
+            //        .clip(CircleShape)
+            //        .size(100.dp),
+            //    colors = ButtonDefaults.buttonColors(buttonColor)
+            //) {
+            //    Icon(
+            //        Icons.Outlined.Add,
+            //        contentDescription = "Add",
+            //        modifier = Modifier.size(100.dp)
+            //    )
+            //}
+        }
+
+        imageUri?.let {
+            if (Build.VERSION.SDK_INT < 28) {
+                bitmap.value = MediaStore.Images
+                    .Media.getBitmap(context.contentResolver,it)
+
+            } else {
+                val source = ImageDecoder
+                    .createSource(context.contentResolver,it)
+                bitmap.value = ImageDecoder.decodeBitmap(source)
+            }
+            bitmap.value?.let {  btm ->
+                Image(
+                    bitmap = btm.asImageBitmap(),
+                    contentDescription =null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(200.dp)
+                        //.clip(CircleShape)
                         .clickable { launcher.launch("image/*") }
                 )
             }
