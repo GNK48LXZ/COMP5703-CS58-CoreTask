@@ -1,4 +1,6 @@
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -20,13 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.navigation.*
 import androidx.navigation.compose.*
-import com.example.myapplication.MessageListAndInput
-import com.example.myapplication.PreviewConversation
+import com.example.myapplication.*
 import com.example.myapplication.R
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 data class Chat(
-    val name: String,
-    val lastMessage: String,
+    val receiver: String,
     val time: String,
 )
 
@@ -34,6 +36,9 @@ data class Chat(
 @ExperimentalAnimationApi
 @Composable
 fun WeChatMainScreen(navController: NavController) {
+
+    var receiver by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -51,19 +56,39 @@ fun WeChatMainScreen(navController: NavController) {
             )
         },
     ) {
-        var inputText by remember{ mutableStateOf("")}
-        val chats = remember {
 
-            mutableListOf(
-                Chat("John", inputText, "10:23"),
-            )
+        val chats = remember { mutableStateListOf<Chat>() }
+        val db = Firebase.firestore
+        val docRef = db.collection("Message")
+        LaunchedEffect(Unit) {
+            docRef.addSnapshotListener { querySnapshot, exception ->
+                if (exception != null) {
+                    // 处理错误
+                    println("监听集合失败：$exception")
+                }
+                else{
+                    chats.clear()
+                    for (documentSnapshot in querySnapshot!!) {
+                        // 获取每个文档的数据
+                        val documentData = documentSnapshot.data
+                        if(documentData.get("sender")== user){
+                            receiver = documentData.get("receiver").toString()
+                            time = documentData.get("time").toString()
+                            if (!chats.any { it.receiver == receiver }) {
+                                chats.add(Chat(receiver = receiver, time = time))
+                            }
+                        }
+
+                    }
+                }
+            }
         }
 
         LazyColumn(
             contentPadding = PaddingValues(top = 8.dp, bottom = 56.dp),
         ) {
-            items(chats) { chat ->
-                ChatItem(chat, navController)
+            items(chats.size) { index ->
+                ChatItem(chats[index], navController)
             }
         }
     }
@@ -74,7 +99,7 @@ fun ChatItem(chat: Chat, navController: NavController) {
     Row(
         modifier = Modifier
             .clickable {
-                navController.navigate("chat/${chat.name}")
+                navController.navigate("chat/${chat.receiver}")
             }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -89,16 +114,16 @@ fun ChatItem(chat: Chat, navController: NavController) {
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(
-                text = chat.name,
+                text = chat.receiver,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
+            /*Text(
                 text = chat.lastMessage,
                 color = Color.Gray,
                 fontSize = 14.sp,
-            )
+            )*/
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(
@@ -109,8 +134,9 @@ fun ChatItem(chat: Chat, navController: NavController) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WeChatChatScreen(chatName: String) {
+fun WeChatChatScreen(chatName: String, navController: NavController) {
     Text(
         text = "Chat with $chatName",
         fontSize = 24.sp,
@@ -119,33 +145,5 @@ fun WeChatChatScreen(chatName: String) {
             .fillMaxSize()
             .padding(16.dp),
     )
-    PreviewConversation()
+    PreviewConversation(chatName,navController)
 }
-
-/*
-@ExperimentalAnimationApi
-@Composable
-fun WeChatApp() {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = "main",
-    ) {
-        composable("main") {
-            WeChatMainScreen(navController)
-        }
-        composable(
-            "chat/{chatName}",
-            arguments = listOf(navArgument("chatName") { type = NavType.StringType }),
-        ) { backStackEntry ->
-            val chatName = backStackEntry.arguments?.getString("chatName") ?: ""
-            WeChatChatScreen(chatName)
-        }
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun PreviewWeChatApp() {
-    WeChatApp()
-}*/

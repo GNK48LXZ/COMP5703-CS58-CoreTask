@@ -45,11 +45,11 @@ fun SetupNavGraph(navController: NavHostController) {
             ClassificationPage(navController)
         }
         composable(
-            "chat/{chatName}",
-            arguments = listOf(navArgument("chatName") { type = NavType.StringType }),
+            "chat/{receiver}",
+            arguments = listOf(navArgument("receiver") { type = NavType.StringType }),
         ) { backStackEntry ->
-            val chatName = backStackEntry.arguments?.getString("chatName") ?: ""
-            WeChatChatScreen(chatName)
+            val chatName = backStackEntry.arguments?.getString("receiver") ?: ""
+            WeChatChatScreen(chatName,navController)
         }
         composable(
             "monitoringDetails/{taskId}",
@@ -120,7 +120,7 @@ fun SetupNavGraph(navController: NavHostController) {
             "test"
         )
         {
-            //MapTest()
+            test()
         }
     }
 

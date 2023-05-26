@@ -153,7 +153,7 @@ fun GetItDone(navController: NavController) {
                     .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
+                    .clickable {navController.navigate(route = Screen.PostTask.route) },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
                 Column(
@@ -183,7 +183,7 @@ fun GetItDone(navController: NavController) {
                     .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
+                    .clickable {navController.navigate(route = Screen.PostTask.route) },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
                 Column(
@@ -210,7 +210,7 @@ fun GetItDone(navController: NavController) {
                     .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
+                    .clickable {navController.navigate(route = Screen.PostTask.route) },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
                 Column(
@@ -240,7 +240,7 @@ fun GetItDone(navController: NavController) {
                     .size(width = 200.dp, height = 150.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
+                    .clickable {navController.navigate(route = Screen.PostTask.route) },
                 colors = CardDefaults.cardColors(cardColor)
             ) {
                 Column(

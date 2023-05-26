@@ -1,8 +1,11 @@
 package com.example.myapplication
+import Chat
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.service.controls.ControlsProviderService.TAG
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -38,6 +41,9 @@ import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.tasks.await
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 val db = Firebase.firestore
 data class Message(
@@ -46,20 +52,28 @@ data class Message(
     val isMe: Boolean,
     val reciever: String?= null,
     val time: String? = null)
+data class Messages(
+    val sender: String?= null,
+    val inputText: String? = null,
+    val receiver: String?= null,
+    val time: String? = null
+)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MessageListAndInput() {
+fun MessageListAndInput(chatName: String?) {
     var inputText by remember { mutableStateOf("") }
     // When the user sends a new message
     var sender by remember { mutableStateOf("") }
-    var reciever by remember { mutableStateOf("") }
+    var receiver by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
+    var inputText2 by remember { mutableStateOf("") }
 
-    val storage = Firebase.storage
-    var storageRef = storage.reference
+    //val storage = Firebase.storage
+    //var storageRef = storage.reference
 
 
 // 获取用户头像
-    val avatarImagesRef = storageRef.child("avatar/"+user+".jpg")
+    /*val avatarImagesRef = storageRef.child("avatar/"+user+".jpg")
     val avatar =  remember {
         mutableStateOf<Bitmap?>(null)
     }
@@ -67,44 +81,57 @@ fun MessageListAndInput() {
         avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
     }.addOnFailureListener {
         // 处理任何错误
-    }
-    sender = auth.currentUser?.email.toString()
+    }*/
+    sender = user
 
-
-
-// 监听指定Document ID的数据
+    //val messages = remember {
+        //mutableListOf(
+            //Messages(user,"Hello","choice@gmail.com","11:00 AM")
+            //Message("Lucas", "Hello!", true, "Sophie","12:00"),
+            //Message("Sophie", "Hi!", false, "Lucas", "12:00"),
+        //)
+    //}
+    var messages = remember { mutableStateListOf<Messages>() }
+    val db = Firebase.firestore
+    val docRef = db.collection("Message")
     LaunchedEffect(Unit) {
-        FireStore.collection("Message")
-            .document(sender.toString())
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    // 处理错误
-                } else {
-                    if (snapshot != null && snapshot.exists()) {
-                        sender = (snapshot.getString("sender")?:"")
-                        inputText = snapshot.getString("Inputext")?:""
-                        reciever = snapshot.getString("reciever")?:""
-                        time = snapshot.getString("time")?:""
-
+        docRef.addSnapshotListener { querySnapshot, exception ->
+            if (exception != null) {
+                // 处理错误
+                println("监听集合失败：$exception")
+            }
+            else{
+                messages.clear()
+                for (documentSnapshot in querySnapshot!!) {
+                    // 获取每个文档的数据
+                    val documentData = documentSnapshot.data
+                    if(
+                        (documentData.get("sender") == user && documentData.get("receiver") == chatName)
+                        ||(documentData.get("sender") == chatName && documentData.get("receiver") == user)
+                    ){
+                        inputText = documentData.get("inputText").toString()
+                        sender = documentData.get("sender").toString()
+                        receiver = documentData.get("receiver").toString()
+                        time = documentData.get("time").toString()
+                        messages.add(Messages(sender = sender,receiver = receiver, inputText = inputText, time = time))
+                        messages.sortedBy { it.time }
                     }
+
                 }
             }
+        }
     }
 
-    val messages = remember {
-        mutableListOf(
-            Message("Lucas", "Hello!", true, "Sophie","12:00"),
-            Message("Sophie", "Hi!", false, "Lucas", "12:00"),
-        )
-    }
+
     Column(
         modifier = Modifier.fillMaxHeight()
     ) {
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(messages.size) { index ->
-                MessageItem(messages[index])
+            val sortedMessages = messages.sortedBy { it.time }
+            items(sortedMessages.size) { index ->
+                MessageItem(sortedMessages[index])
             }
         }
         Row(
@@ -112,9 +139,9 @@ fun MessageListAndInput() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             TextField(
-                value = inputText,
+                value = inputText2,
                 onValueChange = {
-                    inputText = it
+                    inputText2 = it
                 },
                 modifier = Modifier.weight(1f),
 
@@ -130,9 +157,8 @@ fun MessageListAndInput() {
                 textStyle = MaterialTheme.typography.body1,
                 trailingIcon = {
                     IconButton(onClick = {
-                        if (inputText.isNotEmpty()) {
-                            messages.add(Message("Lucas", inputText, true, "Sophie","12:00"))
-                            inputText = ""
+                        if (inputText2.isNotEmpty()) {
+
                         }
                     }) {
 
@@ -146,21 +172,16 @@ fun MessageListAndInput() {
                 keyboardActions = KeyboardActions(
                     onSend = {
                         if (inputText.isNotEmpty()) {
-                            messages.add(Message("Lucas", inputText, true, "Sophie","12:00"))
-                            inputText = ""
+                            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                            val timeStamp = LocalDateTime.now().format(formatter)
+                            var m = Messages(sender = user,receiver = chatName, inputText = inputText2, time = timeStamp)
+                            val db2 = Firebase.firestore
+                            db2.collection("Message").document().set(m)
+                            inputText2 = ""
                         }
                     }
                 )
             )
-//            androidx.compose.material3.IconButton(
-//                onClick = {
-//
-//                },
-//                modifier = Modifier.fillMaxSize()
-//            ) {
-//                Row {
-//                    Icon(Icons.Filled.Settings, contentDescription = "设置")
-//                }
             }
         }
      //   db.collection("Message").document("document.id").set(Message)
@@ -168,14 +189,14 @@ fun MessageListAndInput() {
 
 
 @Composable
-fun MessageItem(message: Message) {
+fun MessageItem(message: Messages) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        horizontalArrangement = if (message.isMe) Arrangement.End else Arrangement.Start,
+        horizontalArrangement = if (message.sender==user) Arrangement.End else Arrangement.Start,
     ) {
-        if (!message.isMe) {
+        if (message.sender!=user) {
             Image(
                 painter = painterResource(R.drawable.img1),
                 contentDescription = "Avatar",
@@ -186,8 +207,8 @@ fun MessageItem(message: Message) {
             modifier = Modifier
                 .weight(1f)
                 .padding(
-                    start = if (message.isMe) 0.dp else 16.dp,
-                    end = if (message.isMe) 16.dp else 0.dp
+                    start = if (message.sender==user) 0.dp else 16.dp,
+                    end = if (message.sender==user) 16.dp else 0.dp
                 ),
             verticalArrangement = Arrangement.Center,
         ) {
@@ -195,18 +216,18 @@ fun MessageItem(message: Message) {
                 androidx.compose.material.Text(
                     text = it,
                     style = MaterialTheme.typography.body1,
-                    color = if (message.isMe) Color.White else Color.Black,
+                    color = if (message.sender==user) Color.White else Color.Black,
                     modifier = Modifier
                         .background(
-                            if (message.isMe) Color.Blue else Color.Gray,
+                            if (message.sender==user) buttonColor else textFieldColor,
                             MaterialTheme.shapes.medium
                         )
                         .padding(16.dp)
-                        .align(if (message.isMe) Alignment.End else Alignment.Start),
+                        .align(if (message.sender==user) Alignment.End else Alignment.Start),
                 )
             }
         }
-        if (message.isMe) {
+        if (message.sender==user) {
             Image(
                 painter = painterResource(R.drawable.img),
                 contentDescription = "Avatar",
@@ -216,9 +237,10 @@ fun MessageItem(message: Message) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreviewConversation() {
+fun PreviewConversation(chatName: String?, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -230,20 +252,20 @@ fun PreviewConversation() {
                 imageVector = Icons.Filled.ArrowBack,
                 "Icon",
                 modifier = Modifier
-                    .clickable {}
+                    .clickable {navController.popBackStack()}
                     .padding(horizontal = 16.dp)
                     .size(30.dp),
                 tint = Color(0xff333333)
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = "John",
+                text = chatName.toString(),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600
             )
         }
         Spacer(modifier = Modifier.height(40.dp))
-        MessageListAndInput()
+        MessageListAndInput(chatName)
         Spacer(modifier = Modifier.height(380.dp))
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue("", TextRange(0, 0)))
