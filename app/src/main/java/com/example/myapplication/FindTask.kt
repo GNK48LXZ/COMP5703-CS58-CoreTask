@@ -64,7 +64,6 @@ fun FindTask(navController: NavController) {
     var filterText by remember { mutableStateOf("") }
     val pageState = remember { mutableStateOf(1) }
 
-
     when (pageState.value) {
         1 -> {
             Column(

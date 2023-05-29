@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -60,6 +61,7 @@ import com.google.firebase.storage.ktx.storage
 import com.google.maps.android.compose.*
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -1795,12 +1797,12 @@ fun SuggestBudget(pageState: MutableState<Int>, money: MutableState<String>) {
                 //.padding(horizontal = 16.dp),
                 singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
-                placeholder = { Text(" 50") }
+                placeholder = { Text("A$ 50") }
             )
             Column() {
                 Spacer(modifier = Modifier.height(15.dp))
                 Text(
-                    text = "AU$/hour",
+                    text = "/hour",
                     style = MaterialTheme.typography.headlineSmall,
                     fontSize = 18.sp
                 )
@@ -2147,7 +2149,7 @@ fun TaskDetail(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = money.value + "AU$/hour",
+                        text = "A$ " + money.value +"/hour",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontSize = 35.sp,
                         fontWeight = FontWeight.Bold

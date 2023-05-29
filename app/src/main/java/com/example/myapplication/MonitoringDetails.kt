@@ -817,7 +817,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = money + " AU$/hour",
+                        text =  "A$ " + money +"/hour",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold
