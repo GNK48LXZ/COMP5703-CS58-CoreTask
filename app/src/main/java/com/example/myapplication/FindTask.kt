@@ -2,8 +2,10 @@ package com.example.myapplication
 
 
 import No
+import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -56,502 +59,242 @@ fun FindTask(navController: NavController) {
 
     val options1 = listOf("All Task", "Cleaning", "Removals", "Repairs", "Painting")
     var selectedOption1 by remember { mutableStateOf(options1[0]) }
-    val options2 = listOf("Bill", "0-50", "51-100", "100-200", "200~")
+    val options2 = listOf("All Bill", "0-50", "51-100", "101~")
     var selectedOption2 by remember { mutableStateOf(options2[0]) }
-    val options3 = listOf("Status", "Open", "Assigned")
+    val options3 = listOf("All Status", "Open", "Assigned", "Completed")
     var selectedOption3 by remember { mutableStateOf(options3[0]) }
 
     var filterText by remember { mutableStateOf("") }
     val pageState = remember { mutableStateOf(1) }
 
-    when (pageState.value) {
-        1 -> {
-            Column(
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(background)
+            .height(700.dp)
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Row {
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(
+                text = "Browse Tasks",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600,
+                fontFamily = Poppins,
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(10.dp))
+        Row {
+            androidx.compose.material.TextField(
+                value = filterText,
+                onValueChange = { filterText = it },
                 modifier = Modifier
+                    .padding(horizontal = 20.dp)
                     .fillMaxWidth()
-                    .background(background)
-                    .height(700.dp)
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Row {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = "Browse Tasks",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = Poppins,
-                        //modifier = Modifier.weight(1f)
+                    .background(Color.White),
+                textStyle = MaterialTheme.typography.body2,
+                placeholder = { androidx.compose.material.Text("Filter by task name") },
+                trailingIcon = {
+                    androidx.compose.material.Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search icon",
+                        tint = Color.Gray,
+                        modifier = Modifier.clickable(onClick = {
+                            pageState.value = 6
+                        })
                     )
-                    /*androidx.compose.material.Button(
-                        modifier = Modifier
-                            .weight(1.5f),
-                        onClick = { navController.navigate(Screen.ClassificationPage.route) },
-                        shape = RoundedCornerShape(25.dp),
-                        colors = ButtonDefaults.buttonColors(buttonColor)
-                    ) {
-                        androidx.compose.material.Text(
-                            text = "I am a Task Poster",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(20.dp))*/
-                    /*Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp)
-                    ) {
+                }
+            )
+        }
 
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FilterDropdown(
+                options = options1,
+                selectedOption = selectedOption1,
+                onOptionSelected = { option ->
+                    selectedOption1 = option
+                },
+                modifier = Modifier.weight(1f)
+            )
+            FilterDropdown(
+                options = options2,
+                selectedOption = selectedOption2,
+                onOptionSelected = { option ->
+                    selectedOption2 = option
+                },
+                modifier = Modifier.weight(1f)
+            )
+            FilterDropdown(
+                options = options3,
+                selectedOption = selectedOption3,
+                onOptionSelected = { option ->
+                    selectedOption3 = option
+                },
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        /*if (selectedOption1 == "All Task") {
+            TaskListScreen("Task", navController)
+        } else if (selectedOption1 == "Cleaning") {
+            TaskListOthersScreen("Task", navController, 1)
+        } else if (selectedOption1 == "Removals") {
+            TaskListOthersScreen("Task", navController, 2)
+        } else if (selectedOption1 == "Repairs") {
+            TaskListOthersScreen("Task", navController, 3)
+        } else if (selectedOption1 == "Painting") {
+            TaskListOthersScreen("Task", navController, 4)
+        }
+        if (selectedOption2 == "All Bill") {
+            TaskListScreen("Task", navController)
+        } else if (selectedOption2 == "0-50") {
+            TaskListOthersScreen("Task", navController, 5)
+        } else if (selectedOption2 == "51-100") {
+            TaskListOthersScreen("Task", navController, 6)
+        } else if (selectedOption2 == "101-200") {
+            TaskListOthersScreen("Task", navController, 7)
+        } else if (selectedOption2 == "200~") {
+            TaskListOthersScreen("Task", navController, 8)
+        }
+        if (selectedOption3 == "All Status") {
+            TaskListScreen("Task", navController)
+        } else if (selectedOption3 == "Open") {
+            TaskListOthersScreen("Task", navController, 9)
+        } else if (selectedOption3 == "Assigned") {
+            TaskListOthersScreen("Task", navController, 10)
+        } else if (selectedOption3 == "Completed") {
+            TaskListOthersScreen("Task", navController, 11)
+        }
+        if (pageState.value == 6) {
+            TaskListFilterScreen("Task", navController, filterText = filterText)
+        }*/
+        when {
+            pageState.value == 1 -> {
+                when {
+                    selectedOption1 == "All Task" && selectedOption2 == "All Bill" && selectedOption3 == "All Status" -> {
+                        TaskListScreen("Task", navController)
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "All Bill" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 0)
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "0-50" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 1)
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "0-50" && selectedOption3 == "Open" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 1, "Open")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "0-50" && selectedOption3 == "Assigned" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 1, "Assigned")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "0-50" && selectedOption3 == "Completed" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 1, "Completed")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "51-100" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 2)
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "51-100" && selectedOption3 == "Open" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 2, "Open")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "51-100" && selectedOption3 == "Assigned" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 2, "Assigned")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "51-100" && selectedOption3 == "Completed" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 2, "Completed")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "101~" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 3)
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "101~" && selectedOption3 == "Open" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 3, "Open")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "101~" && selectedOption3 == "Assigned" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 3, "Assigned")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "101~" && selectedOption3 == "Completed" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 3, "Completed")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "All Bill" && selectedOption3 == "Open" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 0, "Open")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "All Bill" && selectedOption3 == "Assigned" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 0, "Assigned")
+                    }
+
+                    selectedOption1 == "Cleaning" && selectedOption2 == "All Bill" && selectedOption3 == "Completed" -> {
+                        TaskListOthersScreen("Task", navController, "Cleaning", 0, "Completed")
+                    }
+
+                    /*selectedOption1 == "Removals" && selectedOption2 == "All Bill" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, 2)
+                    }
+
+                    selectedOption1 == "Repairs" && selectedOption2 == "All Bill" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, 3)
+                    }
+
+                    selectedOption1 == "Painting" && selectedOption2 == "All Bill" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, 4)
+                    }
+
+                    selectedOption2 == "0-50" && selectedOption1 == "All Task" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, 5)
+                    }
+
+                    selectedOption2 == "51-100" && selectedOption1 == "All Task" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, 6)
+                    }
+
+                    selectedOption2 == "101~" && selectedOption1 == "All Task" && selectedOption3 == "All Status" -> {
+                        TaskListOthersScreen("Task", navController, 7)
+                    }
+
+                    selectedOption3 == "Open" && selectedOption1 == "All Task" && selectedOption2 == "All Bill" -> {
+                        TaskListOthersScreen("Task", navController, 9)
+                    }
+
+                    selectedOption3 == "Assigned" && selectedOption1 == "All Task" && selectedOption2 == "All Bill" -> {
+                        TaskListOthersScreen("Task", navController, 10)
+                    }
+
+                    selectedOption3 == "Completed" && selectedOption1 == "All Task" && selectedOption2 == "All Bill" -> {
+                        TaskListOthersScreen("Task", navController, 11)
+                    }
+
+                    pageState.value == 6 && selectedOption1 == "All Task" && selectedOption2 == "All Bill" && selectedOption3 == "All Status" -> {
+                        TaskListFilterScreen("Task", navController, filterText = filterText)
                     }*/
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    androidx.compose.material.TextField(
-                        value = filterText,
-                        onValueChange = { filterText = it },
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
-                            .background(Color.White),
-                        textStyle = MaterialTheme.typography.body2,
-                        placeholder = { androidx.compose.material.Text("Filter by task name") },
-                        trailingIcon = {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search icon",
-                                tint = Color.Gray,
-                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
-                            )
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilterDropdown(
-                        pageState,
-                        options = options1,
-                        selectedOption = selectedOption1,
-                        onOptionSelected = { option ->
-                            selectedOption1 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options2,
-                        selectedOption = selectedOption2,
-                        onOptionSelected = { option ->
-                            selectedOption2 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options3,
-                        selectedOption = selectedOption3,
-                        onOptionSelected = { option ->
-                            selectedOption3 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                TaskListScreen("Task", navController)
+            }
+
+            pageState.value == 6 -> {
+                TaskListFilterScreen("Task", navController, filterText = filterText)
             }
         }
 
-        2 -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(background)
-                    .height(720.dp)
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Row {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = "Browse Tasks",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = Poppins
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    androidx.compose.material.TextField(
-                        value = filterText,
-                        onValueChange = { filterText = it },
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
-                            .background(Color.White),
-                        textStyle = MaterialTheme.typography.body2,
-                        placeholder = { androidx.compose.material.Text("Filter by task name") },
-                        trailingIcon = {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search icon",
-                                tint = Color.Gray,
-                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
-                            )
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilterDropdown(
-                        pageState,
-                        options = options1,
-                        selectedOption = selectedOption1,
-                        onOptionSelected = { option ->
-                            selectedOption1 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options2,
-                        selectedOption = selectedOption2,
-                        onOptionSelected = { option ->
-                            selectedOption2 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options3,
-                        selectedOption = selectedOption3,
-                        onOptionSelected = { option ->
-                            selectedOption3 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                TaskListOthersScreen("Task", navController, 1)
-            }
-        }
-
-        3 -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(background)
-                    .height(700.dp)
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Row {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = "Browse Tasks",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = Poppins
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    androidx.compose.material.TextField(
-                        value = filterText,
-                        onValueChange = { filterText = it },
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
-                            .background(Color.White),
-                        textStyle = MaterialTheme.typography.body2,
-                        placeholder = { androidx.compose.material.Text("Filter by task name") },
-                        trailingIcon = {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search icon",
-                                tint = Color.Gray,
-                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
-                            )
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilterDropdown(
-                        pageState,
-                        options = options1,
-                        selectedOption = selectedOption1,
-                        onOptionSelected = { option ->
-                            selectedOption1 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options2,
-                        selectedOption = selectedOption2,
-                        onOptionSelected = { option ->
-                            selectedOption2 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options3,
-                        selectedOption = selectedOption3,
-                        onOptionSelected = { option ->
-                            selectedOption3 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                TaskListOthersScreen("Task", navController, 2)
-            }
-        }
-
-        4 -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(background)
-                    .height(700.dp)
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Row {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = "Browse Tasks",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = Poppins
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    androidx.compose.material.TextField(
-                        value = filterText,
-                        onValueChange = { filterText = it },
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
-                            .background(Color.White),
-                        textStyle = MaterialTheme.typography.body2,
-                        placeholder = { androidx.compose.material.Text("Filter by task name") },
-                        trailingIcon = {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search icon",
-                                tint = Color.Gray,
-                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
-                            )
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilterDropdown(
-                        pageState,
-                        options = options1,
-                        selectedOption = selectedOption1,
-                        onOptionSelected = { option ->
-                            selectedOption1 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options2,
-                        selectedOption = selectedOption2,
-                        onOptionSelected = { option ->
-                            selectedOption2 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options3,
-                        selectedOption = selectedOption3,
-                        onOptionSelected = { option ->
-                            selectedOption3 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                TaskListOthersScreen("Task", navController, 3)
-            }
-        }
-
-        5 -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(background)
-                    .height(700.dp)
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Row {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = "Browse Tasks",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = Poppins
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    androidx.compose.material.TextField(
-                        value = filterText,
-                        onValueChange = { filterText = it },
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
-                            .background(Color.White),
-                        textStyle = MaterialTheme.typography.body2,
-                        placeholder = { androidx.compose.material.Text("Filter by task name") },
-                        trailingIcon = {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search icon",
-                                tint = Color.Gray,
-                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
-                            )
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilterDropdown(
-                        pageState,
-                        options = options1,
-                        selectedOption = selectedOption1,
-                        onOptionSelected = { option ->
-                            selectedOption1 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options2,
-                        selectedOption = selectedOption2,
-                        onOptionSelected = { option ->
-                            selectedOption2 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options3,
-                        selectedOption = selectedOption3,
-                        onOptionSelected = { option ->
-                            selectedOption3 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                TaskListOthersScreen("Task", navController, 4)
-            }
-        }
-
-        6 -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(background)
-                    .height(700.dp)
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Row {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(
-                        text = "Browse Tasks",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = Poppins
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    androidx.compose.material.TextField(
-                        value = filterText,
-                        onValueChange = { filterText = it },
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth()
-                            .background(Color.White),
-                        textStyle = MaterialTheme.typography.body2,
-                        placeholder = { androidx.compose.material.Text("Filter by task name") },
-                        trailingIcon = {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search icon",
-                                tint = Color.Gray,
-                                modifier = Modifier.clickable(onClick = { pageState.value = 6 })
-                            )
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilterDropdown(
-                        pageState,
-                        options = options1,
-                        selectedOption = selectedOption1,
-                        onOptionSelected = { option ->
-                            selectedOption1 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options2,
-                        selectedOption = selectedOption2,
-                        onOptionSelected = { option ->
-                            selectedOption2 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilterDropdown(
-                        pageState,
-                        options = options3,
-                        selectedOption = selectedOption3,
-                        onOptionSelected = { option ->
-                            selectedOption3 = option
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                TaskListFilterScreen("Task", navController, filterText)
-            }
-        }
     }
-
 }
 
 data class TaskItem(
@@ -567,7 +310,6 @@ data class TaskItem(
 
 @Composable
 fun FilterDropdown(
-    pageState: MutableState<Int>,
     options: List<String>,
     selectedOption: String,
     onOptionSelected: (String) -> Unit,
@@ -604,21 +346,6 @@ fun FilterDropdown(
                             onClick = {
                                 onOptionSelected(option)
                                 expanded = false
-                                if (option == "All Task") {
-                                    pageState.value = 1
-                                }
-                                if (option == "Cleaning") {
-                                    pageState.value = 2
-                                }
-                                if (option == "Removals") {
-                                    pageState.value = 3
-                                }
-                                if (option == "Repairs") {
-                                    pageState.value = 4
-                                }
-                                if (option == "Painting") {
-                                    pageState.value = 5
-                                }
                             }
                         ),
                         onClick = {
@@ -632,7 +359,6 @@ fun FilterDropdown(
             }
         )
     }
-
 }
 
 @Composable
@@ -645,6 +371,11 @@ fun TaskListScreen(collectionPath: String, navController: NavController) {
     }
 
     TaskListLazyColumn(taskItems, navController)
+}
+
+@Composable
+fun showShearchingPage(collectionPath: String, navController: NavController, filterText: String) {
+    TaskListFilterScreen(collectionPath, navController, filterText = filterText)
 }
 
 @Composable
@@ -663,16 +394,60 @@ fun TaskListFilterScreen(collectionPath: String, navController: NavController, f
 fun TaskListOthersScreen(
     collectionPath: String,
     navController: NavController,
-    classification: Int
+    classification: String,
+    Bill: Int,
+    Status: String
 ) {
     var taskItems by remember { mutableStateOf(listOf<TaskItem>()) }
     val db = FirebaseFirestore.getInstance()
 
     LaunchedEffect(collectionPath) {
-        taskItems = loadClassificationDataFromFirestore(
+        taskItems = loadSeletedDataFromFirestore(
             db = db,
-            collectionPath = collectionPath,
-            classification = classification
+            classification = classification,
+            Bill = Bill,
+            Status = Status
+        )
+    }
+
+    TaskListLazyColumn(taskItems, navController)
+}
+
+@Composable
+fun TaskListOthersScreen(
+    collectionPath: String,
+    navController: NavController,
+    Bill: Int,
+    Status: String
+) {
+    var taskItems by remember { mutableStateOf(listOf<TaskItem>()) }
+    val db = FirebaseFirestore.getInstance()
+
+    LaunchedEffect(collectionPath) {
+        taskItems = loadSeletedDataFromFirestoreAT(
+            db = db,
+            Bill = Bill,
+            Status = Status
+        )
+    }
+    TaskListLazyColumn(taskItems, navController)
+}
+
+@Composable
+fun TaskListOthersScreen(
+    collectionPath: String,
+    navController: NavController,
+    classification: String,
+    Bill: Int,
+) {
+    var taskItems by remember { mutableStateOf(listOf<TaskItem>()) }
+    val db = FirebaseFirestore.getInstance()
+
+    LaunchedEffect(collectionPath) {
+        taskItems = loadSeletedDataFromFirestoreAS(
+            db = db,
+            classification = classification,
+            Bill = Bill
         )
     }
 
@@ -723,6 +498,7 @@ public suspend fun loadDataFromFirestore(
     }
     return taskList
 }
+/*
 
 public suspend fun loadClassificationDataFromFirestore(
     db: FirebaseFirestore,
@@ -733,6 +509,14 @@ public suspend fun loadClassificationDataFromFirestore(
     val taskList2 = mutableListOf<TaskItem>()
     val taskList3 = mutableListOf<TaskItem>()
     val taskList4 = mutableListOf<TaskItem>()
+    val taskList5 = mutableListOf<TaskItem>()
+    val taskList6 = mutableListOf<TaskItem>()
+    val taskList7 = mutableListOf<TaskItem>()
+    val taskList8 = mutableListOf<TaskItem>()
+    val taskList9 = mutableListOf<TaskItem>()
+    val taskList10 = mutableListOf<TaskItem>()
+    val taskList11 = mutableListOf<TaskItem>()
+    val taskList12 = mutableListOf<TaskItem>()
     val querySnapshot = db.collection(collectionPath).get().await()
     querySnapshot.documents.forEach { document ->
         val taskId = document.id
@@ -762,6 +546,104 @@ public suspend fun loadClassificationDataFromFirestore(
 
         if ("Cleaning" == classification) {
             taskList1.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if ("Cleaning" == classification && money.toInt() <= 50) {
+            taskList12.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if ("Cleaning" == classification && money.toInt() in 51..100) {
+            taskList13.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if ("Cleaning" == classification && money.toInt() > 100) {
+            taskList14.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if ("Cleaning" == classification && money.toInt() <= 50 && status == "Open") {
+            taskList15.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if ("Cleaning" == classification && money.toInt() <= 50 && status == "Assigned") {
+            taskList16.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if ("Cleaning" == classification && money.toInt() <= 50 && status == "Completed") {
+            taskList17.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if ("Cleaning" == classification && money.toInt() in 51..100 && status == "Open") {
+            taskList18.add(
                 TaskItem(
                     taskId = taskId,
                     taskName = taskTopic,
@@ -816,6 +698,91 @@ public suspend fun loadClassificationDataFromFirestore(
                 )
             )
         }
+        if (money.toInt() <= 50) {
+            taskList5.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if (money.toInt() in 51..100) {
+            taskList6.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if (money.toInt() > 100) {
+            taskList7.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+
+        if (status == "Open") {
+            taskList9.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if (status == "Assigned") {
+            taskList10.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
+        if (status == "Completed") {
+            taskList11.add(
+                TaskItem(
+                    taskId = taskId,
+                    taskName = taskTopic,
+                    location = address,
+                    date = date,
+                    time = "$startTime - $endTime",
+                    status = status,
+                    bill = money,
+                    imageUrl = a
+                )
+            )
+        }
     }
     if (classification == 1) {
         return taskList1
@@ -829,7 +796,571 @@ public suspend fun loadClassificationDataFromFirestore(
     if (classification == 4) {
         return taskList4
     }
+    if (classification == 5) {
+        return taskList5
+    }
+    if (classification == 6) {
+        return taskList6
+    }
+    if (classification == 7) {
+        return taskList7
+    }
+    if (classification == 8) {
+        return taskList8
+    }
+    if (classification == 9) {
+        return taskList9
+    }
+    if (classification == 10) {
+        return taskList10
+    }
+    if (classification == 11) {
+        return taskList11
+    }
+
     return taskList1 + taskList2 + taskList3 + taskList4
+}
+*/
+
+public suspend fun loadSeletedDataFromFirestoreAT(
+    db: FirebaseFirestore,
+    Bill: Int,
+    Status: String
+): List<TaskItem> {
+    val taskList = mutableListOf<TaskItem>()
+    if (Bill == 0) {
+        db.collection("Task")
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                taskList.add(
+                    TaskItem(
+                        taskId = taskId,
+                        taskName = taskTopic,
+                        location = address,
+                        date = date,
+                        time = "$startTime - $endTime",
+                        status = status,
+                        bill = money,
+                        imageUrl = a
+                    )
+                )
+            }
+        return taskList
+    } else if (Bill == 1) {
+        db.collection("Task")
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() <= 50) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    } else if (Bill == 2) {
+        db.collection("Task")
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() in 51..100) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    } else if (Bill == 3) {
+        db.collection("Task")
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() > 100) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    }
+    return taskList
+}
+
+public suspend fun loadSeletedDataFromFirestoreAS(
+    db: FirebaseFirestore,
+    classification: String,
+    Bill: Int,
+): List<TaskItem> {
+    val taskList = mutableListOf<TaskItem>()
+    if (Bill == 0) {
+        db.collection("Task").whereEqualTo("classification", classification).get()
+            .await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                taskList.add(
+                    TaskItem(
+                        taskId = taskId,
+                        taskName = taskTopic,
+                        location = address,
+                        date = date,
+                        time = "$startTime - $endTime",
+                        status = status,
+                        bill = money,
+                        imageUrl = a
+                    )
+                )
+            }
+        return taskList
+    } else if (Bill == 1) {
+        db.collection("Task").whereEqualTo("classification", classification).get()
+            .await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() <= 50) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    } else if (Bill == 2) {
+        db.collection("Task").whereEqualTo("classification", classification).get()
+            .await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() in 51..100) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    } else if (Bill == 3) {
+        db.collection("Task").whereEqualTo("classification", classification).get()
+            .await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() > 100) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    }
+    return taskList
+}
+
+public suspend fun loadSeletedDataFromFirestore(
+    db: FirebaseFirestore,
+    classification: String,
+    Bill: Int,
+    Status: String
+): List<TaskItem> {
+    val taskList = mutableListOf<TaskItem>()
+    if (Bill == 0) {
+        db.collection("Task").whereEqualTo("classification", classification)
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                taskList.add(
+                    TaskItem(
+                        taskId = taskId,
+                        taskName = taskTopic,
+                        location = address,
+                        date = date,
+                        time = "$startTime - $endTime",
+                        status = status,
+                        bill = money,
+                        imageUrl = a
+                    )
+                )
+            }
+        return taskList
+    } else if (Bill == 1) {
+        db.collection("Task").whereEqualTo("classification", classification)
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() <= 50) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    } else if (Bill == 2) {
+        db.collection("Task").whereEqualTo("classification", classification)
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() in 51..100) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    } else if (Bill == 3) {
+        db.collection("Task").whereEqualTo("classification", classification)
+            .whereEqualTo("status", Status).get().await().documents.forEach { document ->
+                val taskId = document.id
+                val taskTopic = document.getString("taskTopic") ?: ""
+                val address = document.getString("address") ?: ""
+                val date = document.getString("date") ?: ""
+                val startTime = document.getString("startTime") ?: ""
+                val endTime = document.getString("endTime") ?: ""
+                val status = document.getString("status") ?: ""
+                val money = document.getString("money") ?: ""
+                val userID = document.getString("userID") ?: ""
+                var starRate = 0.0
+                val querySnapshotUser =
+                    db.collection("User").whereEqualTo("id", userID).get().await()
+                val b: Bitmap? = null
+                val a = mutableStateOf(b)
+                querySnapshotUser.documents.forEach { document ->
+                    starRate = document.getDouble("starRate") ?: 0.0
+                }
+                val avatarImagesRef =
+                    Firebase.storage.reference.child("avatar/" + userID + ".jpg")
+                avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+                    a.value = BitmapFactory.decodeByteArray(it, 0, it.size)
+                }.addOnFailureListener {
+
+                }
+                if (money.toInt() > 100) {
+                    taskList.add(
+                        TaskItem(
+                            taskId = taskId,
+                            taskName = taskTopic,
+                            location = address,
+                            date = date,
+                            time = "$startTime - $endTime",
+                            status = status,
+                            bill = money,
+                            imageUrl = a
+                        )
+                    )
+                }
+            }
+        return taskList
+    }
+    return taskList
 }
 
 public suspend fun loadSearchDataFromFirestore(

@@ -1,238 +1,149 @@
 package com.example.myapplication
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material3.CardDefaults
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.flow
 
 @Preview
+@ExperimentalMaterial3Api
 @Composable
-fun FilteredUsersScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(720.dp)
-            .background(background)
-            .verticalScroll(rememberScrollState())
-    ) {
-        Spacer(
-            modifier = Modifier.height(10.dp)
-        )
-        androidx.compose.material3.Text(
-            text = "Let's get your things done!",
-            fontSize = 30.sp,
-            fontWeight = FontWeight.W500,
-            lineHeight = 30.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)) {
-            Button(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 2.dp),
-                onClick = { /* 按钮1被点击 */ },
-                shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.buttonColors(buttonColor)
-            ) {
-                Text(
-                    text = "I am a Task Poster",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 2.dp),
-                onClick = { /* 按钮2被点击 */ },
-                shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.buttonColors(buttonColor)
-            ) {
-                Text(
-                    text = "I'll take on Tasks",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        androidx.compose.material3.Text(
-            text = "OR choose your task category to create your task.",
-            fontSize = 22.sp,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            color = buttonColor,
-            fontWeight = FontWeight.W500,
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        androidx.compose.material3.Text(
-            text = "Top trending categories",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W500,
-            lineHeight = 40.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Row {
-            androidx.compose.material3.Card(
-                modifier = Modifier
-                    .size(width = 200.dp, height = 150.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                //.clickable { navController.navigate(route = Screen.PostTask.route) },
-                colors = CardDefaults.cardColors(cardColor)
-            ) {
-                Column(
-                    Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center
+fun FindFliter() {
+    var selectedCategory by remember { mutableStateOf("All Task") }
+    var selectedBillRange by remember { mutableStateOf("All Bill") }
+    var selectedStatus by remember { mutableStateOf("All Status") }
+
+    FilterDropdown(
+        selectedCategory = selectedCategory,
+        selectedBillRange = selectedBillRange,
+        selectedStatus = selectedStatus,
+        onCategorySelected = { category -> selectedCategory = category },
+        onBillRangeSelected = { billRange -> selectedBillRange = billRange },
+        onStatusSelected = { status -> selectedStatus = status }
+    )
+
+}
+
+@Composable
+fun FilterDropdown(
+    selectedCategory: String,
+    selectedBillRange: String,
+    selectedStatus: String,
+    onCategorySelected: (String) -> Unit,
+    onBillRangeSelected: (String) -> Unit,
+    onStatusSelected: (String) -> Unit
+) {
+    val categories = listOf("All Task", "Cleaning", "Removals", "Repairs", "Painting")
+    val billRanges = listOf("All Bill", "0-50", "51-100", "101-200", "200~")
+    val statuses = listOf("All Status", "Open", "Assigned", "Completed")
+
+    val filteredItems = remember {
+        mutableStateListOf<String>() // 存储过滤结果的列表
+    }
+
+    // 过滤逻辑
+    LaunchedEffect(selectedCategory, selectedBillRange) {
+        filteredItems.clear()
+        if (selectedCategory == "All Task" && selectedBillRange == "All Bill") {
+            // 如果选择的都是"All"，显示所有内容
+            //filteredItems.addAll() // 这里的dummyData是你的数据源，需要替换成你的实际数据
+        } else {
+            // 进行过滤操作
+            /*dummyData.forEach { item ->
+                if ((selectedCategory == "All Task" || item.category == selectedCategory) &&
+                    (selectedBillRange == "All Bill" || item.billRange == selectedBillRange)
                 ) {
-                    androidx.compose.material3.Icon(
-                        painter = painterResource(R.drawable.cleaning),
-                        tint = whiteColor,
-                        contentDescription = "the cleaning"
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    androidx.compose.material3.Text(
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.W500,
-                        color = textColor,
-                        text = "Cleaning",
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
+                    filteredItems.add(item)
                 }
-            }
-            androidx.compose.material3.Card(
-                modifier = Modifier
-                    .size(width = 200.dp, height = 150.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
-                colors = CardDefaults.cardColors(cardColor)
+            }*/
+        }
+    }
+
+    Row(Modifier.padding(16.dp)) {
+        Column(Modifier.weight(1f)) {
+            DropdownMenu(
+                expanded = true,
+                onDismissRequest = { }
             ) {
-                Column(
-                    Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    androidx.compose.material3.Icon(
-                        painter = painterResource(R.drawable.removals),
-                        tint = whiteColor,
-                        contentDescription = "the removal"
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    androidx.compose.material3.Text(
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.W500,
-                        color = textColor,
-                        text = "Removals",
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = { category },
+                        onClick = { onCategorySelected(category) })
                 }
             }
         }
-        Spacer(modifier = Modifier.height(22.dp))
-        Row {
-            androidx.compose.material3.Card(
-                modifier = Modifier
-                    .size(width = 200.dp, height = 150.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
-                colors = CardDefaults.cardColors(cardColor)
+        Column(Modifier.weight(1f)) {
+            DropdownMenu(
+                expanded = false,
+                onDismissRequest = { }
             ) {
-                Column(
-                    Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    androidx.compose.material3.Icon(
-                        painter = painterResource(R.drawable.build),
-                        contentDescription = "the repairs",
-                        tint = whiteColor
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    androidx.compose.material3.Text(
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.W500,
-                        color = textColor,
-                        text = "Repairs",
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
-                }
-            }
-            androidx.compose.material3.Card(
-                modifier = Modifier
-                    .size(width = 200.dp, height = 150.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
-                colors = CardDefaults.cardColors(cardColor)
-            ) {
-                Column(
-                    Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    androidx.compose.material3.Icon(
-                        painter = painterResource(R.drawable.painting),
-                        tint = whiteColor,
-                        contentDescription = "the painting"
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    androidx.compose.material3.Text(
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.W500,
-                        color = textColor,
-                        text = "Painting",
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
+                billRanges.forEach { billRange ->
+                    DropdownMenuItem(
+                        text = { billRange },
+                        onClick = { onBillRangeSelected(billRange) })
                 }
             }
         }
-        Spacer(modifier = Modifier.height(22.dp))
-        Row {
-            androidx.compose.material3.Card(
-                modifier = Modifier
-                    .size(width = 200.dp, height = 150.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clickable {/* 点击事件 */ },
-                colors = CardDefaults.cardColors(cardColor)
+        Column(modifier = Modifier.weight(1f)) {
+            DropdownMenu(
+                expanded = false,
+                onDismissRequest = { }
             ) {
-                Column(
-                    Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    androidx.compose.material3.Icon(
-                        painter = painterResource(R.drawable.others),
-                        contentDescription = "the repairs",
-                        tint = whiteColor
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    androidx.compose.material3.Text(
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.W500,
-                        color = textColor,
-                        text = "Others",
-                        modifier = Modifier.padding(bottom = 10.dp)
-                    )
+                statuses.forEach { status ->
+                    DropdownMenu(
+                        expanded = false,
+                        onDismissRequest = { }
+                    ) {
+                        statuses.forEach { status ->
+                            DropdownMenuItem(text = { status }, onClick = { onStatusSelected(status) })
+
+                        }
+                    }
                 }
             }
         }
     }
+
+    Box(Modifier.padding(horizontal = 16.dp)) {
+        if (filteredItems.isNotEmpty()) {
+            // 显示过滤结果
+            LazyColumn {
+                items(filteredItems) { item ->
+                    // 显示每个过滤项的内容
+                    Text(text = item) // 这里根据你的实际数据结构显示相应的内容
+                }
+            }
+        } else {
+            // 过滤结果为空的情况
+            Text(
+                text = "No items match the selected filters",
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
 }
+
+
 
 
 
