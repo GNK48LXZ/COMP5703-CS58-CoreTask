@@ -87,7 +87,8 @@ fun FindTask(navController: NavController) {
         Divider()
         Spacer(modifier = Modifier.height(10.dp))
         Row {
-            androidx.compose.material.TextField(
+            TextField(
+                colors = TextFieldDefaults.textFieldColors(containerColor = textFieldColor),
                 value = filterText,
                 onValueChange = { filterText = it },
                 modifier = Modifier
@@ -1494,7 +1495,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                                         fontSize = 15.sp,
                                         fontFamily = Poppins
                                     ),
-                                    color = lightGreen,
+                                    color = Color(0xFF9BEDAD),
                                     modifier = Modifier
                                         .padding(top = 5.dp)
                                 )
@@ -1505,7 +1506,7 @@ fun TaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController) {
                                         fontSize = 15.sp,
                                         fontFamily = Poppins
                                     ),
-                                    color = Color.Blue,
+                                    color = buttonColor,
                                     modifier = Modifier
                                         .padding(top = 5.dp)
                                 )

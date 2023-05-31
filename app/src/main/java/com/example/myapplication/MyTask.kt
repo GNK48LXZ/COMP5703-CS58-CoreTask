@@ -111,7 +111,7 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
                     Text(
                         "My Posted Task",
                         fontSize = 12.sp,
-                        color = if (pageState.value == 1) Color.Black else MaterialTheme.colors.onSurface
+                        color = if (pageState.value == 1) Color.White else MaterialTheme.colors.onSurface
                     )
                 }
                 Box(
@@ -130,7 +130,7 @@ fun ShowPostTask(pageState: MutableState<Int>, navController: NavController) {
                     Text(
                         "My Assign Task",
                         fontSize = 12.sp,
-                        color = if (pageState.value == 2) Color.Black else MaterialTheme.colors.onSurface
+                        color = if (pageState.value == 2) Color.White else MaterialTheme.colors.onSurface
                     )
                 }
 
@@ -419,7 +419,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                                             fontSize = 15.sp,
                                             fontFamily = Poppins
                                         ),
-                                        color = Color.Green,
+                                        color = Color(0xFF9BEDAD),
                                         modifier = Modifier
                                             .padding(top = 5.dp)
                                     )
@@ -430,7 +430,7 @@ fun MyTaskListLazyColumn(taskItem: List<TaskItem>, navController: NavController)
                                             fontSize = 15.sp,
                                             fontFamily = Poppins
                                         ),
-                                        color = Color.Blue,
+                                        color = buttonColor,
                                         modifier = Modifier
                                             .padding(top = 5.dp)
                                     )

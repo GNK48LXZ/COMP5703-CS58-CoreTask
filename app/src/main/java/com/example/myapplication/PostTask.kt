@@ -258,6 +258,7 @@ fun SimplyDescribeTask(
             Divider()
             Spacer(modifier = Modifier.height(2.dp))
             progressBar(checked = 1f, waiting = 5f, text = "1")
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -271,7 +272,7 @@ fun SimplyDescribeTask(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 //text = "Describe what you need done in a few word.",
                 text = "In a few words, what do you need?",
                 style = MaterialTheme.typography.bodyLarge,
@@ -370,7 +371,7 @@ fun SelectTaskType(pageState: MutableState<Int>) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             //text = "Tell the job seeker your preferred time",
             text = "Select your preferred task frequency",
             style = MaterialTheme.typography.bodyLarge,
@@ -537,7 +538,7 @@ fun SelectRepeatDate(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             //text = "Tell the job seeker your preferred time",
             text = "When do you want to start?",
             style = MaterialTheme.typography.bodyLarge,
@@ -747,7 +748,7 @@ fun SpecificPeriod(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             //text = "Tell the job seeker your preferred time",
             text = "Select the start date and end date for your specific period task",
             style = MaterialTheme.typography.bodyLarge,
@@ -1005,7 +1006,7 @@ fun RecurringTask(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             //text = "Tell the job seeker your preferred time",
             text = "Select the start date and end date for your specific period task",
             style = MaterialTheme.typography.bodyLarge,
@@ -1279,19 +1280,18 @@ fun DescribeTask(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(16.dp),
                 //text = "Summarize the detail of the task",
                 text = "Details",
                 style = MaterialTheme.typography.headlineLarge,
                 //lineHeight = 40.sp,
                 //fontSize = 40.sp
             )
-            Spacer(modifier = Modifier.height(20.dp))
             //Title2
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 text = "Help the tasker understand what you need to do",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
@@ -1400,7 +1400,7 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
         Divider()
         Spacer(modifier = Modifier.height(2.dp))
         progressBar(checked = 4f, waiting = 2f, text = "4")
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         //Title
         Text(
@@ -1761,7 +1761,7 @@ fun SuggestBudget(pageState: MutableState<Int>, money: MutableState<String>) {
         Divider()
         Spacer(modifier = Modifier.height(2.dp))
         progressBar(checked = 6f, waiting = 0f, text = "6")
-
+        Spacer(modifier = Modifier.height(40.dp))
         //Title
         Text(
             modifier = Modifier
@@ -1972,6 +1972,7 @@ fun TaskDetail(
         }
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
+        Spacer(modifier = Modifier.height(10.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1982,7 +1983,7 @@ fun TaskDetail(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(start=16.dp,bottom=10.dp),
                 text = "Please confirm your task details",
                 color= buttonColor,
                 style = MaterialTheme.typography.headlineSmall,
@@ -1993,7 +1994,7 @@ fun TaskDetail(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(start=16.dp,bottom=16.dp),
                 text = taskTopic.value,
                 style = MaterialTheme.typography.bodyLarge,
                 lineHeight = 40.sp,
@@ -2131,8 +2132,7 @@ fun TaskDetail(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -2167,7 +2167,7 @@ fun TaskDetail(
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Gray
+                color = Color.Black
             )
             Text(
                 modifier = Modifier
@@ -2192,7 +2192,7 @@ fun TaskDetail(
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Gray
+                color = Color.Black
             )
             Text(
                 modifier = Modifier

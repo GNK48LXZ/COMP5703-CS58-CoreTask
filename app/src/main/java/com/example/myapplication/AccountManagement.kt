@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -122,7 +123,7 @@ fun AccountMain(pageState: MutableState<Int>){
                 fontWeight = FontWeight.W600,
                 fontFamily = Poppins,
             )
-            Spacer(modifier = Modifier.width(110.dp))
+            Spacer(modifier = Modifier.width(118.dp))
             IconButton(
                 onClick = { pageState.value = 2 },
                 modifier = Modifier.fillMaxSize()
@@ -130,14 +131,18 @@ fun AccountMain(pageState: MutableState<Int>){
                 Icon(Icons.Filled.Settings, contentDescription = "Settings")
             }
     }
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(5.dp))
     Divider()
     Spacer(modifier = Modifier.height(5.dp))
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()
+        .fillMaxHeight()
+        .background(background)
+        .verticalScroll(rememberScrollState())
+    ){
         Row(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
-                .padding(top = 30.dp)
+                .padding(top = 5.dp)
                 .height(100.dp)
                 .fillMaxWidth()
         ) {
@@ -156,9 +161,9 @@ fun AccountMain(pageState: MutableState<Int>){
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(30.dp))
             Column {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(17.dp))
                 Text(
                     text = userName,
                     fontWeight = FontWeight.Bold,
@@ -208,24 +213,27 @@ fun AccountMain(pageState: MutableState<Int>){
             Spacer(modifier = Modifier.weight(1f))
         }*/
 
-        Divider(
+        /*Divider(
             modifier = Modifier.padding(horizontal = 25.dp),
             thickness = 1.5.dp,
             color = textFieldColor,
-        )
+        )*/
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp, vertical = 15.dp),
             text = "Introduction",
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
         )
         Text(
             introduction,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 20.sp
         )
         Divider(
             modifier = Modifier.padding(horizontal = 25.dp),
@@ -237,14 +245,17 @@ fun AccountMain(pageState: MutableState<Int>){
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp, vertical = 15.dp),
             text = "Address",
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
         )
         Text(
             location,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 20.sp
         )
         Divider(
             modifier = Modifier.padding(horizontal = 25.dp),
@@ -256,14 +267,17 @@ fun AccountMain(pageState: MutableState<Int>){
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp, vertical = 15.dp),
             text = "Skills",
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
         )
         Text(
             skill,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 20.sp
         )
         Divider(
             modifier = Modifier.padding(horizontal = 25.dp),
@@ -275,8 +289,23 @@ fun AccountMain(pageState: MutableState<Int>){
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp, vertical = 15.dp),
             text = "Certificate",
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
         )
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.certificate2),
+                contentDescription = "Certificate Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(height=150.dp,width=250.dp)
+                    .padding(horizontal = 8.dp)
+            )
+        }
     }
 }
 
@@ -536,8 +565,8 @@ fun EditUserProfile(pageState: MutableState<Int>){
                 onClick = { /* Do something! */ },
                 modifier = Modifier
                     .padding(16.dp)
-                    .height(110.dp)
-                    .width(160.dp),
+                    .height(50.dp)
+                    .width(80.dp),
                 colors = ButtonDefaults.buttonColors(textFieldColor)
             ) {
                 Icon(

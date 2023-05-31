@@ -1,11 +1,13 @@
 package com.example.myapplication
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -183,7 +185,7 @@ fun OfferListLazyColumn(
             }
             Card(
                 modifier = Modifier
-                    .height(230.dp)
+                    .height(200.dp)
                     .padding(horizontal = 16.dp)
                     .clickable(userId == user)
                     {
@@ -224,7 +226,7 @@ fun OfferListLazyColumn(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             offerItem.userName?.let {
                                 Text(
@@ -296,7 +298,7 @@ fun OfferListLazyColumn(
                                     },
                                     modifier = Modifier
                                         .height(40.dp)
-                                        .width(130.dp),
+                                        .width(140.dp),
                                     colors = ButtonDefaults.buttonColors(buttonColor),
                                     enabled = when (taskstatus) {
                                         "Assigned", "Completed" -> false
@@ -417,6 +419,8 @@ fun OfferDetails(recommendation: String, userID: String, taskId:String, navContr
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(50.dp)
+                            .clickable {  }
+
                     )
                 } else {
                     androidx.compose.material3.Icon(
@@ -601,7 +605,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                     .padding(5.dp)
                     .background(
                         color = when (status) {
-                            "Open" -> Color(0xFF9BEDAD)
+                            "Open" -> buttonColor
                             else -> Color.Transparent
                         },
                         shape = RoundedCornerShape(20.dp)
@@ -624,7 +628,7 @@ fun MonitoringDetails(taskId: String, navController: NavController) {
                     .padding(5.dp)
                     .background(
                         color = when (status) {
-                            "Assigned" -> buttonColor
+                            "Assigned" -> Color(0xFF9BEDAD)
                             else -> Color.Transparent
                         },
                         shape = RoundedCornerShape(20.dp)
@@ -972,17 +976,17 @@ fun EditTask(taskId: String, navController: NavController) {
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Edit Task details") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        androidx.compose.material3.Icon(
-                            Icons.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-            )
+                TopAppBar(
+                    title = { Text(text = "Edit Task details") },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            androidx.compose.material3.Icon(
+                                Icons.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+                    },
+                )
         }
     ) {
         Column(
@@ -993,9 +997,8 @@ fun EditTask(taskId: String, navController: NavController) {
                 .padding(it)
                 .verticalScroll(rememberScrollState())
         ) {
-
             Text(
-                "taskDescription",
+                "Description",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -1035,7 +1038,7 @@ fun EditTask(taskId: String, navController: NavController) {
             )
 
             Text(
-                "money",
+                "Budget",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.headlineMedium
             )

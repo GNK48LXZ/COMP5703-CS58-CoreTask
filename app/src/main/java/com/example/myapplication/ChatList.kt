@@ -46,15 +46,16 @@ fun WeChatMainScreen(navController: NavController) {
                 title = {
                     Text(
                         text = "My Message",
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontFamily = Poppins,
+                        fontWeight = FontWeight.W600,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(top = 20.dp)
                     )
                 },
                 backgroundColor = Color.White,
                 elevation = 2.dp,
             )
-        },
+        }
     ) {
 
         val chats = remember { mutableStateListOf<Chat>() }
