@@ -62,6 +62,7 @@ import com.google.maps.android.compose.*
 import com.maxkeppeler.sheets.clock.ClockDialog
 import com.maxkeppeler.sheets.clock.models.ClockSelection
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -467,6 +468,7 @@ fun SelectRepeatDate(
     startTime: MutableState<String>,
     endTime: MutableState<String>
 ) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val startCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
     val endClockState = rememberSheetState()
@@ -475,7 +477,7 @@ fun SelectRepeatDate(
     CalendarDialog(
         state = startCalendarState,
         selection = CalendarSelection.Date {
-            startDate.value = it.toString()
+            startDate.value = it.format(formatter).toString()
         },
         config = CalendarConfig(
             monthSelection = true,
@@ -485,13 +487,17 @@ fun SelectRepeatDate(
     ClockDialog(
         state = startClockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            startTime.value = "$hours:$minutes"
+            val formattedHours = String.format("%02d", hours)
+            val formattedMinutes = String.format("%02d", minutes)
+            startTime.value = "$formattedHours:$formattedMinutes"
         }
     )
     ClockDialog(
         state = endClockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            endTime.value = "$hours:$minutes"
+            val formattedHours = String.format("%02d", hours)
+            val formattedMinutes = String.format("%02d", minutes)
+            endTime.value = "$formattedHours:$formattedMinutes"
         }
     )
     Column(
@@ -660,6 +666,7 @@ fun SelectRepeatDate(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpecificPeriod(
@@ -669,6 +676,7 @@ fun SpecificPeriod(
     startTime: MutableState<String>,
     endTime: MutableState<String>
 ) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val startCalendarState = rememberSheetState()
     val endCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
@@ -678,7 +686,8 @@ fun SpecificPeriod(
     CalendarDialog(
         state = startCalendarState,
         selection = CalendarSelection.Date {
-            startDate.value = it.toString()
+            startDate.value = it.format(formatter).toString()
+
         },
         config = CalendarConfig(
             monthSelection = true,
@@ -688,7 +697,7 @@ fun SpecificPeriod(
     CalendarDialog(
         state = endCalendarState,
         selection = CalendarSelection.Date {
-            endDate.value = it.toString()
+            endDate.value = it.format(formatter).toString()
         },
         config = CalendarConfig(
             monthSelection = true,
@@ -698,13 +707,17 @@ fun SpecificPeriod(
     ClockDialog(
         state = startClockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            startTime.value = "$hours:$minutes"
+            val formattedHours = String.format("%02d", hours)
+            val formattedMinutes = String.format("%02d", minutes)
+            startTime.value = "$formattedHours:$formattedMinutes"
         }
     )
     ClockDialog(
         state = endClockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            endTime.value = "$hours:$minutes"
+            val formattedHours = String.format("%02d", hours)
+            val formattedMinutes = String.format("%02d", minutes)
+            endTime.value = "$formattedHours:$formattedMinutes"
         }
     )
     Column(
@@ -916,6 +929,7 @@ enum class RepeatFrequency {
     CUSTOM
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecurringTask(
@@ -926,6 +940,7 @@ fun RecurringTask(
     endTime: MutableState<String>,
     repeat: MutableState<String>
 ) {
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val startCalendarState = rememberSheetState()
     val endCalendarState = rememberSheetState()
     val startClockState = rememberSheetState()
@@ -935,7 +950,7 @@ fun RecurringTask(
     CalendarDialog(
         state = startCalendarState,
         selection = CalendarSelection.Date {
-            startDate.value = it.toString()
+            startDate.value = it.format(formatter).toString()
         },
         config = CalendarConfig(
             monthSelection = true,
@@ -945,7 +960,7 @@ fun RecurringTask(
     CalendarDialog(
         state = endCalendarState,
         selection = CalendarSelection.Date {
-            endDate.value = it.toString()
+            endDate.value = it.format(formatter).toString()
         },
         config = CalendarConfig(
             monthSelection = true,
@@ -955,13 +970,17 @@ fun RecurringTask(
     ClockDialog(
         state = startClockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            startTime.value = "$hours:$minutes"
+            val formattedHours = String.format("%02d", hours)
+            val formattedMinutes = String.format("%02d", minutes)
+            startTime.value = "$formattedHours:$formattedMinutes"
         }
     )
     ClockDialog(
         state = endClockState,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
-            endTime.value = "$hours:$minutes"
+            val formattedHours = String.format("%02d", hours)
+            val formattedMinutes = String.format("%02d", minutes)
+            endTime.value = "$formattedHours:$formattedMinutes"
         }
     )
     Column(
