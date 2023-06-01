@@ -1010,12 +1010,12 @@ fun RecurringTask(
         Spacer(modifier = Modifier.height(20.dp))
         Divider()
         progressBar(checked = 2f, waiting = 4f, text = "2")
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         //Title
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             //text = "Tell the job seeker your preferred time",
             text = "Date",
             style = MaterialTheme.typography.headlineLarge,
@@ -1033,13 +1033,32 @@ fun RecurringTask(
             //lineHeight = 40.sp,
             //fontSize = 40.sp
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = "From: ",
             fontSize = 20.sp,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
+        Row() {
+            Text(
+                text = "Start Date:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+            Spacer(modifier = Modifier.width(65.dp))
+            Text(
+                text = "Start Time:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1050,23 +1069,21 @@ fun RecurringTask(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .height(50.dp)
+                    .align(Alignment.CenterVertically)
                     .clickable { startCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  startDate:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = startDate.value.ifEmpty { "05/08/2023" },
                         color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                            .wrapContentSize()
                     )
                 }
             }
@@ -1075,23 +1092,21 @@ fun RecurringTask(
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .height(50.dp)
+                    .align(Alignment.CenterVertically)
                     .clickable { startClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  startTime:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = startTime.value.ifEmpty { "11:00 AM" },
                         color = if (startTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                            .wrapContentSize()
                     )
                 }
             }
@@ -1100,9 +1115,26 @@ fun RecurringTask(
         Text(
             text = "To: ",
             fontSize = 20.sp,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
+        Row() {
+            Text(
+                text = "End Date:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+            Spacer(modifier = Modifier.width(70.dp))
+            Text(
+                text = "End Time:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1116,20 +1148,16 @@ fun RecurringTask(
                     .clickable { endCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  endDate:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = endDate.value.ifEmpty { "05/10/2023" },
                         color = if (endDate.value.isNotEmpty()) buttonColor else Color.LightGray,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                        modifier = Modifier.wrapContentSize()
                     )
                 }
             }
@@ -1141,20 +1169,16 @@ fun RecurringTask(
                     .clickable { endClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  endTime:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = endTime.value.ifEmpty { "01:30 PM" },
                         color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                        modifier = Modifier.wrapContentSize()
                     )
                 }
             }
@@ -1903,12 +1927,12 @@ fun TaskDetail(
 ) {
     val storage = Firebase.storage
     var storageRef = storage.reference
-    val avatarImagesRef = storageRef.child("avatar/"+user+".jpg")
-    val avatar =  remember {
+    val avatarImagesRef = storageRef.child("avatar/" + user + ".jpg")
+    val avatar = remember {
         mutableStateOf<Bitmap?>(null)
     }
-    avatarImagesRef.getBytes(2048*2048).addOnSuccessListener {
-        avatar.value = BitmapFactory.decodeByteArray(it,0,it.size)
+    avatarImagesRef.getBytes(2048 * 2048).addOnSuccessListener {
+        avatar.value = BitmapFactory.decodeByteArray(it, 0, it.size)
     }.addOnFailureListener {
         // Handle any errors
     }
@@ -1956,7 +1980,7 @@ fun TaskDetail(
     val flag2 = remember { mutableStateOf(false) }
     ConfirmationDialog(openDialog = openDialog3, flag2 = flag2)
     LaunchedEffect(flag2.value) {
-        if(flag2.value){
+        if (flag2.value) {
             val db = Firebase.firestore
             db.collection("Task").document().set(task)
             //navController.popBackStack()
@@ -2002,9 +2026,9 @@ fun TaskDetail(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start=16.dp,bottom=10.dp),
+                    .padding(start = 16.dp, bottom = 10.dp),
                 text = "Please confirm your task details",
-                color= buttonColor,
+                color = buttonColor,
                 style = MaterialTheme.typography.headlineSmall,
                 //lineHeight = 40.sp,
                 //fontSize = 30.sp,
@@ -2013,7 +2037,7 @@ fun TaskDetail(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start=16.dp,bottom=16.dp),
+                    .padding(start = 16.dp, bottom = 16.dp),
                 text = taskTopic.value,
                 style = MaterialTheme.typography.bodyLarge,
                 lineHeight = 40.sp,
@@ -2168,7 +2192,7 @@ fun TaskDetail(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "A$ " + money.value +"/hour",
+                        text = "A$ " + money.value + "/hour",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                         fontSize = 35.sp,
                         fontWeight = FontWeight.Bold
