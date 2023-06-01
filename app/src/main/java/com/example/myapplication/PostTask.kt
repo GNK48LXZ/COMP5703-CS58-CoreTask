@@ -1126,7 +1126,7 @@ fun RecurringTask(
                     .padding(horizontal = 18.dp)
                     .padding(vertical = 6.dp)
             )
-            Spacer(modifier = Modifier.width(70.dp))
+            Spacer(modifier = Modifier.width(75.dp))
             Text(
                 text = "End Time:",
                 fontSize = 16.sp,
