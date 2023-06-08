@@ -255,11 +255,9 @@ fun SimplyDescribeTask(
                     fontWeight = FontWeight.W600
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Divider()
-            Spacer(modifier = Modifier.height(2.dp))
             progressBar(checked = 1f, waiting = 5f, text = "1")
-            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -353,11 +351,9 @@ fun SelectTaskType(pageState: MutableState<Int>) {
                 fontWeight = FontWeight.W600
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        progressBar(checked = 2f, waiting = 4f, text = "2")
+        Spacer(modifier = Modifier.height(10.dp))
         Divider()
-        Spacer(modifier = Modifier.height(40.dp))
-
+        progressBar(checked = 2f, waiting = 4f, text = "2")
         //Title
         Text(
             modifier = Modifier
@@ -523,13 +519,9 @@ fun SelectRepeatDate(
                 fontWeight = FontWeight.W600
             )
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider()
-        Spacer(modifier = Modifier.height(2.dp))
         progressBar(checked = 2f, waiting = 4f, text = "2")
-        Spacer(modifier = Modifier.height(40.dp))
-
         //Title
         Text(
             modifier = Modifier
@@ -743,10 +735,9 @@ fun SpecificPeriod(
                 fontWeight = FontWeight.W600
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider()
         progressBar(checked = 2f, waiting = 4f, text = "2")
-        Spacer(modifier = Modifier.height(40.dp))
         //Title
         Text(
             modifier = Modifier
@@ -773,9 +764,27 @@ fun SpecificPeriod(
         Text(
             text = "From: ",
             fontSize = 20.sp,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(2.dp))
+        Row() {
+            Text(
+                text = "Start Date:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+            Spacer(modifier = Modifier.width(65.dp))
+            Text(
+                text = "Start Time:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -789,20 +798,17 @@ fun SpecificPeriod(
                     .clickable { startCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  startDate:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = startDate.value.ifEmpty { "05/08/2023" },
                         color = if (startDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                            .wrapContentSize()
                     )
                 }
             }
@@ -814,20 +820,17 @@ fun SpecificPeriod(
                     .clickable { startClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  startTime:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = startTime.value.ifEmpty { "11:00 AM" },
                         color = if (startTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                            .wrapContentSize()
                     )
                 }
             }
@@ -836,9 +839,26 @@ fun SpecificPeriod(
         Text(
             text = "To: ",
             fontSize = 20.sp,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
+        Row() {
+            Text(
+                text = "End Date:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+            Spacer(modifier = Modifier.width(75.dp))
+            Text(
+                text = "End Time:",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(horizontal = 18.dp)
+                    .padding(vertical = 6.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -852,20 +872,17 @@ fun SpecificPeriod(
                     .clickable { endCalendarState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  endDate:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = endDate.value.ifEmpty { "05/10/2023" },
+                        text = endDate.value.ifEmpty { "05/08/2023" },
                         color = if (endDate.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                            .wrapContentSize()
                     )
                 }
             }
@@ -877,20 +894,17 @@ fun SpecificPeriod(
                     .clickable { endClockState.show() },
                 colors = CardDefaults.cardColors(textFieldColor)
             ) {
-                Text(text = "  endTime:")
-                Row(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = endTime.value.ifEmpty { "01:30 PM" },
+                        text = endTime.value.ifEmpty { "11:00 AM" },
                         color = if (endTime.value.isNotEmpty()) buttonColor else Color.LightGray,
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                            .wrapContentSize()
                     )
                 }
             }
@@ -1007,15 +1021,15 @@ fun RecurringTask(
                 fontWeight = FontWeight.W600
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Divider()
-        progressBar(checked = 2f, waiting = 4f, text = "2")
         Spacer(modifier = Modifier.height(10.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(10.dp))
+        progressBar(checked = 2f, waiting = 4f, text = "2")
         //Title
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(16.dp),
             //text = "Tell the job seeker your preferred time",
             text = "Date",
             style = MaterialTheme.typography.headlineLarge,
@@ -1197,7 +1211,7 @@ fun RecurringTask(
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .height(40.dp)
+                        .height(10.dp)
                         .selectable(
                             selected = (text == selectedOption),
                             onClick = {
@@ -1308,11 +1322,10 @@ fun DescribeTask(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider()
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         progressBar(checked = 3f, waiting = 3f, text = "3")
-        Spacer(modifier = Modifier.height(40.dp))
         //Content
         Column(
             modifier = Modifier
@@ -1438,13 +1451,10 @@ fun SelectAddress(pageState: MutableState<Int>, address: MutableState<String>) {
                 fontWeight = FontWeight.W600
             )
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider()
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         progressBar(checked = 4f, waiting = 2f, text = "4")
-        Spacer(modifier = Modifier.height(40.dp))
-
         //Title
         Text(
             modifier = Modifier
@@ -1616,12 +1626,10 @@ fun JobRequires(pageState: MutableState<Int>, requires: MutableState<String>) {
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider()
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         progressBar(checked = 5f, waiting = 1f, text = "5")
-        Spacer(modifier = Modifier.height(40.dp))
-
         //Title
         Text(
             modifier = Modifier
@@ -1800,11 +1808,10 @@ fun SuggestBudget(pageState: MutableState<Int>, money: MutableState<String>) {
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Divider()
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         progressBar(checked = 6f, waiting = 0f, text = "6")
-        Spacer(modifier = Modifier.height(40.dp))
         //Title
         Text(
             modifier = Modifier
@@ -2013,9 +2020,8 @@ fun TaskDetail(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        Divider()
         Spacer(modifier = Modifier.height(10.dp))
+        Divider()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
